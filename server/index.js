@@ -1,86 +1,135 @@
 import express from "express";
-import cors from "cors";
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
-import process from "process";
+import { createClient } from "@supabase/supabase-js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const DATA_DIR = join(__dirname, "data");
-const DATA_FILE = join(DATA_DIR, "profiles.json");
-
-// Ensure storage exists
-if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
-if (!existsSync(DATA_FILE)) writeFileSync(DATA_FILE, "{}");
-
-function readProfiles() {
+// Read Supabase credentials from .env (used in production; in dev Vite proxies for us)
+let supabaseUrl = process.env.VITE_SUPABASE_URL;
+let supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
+if (!supabaseUrl || !supabaseAnonKey) {
   try {
-    return JSON.parse(readFileSync(DATA_FILE, "utf-8"));
-  } catch {
-    return {};
-  }
+    const env = readFileSync(join(__dirname, "..", ".env"), "utf-8");
+    for (const line of env.split("\n")) {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith("#")) {
+        const eq = trimmed.indexOf("=");
+        if (eq > 0) {
+          const k = trimmed.slice(0, eq).trim();
+          if (k === "VITE_SUPABASE_URL") supabaseUrl = trimmed.slice(eq + 1).trim();
+          if (k === "VITE_SUPABASE_ANON_KEY") supabaseAnonKey = trimmed.slice(eq + 1).trim();
+        }
+      }
+    }
+  } catch {}
 }
 
-function writeProfiles(data) {
-  writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
-}
+const supabase = supabaseUrl && supabaseAnonKey
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null;
 
 const app = express();
-app.use(cors());
-app.use(express.json({ limit: "10mb" }));
 
-// --- API routes ---
-
-app.post("/api/profiles", (req, res) => {
-  const { username, ...profile } = req.body;
-
-  if (!username || !/^[a-z0-9_-]{2,30}$/i.test(username)) {
-    return res.status(400).json({
-      error:
-        "Username must be 2–30 characters (letters, numbers, hyphens, underscores).",
-    });
-  }
-
-  const key = username.toLowerCase();
-  const profiles = readProfiles();
-
-  profiles[key] = {
-    ...profile,
-    username: key,
-    createdAt: profiles[key]?.createdAt || new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-
-  writeProfiles(profiles);
-  console.log(`  ✓ Profile saved: /${key}`);
-  res.json({ username: key });
-});
-
-app.get("/api/profiles/:username", (req, res) => {
-  const profiles = readProfiles();
-  const profile = profiles[req.params.username.toLowerCase()];
-  if (!profile) return res.status(404).json({ error: "Not found" });
-  res.json(profile);
-});
-
-app.get("/api/check/:username", (req, res) => {
-  const profiles = readProfiles();
-  const exists = !!profiles[req.params.username.toLowerCase()];
-  res.json({ available: !exists });
-});
-
-// --- Serve SPA (production) ---
+// --- Serve static assets (images, JS, CSS) ---
 
 const distPath = join(__dirname, "..", "dist");
 const serveSPA = existsSync(distPath);
 
 if (serveSPA) {
   app.use(express.static(distPath));
-  app.get("*", (req, res) => {
-    res.sendFile(join(distPath, "index.html"));
+
+  // Cache the built index.html
+  let cachedHtml = null;
+  function getIndexHtml() {
+    if (!cachedHtml) {
+      cachedHtml = readFileSync(join(distPath, "index.html"), "utf-8");
+    }
+    return cachedHtml;
+  }
+
+  // Profile pages: inject OG meta tags
+  app.get("/:username", async (req, res) => {
+    const { username } = req.params;
+
+    // Skip paths that look like asset files or common paths
+    if (
+      !username ||
+      username.includes(".") ||
+      username === "favicon.svg" ||
+      username.startsWith("assets/")
+    ) {
+      return res.send(getIndexHtml());
+    }
+
+    let name = username;
+    let description = `Check out ${username}'s protome profile.`;
+    let image = null;
+    let accent = "#c45a3c";
+
+    // Fetch profile data from Supabase
+    if (supabase) {
+      try {
+        const { data } = await supabase
+          .from("profiles")
+          .select("name, bio, photo_url, accent")
+          .eq("username", username.toLowerCase())
+          .maybeSingle();
+
+        if (data) {
+          name = data.name || username;
+          description = data.bio
+            ? data.bio.length > 200
+              ? data.bio.slice(0, 200) + "…"
+              : data.bio
+            : `Check out ${name}'s protome profile.`;
+          image = data.photo_url || null;
+          accent = data.accent || "#c45a3c";
+        }
+      } catch {}
+    }
+
+    const safeName = esc(name);
+    const safeDesc = esc(description);
+    const safeImage = image ? esc(image) : null;
+    const url = esc(req.protocol + "://" + req.get("host") + "/" + username);
+    const safeAccent = esc(accent);
+
+    // Build the meta tags block
+    const metaTags = [
+      `<title>${safeName} — protome</title>`,
+      `<meta name="description" content="${safeDesc}" />`,
+      `<meta name="theme-color" content="${safeAccent}" />`,
+      `<meta property="og:title" content="${safeName} — protome" />`,
+      `<meta property="og:description" content="${safeDesc}" />`,
+      `<meta property="og:type" content="profile" />`,
+      `<meta property="og:url" content="${url}" />`,
+      safeImage ? `<meta property="og:image" content="${safeImage}" />` : "",
+      `<meta property="og:image:width" content="400" />`,
+      `<meta property="og:image:height" content="400" />`,
+      `<meta name="twitter:card" content="summary" />`,
+      `<meta name="twitter:title" content="${safeName} — protome" />`,
+      `<meta name="twitter:description" content="${safeDesc}" />`,
+      safeImage ? `<meta name="twitter:image" content="${safeImage}" />` : "",
+    ].filter(Boolean).join("\n    ");
+
+    // Replace the existing <title> and inject meta tags before </head>
+    let html = getIndexHtml()
+      // Remove the default <title>
+      .replace(/<title>.*?<\/title>/, "")
+      // Inject our meta tags right before </head>
+      .replace("</head>", `    ${metaTags}\n  </head>`);
+
+    res.send(html);
+  });
+
+  // All other routes (including /) — serve the SPA
+  app.get("*", (_req, res) => {
+    res.send(getIndexHtml());
   });
 } else {
+  // Dev mode — just a health check
   app.get("/", (_req, res) => {
     res.json({ message: "protome API — run `npm run dev` for the frontend" });
   });
@@ -97,3 +146,15 @@ app.listen(PORT, () => {
     );
   }
 });
+
+// --- Helpers ---
+
+function esc(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\n/g, " ");
+}

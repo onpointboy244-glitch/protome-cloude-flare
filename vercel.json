@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/((?!api/|assets/|favicon\\.|robots\\.|.*\\.[a-z]+$).+)",
+      "destination": "/api/og?username=$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

@@ -46,19 +46,35 @@ const GENERIC_ICON = (
 )
 
 function detectIcon(label = '', url = '') {
-  const text = `${label} ${url}`.toLowerCase()
-  if (/\b(website|web|site|portfolio)\b/.test(text)) return LINK_ICONS.website
-  if (/\blinkedin\b/.test(text)) return LINK_ICONS.linkedin
-  if (/\btwitter\b/.test(text) || /\bx\.com\b/.test(text) || /\/x\b/.test(text)) return LINK_ICONS.twitter
-  if (/\bgithub\b/.test(text)) return LINK_ICONS.github
-  if (/\binstagram\b/.test(text)) return LINK_ICONS.instagram
-  if (/\byoutube\b/.test(text)) return LINK_ICONS.youtube
-  if (/\btiktok\b/.test(text)) return LINK_ICONS.tiktok
+  const lbl = label.toLowerCase()
+  const full = `${lbl} ${url}`.toLowerCase()
+
+  // Label-only checks — these match what the user chose, not the URL
+  if (/\btiktok\b/.test(lbl)) return LINK_ICONS.tiktok
+  if (/\binstagram\b/.test(lbl)) return LINK_ICONS.instagram
+  if (/\byoutube\b/.test(lbl)) return LINK_ICONS.youtube
+  if (/\blinkedin\b/.test(lbl)) return LINK_ICONS.linkedin
+  if (/\btwitter\b/.test(lbl) || /\bx\b/.test(lbl)) return LINK_ICONS.twitter
+  if (/\bgithub\b/.test(lbl)) return LINK_ICONS.github
+
+  // Fallback: check full text (label + URL) for the rest
+  if (/\blinkedin\b/.test(full)) return LINK_ICONS.linkedin
+  if (/\btwitter\b/.test(full) || /\bx\.com\b/.test(full) || /\/x\b/.test(full)) return LINK_ICONS.twitter
+  if (/\bgithub\b/.test(full)) return LINK_ICONS.github
+  if (/\binstagram\b/.test(full)) return LINK_ICONS.instagram
+  if (/\byoutube\b/.test(full)) return LINK_ICONS.youtube
+  if (/\btiktok\b/.test(full)) return LINK_ICONS.tiktok
+  if (/\b(website|web|site|portfolio)\b/.test(full)) return LINK_ICONS.website
   return null
 }
 
 export default function SharedProtofile({ data }) {
-  const { name, role, email, location, bio, photo, tags, links, accent, bgColor, font, username } = data
+  const d = {
+    ...data,
+    bgColor: data.bg_color || data.bgColor || '',
+    bgGradient: data.bg_gradient || data.bgGradient || '',
+  }
+  const { name, role, email, location, bio, photo, photo_url, tags, links, accent, bgColor, bgGradient, font, username } = d
   const accentColor = accent || 'var(--color-primary-l)'
   const isSans = font === 'sans'
   const initials = name
@@ -66,15 +82,25 @@ export default function SharedProtofile({ data }) {
     : ''
 
   const linkItems = Array.isArray(links) ? links : []
-  const hasPhoto = !!photo
+  const photoSrc = photo_url || photo
+  const hasPhoto = !!photoSrc
+  const isDarkBg = !!bgGradient && bgGradient.includes('radial')
+  const isLightBg = !isDarkBg && (!!bgGradient || (bgColor && bgColor !== '#ffffff'))
 
   return (
-    <div className={`linktree ${isSans ? 'linktree--sans' : ''}`} style={{ '--accent': accentColor, '--bg-color': bgColor || 'var(--color-bg)' }}>
+    <div
+      className={`linktree ${isSans ? 'linktree--sans' : ''} ${bgGradient ? 'linktree--gradient' : ''} ${isLightBg ? 'linktree--light' : ''} ${isDarkBg ? 'linktree--dark' : ''}`}
+      style={{
+        '--accent': accentColor,
+        '--bg-color': bgColor || 'var(--color-bg)',
+        ...(bgGradient ? { '--bg-gradient': bgGradient } : {}),
+      }}
+    >
       <main className="linktree__main">
         {/* Photo / Avatar */}
         {hasPhoto ? (
           <div className="linktree__photo-wrapper">
-            <img src={photo} alt={name || ''} className="linktree__photo" />
+            <img src={photoSrc} alt={name || ''} className="linktree__photo" />
           </div>
         ) : (
           <div className="linktree__avatar" style={{ background: `color-mix(in oklch, ${accentColor}, white 60%)`, color: accentColor }}>
@@ -148,7 +174,10 @@ export default function SharedProtofile({ data }) {
         {/* Footer */}
         <div className="linktree__footer">
           <a href="/" className="linktree__brand">
-            <span className="linktree__brand-dot" style={{ background: accentColor }} />
+            <span className="linktree__brand-mark">
+              <span className="linktree__brand-diamond" style={{ background: accentColor }} />
+              <span className="linktree__brand-line" />
+            </span>
             protome
           </a>
         </div>

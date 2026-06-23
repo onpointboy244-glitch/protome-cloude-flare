@@ -330,6 +330,48 @@
   color: var(--color-muted);
 }
 
+/* ---- Gradient Picker ---- */
+
+.create-section__gradient-picker {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-sm);
+  max-width: 260px;
+}
+
+.create-section__gradient-swatch {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  border: 2px solid var(--color-border);
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.create-section__gradient-swatch:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px oklch(0 0 0 / 0.1);
+  z-index: 1;
+}
+
+.create-section__gradient-swatch--active {
+  border-color: var(--color-ink);
+  box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-ink);
+}
+
+@media (max-width: 640px) {
+  .create-section__gradient-picker {
+    grid-template-columns: repeat(6, 1fr);
+    max-width: 100%;
+  }
+}
+
 .create-section__font-options {
   display: flex;
   gap: var(--space-sm);
@@ -471,6 +513,190 @@
   border: 1px solid #fecaca;
 }
 
+/* ---- Existing profiles list ---- */
+
+.create-section__profiles-list {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: var(--space-lg);
+  margin-bottom: var(--space-3xl);
+}
+
+.create-section__profiles-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-muted);
+  margin-bottom: var(--space-md);
+}
+
+.create-section__profile-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--color-border);
+  gap: var(--space-md);
+}
+
+.create-section__profile-row:last-child {
+  border-bottom: none;
+}
+
+.create-section__profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+
+.create-section__profile-name {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.create-section__profile-url {
+  font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  color: var(--color-muted);
+}
+
+.create-section__profile-actions {
+  display: flex;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+.create-section__profile-btn {
+  font-size: var(--text-xs) !important;
+  padding: 0.35rem 0.85rem !important;
+}
+
+.create-section__profile-delete {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0 !important;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg);
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.create-section__profile-delete:hover {
+  color: #ef4444;
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+/* ---- Delete confirmation modal ---- */
+
+.create-section__delete-overlay {
+  position: fixed;
+  inset: 0;
+  background: oklch(0 0 0 / 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal-bg);
+  padding: var(--space-lg);
+  animation: fade-in 0.2s ease;
+}
+
+.create-section__delete-modal {
+  background: var(--color-bg);
+  border-radius: 16px;
+  padding: var(--space-2xl);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: var(--shadow-xl);
+  animation: scale-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.create-section__delete-icon {
+  margin-bottom: var(--space-lg);
+  display: flex;
+  justify-content: center;
+}
+
+.create-section__delete-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 500;
+  margin-bottom: var(--space-md);
+  color: var(--color-ink);
+}
+
+.create-section__delete-text {
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  line-height: 1.6;
+  margin-bottom: var(--space-2xl);
+}
+
+.create-section__delete-text strong {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.create-section__delete-actions {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+}
+
+.create-section__delete-confirm {
+  background: #ef4444 !important;
+  color: #fff !important;
+  border: 1px solid #ef4444 !important;
+  font-size: var(--text-sm) !important;
+  padding: 0.6rem 1.5rem !important;
+}
+
+.create-section__delete-confirm:hover {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+}
+
+/* ---- Editing banner ---- */
+
+.create-section__editing-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  background: color-mix(in oklch, var(--color-primary-l), white 88%);
+  color: var(--color-ink);
+  font-size: var(--text-sm);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: 10px;
+  margin-bottom: var(--space-2xl);
+  border: 1px solid color-mix(in oklch, var(--color-primary-l), white 70%);
+}
+
+.create-section__editing-banner svg {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.create-section__editing-banner strong {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.create-section__editing-banner span {
+  flex: 1;
+}
+
 /* ---- Username ---- */
 
 .create-section__username-input {
@@ -495,6 +721,18 @@
   font-family: var(--font-mono);
   letter-spacing: 0.01em;
   flex: 1;
+}
+
+.create-section__input--readonly {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.create-section__input--readonly:focus {
+  box-shadow: none;
+  border-color: var(--color-border);
 }
 
 .create-section__username-status {
@@ -606,6 +844,41 @@
 }
 
 /* ---- Responsive ---- */
+
+/* ---- Auth required card ---- */
+
+.create-section__auth-required {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4xl) 0;
+}
+
+.create-section__auth-card {
+  text-align: center;
+  max-width: 400px;
+  padding: var(--space-4xl) var(--space-2xl);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+}
+
+.create-section__auth-card svg {
+  margin: 0 auto var(--space-xl);
+}
+
+.create-section__auth-card h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 500;
+  margin-bottom: var(--space-md);
+}
+
+.create-section__auth-card p {
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  margin-bottom: var(--space-2xl);
+  line-height: 1.6;
+}
 
 @media (max-width: 640px) {
   .create-section__grid {

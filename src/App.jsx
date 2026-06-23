@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useAuth } from './lib/auth'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import HowItWorks from './components/HowItWorks'
@@ -8,12 +9,16 @@ import Pricing from './components/Pricing'
 import CTA from './components/CTA'
 import Footer from './components/Footer'
 import SharedProtofile from './components/SharedProtofile'
-import { getProfile } from './lib/api'
+import Auth from './components/Auth'
+import { getProfile, getMyProfiles } from './lib/api'
 
 export default function App() {
+  const { user } = useAuth()
   const [route, setRoute] = useState('loading') // loading | landing | profile | notfound
   const [sharedData, setSharedData] = useState(null)
   const [protofileData, setProtofileData] = useState(null)
+  const [myProfiles, setMyProfiles] = useState([])
+  const [showAuth, setShowAuth] = useState(false)
 
   const resolveRoute = () => {
     const path = window.location.pathname.replace(/\/$/, '') || '/'
@@ -40,6 +45,26 @@ export default function App() {
     window.addEventListener('popstate', resolveRoute)
     return () => window.removeEventListener('popstate', resolveRoute)
   }, [])
+
+  // Fetch current user's profiles when signed in
+  useEffect(() => {
+    if (user) {
+      getMyProfiles().then(setMyProfiles)
+    } else {
+      setMyProfiles([])
+    }
+  }, [user])
+
+  // Refresh profiles after creating one
+  const handleProfileCreated = (data) => {
+    setProtofileData(data)
+    getMyProfiles().then(setMyProfiles)
+  }
+
+  // Refresh profiles after deleting one
+  const handleProfileDeleted = (updated) => {
+    setMyProfiles(updated)
+  }
 
   // --- Profile view ---
   if (route === 'profile' && sharedData) {
@@ -86,14 +111,23 @@ export default function App() {
   // --- Landing page ---
   return (
     <>
-      <Nav />
+      <Nav
+        onSignIn={() => setShowAuth(true)}
+        myProfiles={myProfiles}
+      />
+
+      {showAuth && <Auth onClose={() => setShowAuth(false)} />}
+
       <main>
         <Hero />
         <HowItWorks />
         <Features />
         <CreateSection
           latestProtofile={protofileData}
-          onProtofileCreated={setProtofileData}
+          onProtofileCreated={handleProfileCreated}
+          onProfileDeleted={handleProfileDeleted}
+          onSignInNeeded={() => setShowAuth(true)}
+          myProfiles={myProfiles}
         />
         <Pricing />
         <CTA />
