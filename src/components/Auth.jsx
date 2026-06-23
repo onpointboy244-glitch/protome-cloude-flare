@@ -111,14 +111,34 @@ export default function Auth({ onClose }) {
       }
     } catch (err) {
       console.error('Auth error:', err)
-      const msg = err?.message || err?.error_description || err?.error
-      setError(
-        typeof msg === 'string' && msg ? msg
-        : typeof err === 'string' ? err
-        : typeof err?.message === 'string' ? err.message
-        : JSON.stringify(err) !== '{}' ? JSON.stringify(err)
-        : 'Something went wrong. Try again.'
-      )
+
+      // Friendly messages for common errors
+      const msg = (err?.message || err?.error_description || err?.error || '').toLowerCase()
+      const code = (err?.code || '').toLowerCase()
+
+      if (
+        msg.includes('rate limit') ||
+        msg.includes('too many requests') ||
+        msg.includes('over_email_send_rate_limit') ||
+        code.includes('over_email_send_rate_limit') ||
+        code.includes('email_rate_limit')
+      ) {
+        // Per-email rate limit is 2/hr; IP/device limit is ~60 seconds
+        const perEmailLimit = msg.includes('over_email_send_rate_limit') || code.includes('over_email_send_rate_limit')
+        setError(
+          perEmailLimit
+            ? "We've already sent a confirmation link to this email. Check your spam folder, or try again in an hour."
+            : 'Too many signup attempts. Wait a moment and try again.'
+        )
+      } else if (mode === 'signup' && (msg.includes('already registered') || code.includes('user_already_exists'))) {
+        setError('This email is already registered. Try signing in instead.')
+      } else {
+        setError(
+          typeof msg === 'string' && msg ? (err.message || err.error_description || err.error)
+          : typeof err === 'string' ? err
+          : 'Something went wrong. Try again.'
+        )
+      }
     } finally {
       setSubmitting(false)
     }
