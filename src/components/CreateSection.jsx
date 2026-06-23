@@ -14,8 +14,6 @@ const EMPTY_FORM = {
   username: '',
 }
 
-const PHOTO_MAX_SIZE = 10 * 1024 * 1024 // 10MB
-
 function freshLink(label = '', url = '') {
   return { id: Math.random().toString(36).slice(2, 9), label, url }
 }
@@ -182,10 +180,6 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
 
     if (!file.type.startsWith('image/')) {
       setPhotoError('Please select an image file.')
-      return
-    }
-    if (file.size > PHOTO_MAX_SIZE) {
-      setPhotoError('Image must be under 2MB.')
       return
     }
 
