@@ -14,7 +14,7 @@ const EMPTY_FORM = {
   username: '',
 }
 
-const PHOTO_MAX_SIZE = 2 * 1024 * 1024 // 2MB
+const PHOTO_MAX_SIZE = 10 * 1024 * 1024 // 10MB
 
 function freshLink(label = '', url = '') {
   return { id: Math.random().toString(36).slice(2, 9), label, url }
