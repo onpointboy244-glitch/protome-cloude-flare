@@ -127,15 +127,7 @@ export default function Auth({ onClose }) {
         code.includes("over_email_send_rate_limit") ||
         code.includes("email_rate_limit")
       ) {
-        // Per-email rate limit is 2/hr; IP/device limit is ~60 seconds
-        const perEmailLimit =
-          msg.includes("over_email_send_rate_limit") ||
-          code.includes("over_email_send_rate_limit");
-        setError(
-          perEmailLimit
-            ? "We've already sent a confirmation link to this email. Check your spam folder, or try again in an hour."
-            : "Too many signup attempts. Wait a moment and try again.",
-        );
+        setError("Too many signup attempts. Please try again later.");
       } else if (
         mode === "signup" &&
         (msg.includes("already registered") ||
