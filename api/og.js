@@ -2,8 +2,10 @@
 /**
  * Vercel serverless function — OG meta tag injection for profile pages.
  *
- * This replaces the Express `/:username` route from server/index.js
- * so the app can run fully on Vercel's free tier.
+ * Optimised for fast cold starts:
+ *   - `@supabase/supabase-js` is only loaded lazily when a profile is
+ *     actually looked up (most requests are static / warm-up pings).
+ *   - `index.html` is read once and cached across warm invocations.
  *
  * How it works:
  *   1. Someone visits protome.vercel.app/jordan
@@ -11,12 +13,8 @@
  *   3. This function fetches the profile from Supabase
  *   4. Injects OG / Twitter meta tags into index.html
  *   5. Returns the modified HTML — social crawlers get rich previews
- *
- * To enable it, uncomment the `rewrites` section in vercel.json
- * (and comment it out if you switch back to the Express server).
  */
 
-import { createClient } from "@supabase/supabase-js";
 import { readFileSync, existsSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
@@ -24,24 +22,30 @@ import { fileURLToPath } from "url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
 
-// --- Init Supabase ---
+// --- Lazy singletons for cold-start speed ---
+// Supabase client is NOT loaded at module-init. We import it on demand
+// so that static requests (root, assets, warm-up pings) never pay that cost.
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
-
-const supabase =
-  supabaseUrl && supabaseAnonKey
-    ? createClient(supabaseUrl, supabaseAnonKey)
-    : null;
-
-// --- Cache the built index.html ---
-
-const distPath = join(root, "dist");
 let cachedHtml = null;
+let supabaseClient = null;
+
+async function getSupabase() {
+  if (supabaseClient) return supabaseClient;
+  const url = process.env.VITE_SUPABASE_URL;
+  const key = process.env.VITE_SUPABASE_ANON_KEY;
+  if (!url || !key) return null;
+  const { createClient } = await import("@supabase/supabase-js");
+  supabaseClient = createClient(url, key);
+  return supabaseClient;
+}
 
 function getIndexHtml() {
-  if (!cachedHtml) {
+  if (cachedHtml) return cachedHtml;
+  const distPath = join(root, "dist");
+  if (existsSync(distPath)) {
     cachedHtml = readFileSync(join(distPath, "index.html"), "utf-8");
+  } else {
+    cachedHtml = null;
   }
   return cachedHtml;
 }
@@ -51,11 +55,12 @@ function getIndexHtml() {
 export default async function handler(req, res) {
   const username = req.query.username;
 
-  // Skip if not a profile request
-  if (!username || username.includes(".") || username === "favicon.svg") {
-    if (existsSync(distPath)) {
+  // — Static / non-profile requests — return HTML immediately, no Supabase needed
+  if (!username || username.includes(".") || username === "favicon.svg" || username === "keepwarm") {
+    const html = getIndexHtml();
+    if (html) {
       res.setHeader("Content-Type", "text/html");
-      return res.status(200).send(getIndexHtml());
+      return res.status(200).send(html);
     }
     return res.status(200).json({ message: "protome API" });
   }
@@ -65,7 +70,8 @@ export default async function handler(req, res) {
   let image = null;
   let accent = "#c45a3c";
 
-  // Fetch profile data from Supabase
+  // — Profile lookup — lazily load Supabase only now
+  const supabase = await getSupabase();
   if (supabase) {
     try {
       const { data } = await supabase
@@ -114,14 +120,9 @@ export default async function handler(req, res) {
     .filter(Boolean)
     .join("\n    ");
 
-  let html;
-  if (existsSync(distPath)) {
-    html = getIndexHtml()
-      .replace(/<title>.*?<\/title>/, "")
-      .replace("</head>", `    ${metaTags}\n  </head>`);
-  } else {
-    html = `<!DOCTYPE html><html><head>${metaTags}</head><body><p>protome</p></body></html>`;
-  }
+  const html = (getIndexHtml() ?? "")
+    .replace(/<title>.*?<\/title>/, "")
+    .replace("</head>", `    ${metaTags}\n  </head>`);
 
   res.setHeader("Content-Type", "text/html");
   return res.status(200).send(html);

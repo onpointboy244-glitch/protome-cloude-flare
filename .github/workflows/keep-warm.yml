@@ -1,0 +1,17 @@
+name: Keep Vercel warm
+
+on:
+  schedule:
+    # Every 5 minutes — well under the ~15–30 min idle timeout
+    - cron: "*/5 * * * *"
+  workflow_dispatch: # allow manual run too
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping homepage (warm the CDN edge)
+        run: curl -s -o /dev/null -w "%{http_code}" https://protome-nine.vercel.app/
+
+      - name: Ping OG function (warms the Serverless Function)
+        run: curl -s -o /dev/null -w "%{http_code}" https://protome-nine.vercel.app/keepwarm
