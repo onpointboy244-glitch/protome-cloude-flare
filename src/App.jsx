@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useAuth } from './lib/auth'
+import { useState, useEffect, startTransition } from 'react'
+import { useAuth } from './lib/useAuth'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import HowItWorks from './components/HowItWorks'
@@ -41,9 +41,10 @@ export default function App() {
   }
 
   useEffect(() => {
-    resolveRoute()
-    window.addEventListener('popstate', resolveRoute)
-    return () => window.removeEventListener('popstate', resolveRoute)
+    startTransition(() => resolveRoute())
+    const handlePopState = () => startTransition(resolveRoute)
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
   }, [])
 
   // Fetch current user's profiles when signed in
@@ -51,7 +52,10 @@ export default function App() {
     if (user) {
       getMyProfiles().then(setMyProfiles)
     } else {
-      setMyProfiles([])
+      startTransition(() => {
+        setMyProfiles([])
+        setProtofileData(null)
+      })
     }
   }, [user])
 

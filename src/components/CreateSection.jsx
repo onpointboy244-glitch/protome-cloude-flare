@@ -1,5 +1,5 @@
-import { useState, useRef, useCallback } from 'react'
-import { useAuth } from '../lib/auth'
+import { useState, useRef, useCallback, useEffect } from 'react'
+import { useAuth } from '../lib/useAuth'
 import ProtofileCard from './ProtofileCard'
 import { createProfile, updateProfile, deleteProfile, checkUsername, profileUrl, uploadPhoto, getMyProfiles } from '../lib/api'
 import './CreateSection.css'
@@ -74,6 +74,14 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
   const [saving, setSaving] = useState(false)
   const fileInputRef = useRef(null)
   const originalPhotoUrl = useRef('') // keep original photo_url when editing
+
+  // Reset the result view when user signs out
+  useEffect(() => {
+    if (!user) {
+      setSubmitted(false)
+      setCreatedUsername('')
+    }
+  }, [user])
   const [usernameStatus, setUsernameStatus] = useState('idle')
   const [usernameError, setUsernameError] = useState('')
   const usernameTimeout = useRef(null)
