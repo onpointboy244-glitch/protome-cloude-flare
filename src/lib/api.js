@@ -16,7 +16,13 @@ export async function createProfile(username, profileData) {
     updated_at: new Date().toISOString(),
   })
 
-  if (error) throw new Error(error.message)
+  if (error) {
+    // Unique constraint violation — username taken or profile already exists
+    if (error.code === '23505') {
+      throw new Error('This username is already taken. Try a different one.')
+    }
+    throw new Error(error.message)
+  }
   return { username: username.toLowerCase() }
 }
 
@@ -84,12 +90,9 @@ export async function uploadPhoto(file, username) {
   const ext = file.name.split('.').pop()
   const path = `${username}/photo.${ext}`
 
-  // Try to delete existing photo first (ignore error if none exists)
-  await supabase.storage.from('photos').remove([path]).catch(() => {})
-
   const { error: uploadError } = await supabase.storage
     .from('photos')
-    .upload(path, file)
+    .upload(path, file, { upsert: true })
 
   if (uploadError) throw new Error(uploadError.message)
 
