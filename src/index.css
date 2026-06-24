@@ -81,6 +81,32 @@
   --shadow-md:  0 2px 8px oklch(0 0 0 / 0.06), 0 1px 3px oklch(0 0 0 / 0.04);
   --shadow-lg:  0 8px 24px oklch(0 0 0 / 0.08), 0 2px 6px oklch(0 0 0 / 0.04);
   --shadow-xl:  0 16px 48px oklch(0 0 0 / 0.10), 0 4px 12px oklch(0 0 0 / 0.06);
+  --nav-bg: oklch(1 0 0 / 0.85);
+}
+
+/* ----- Dark Mode ----- */
+[data-theme="dark"] {
+  --color-bg:          oklch(0.11 0.008 35.8);
+  --color-surface:     oklch(0.16 0.01 35.8);
+  --color-surface-alt: oklch(0.19 0.012 35.8);
+  --color-primary:     oklch(0.688 0.133 35.8);
+  --color-primary-hov: oklch(0.62 0.13 35.8);
+  --color-primary-l:   oklch(0.78 0.12 35.8);
+  --color-primary-xl:  oklch(0.3 0.06 35.8);
+  --color-accent:      oklch(0.6 0.12 240);
+  --color-accent-hov:  oklch(0.55 0.12 240);
+  --color-ink:         oklch(0.92 0.005 35.8);
+  --color-ink-soft:    oklch(0.85 0.006 35.8);
+  --color-muted:       oklch(0.6 0.01 35.8);
+  --color-border:      oklch(0.22 0.01 35.8);
+  --color-focus:       oklch(0.688 0.133 35.8);
+  --color-white:       oklch(0.11 0.008 35.8);
+  --color-white-soft:  oklch(0.16 0.01 35.8);
+  --nav-bg: oklch(0.11 0.008 35.8 / 0.9);
+  --shadow-sm:  0 1px 2px oklch(0 0 0 / 0.2);
+  --shadow-md:  0 2px 8px oklch(0 0 0 / 0.3), 0 1px 3px oklch(0 0 0 / 0.2);
+  --shadow-lg:  0 8px 24px oklch(0 0 0 / 0.35), 0 2px 6px oklch(0 0 0 / 0.25);
+  --shadow-xl:  0 16px 48px oklch(0 0 0 / 0.4), 0 4px 12px oklch(0 0 0 / 0.3);
 }
 
 /* ----- Global Reset ----- */
