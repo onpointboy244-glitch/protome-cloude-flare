@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../lib/auth'
 import { supabase } from '../lib/supabase'
 import './Auth.css'
@@ -78,19 +78,6 @@ export default function Auth({ onClose }) {
     return () => window.removeEventListener('storage', handleStorage)
   }, [])
 
-  // Manual "check again" — re-fetches the session in case user confirmed on another device
-  const [rechecking, setRechecking] = useState(false)
-  const handleRecheck = useCallback(async () => {
-    setRechecking(true)
-    setError('')
-    const { data: { user } } = await supabase.auth.getUser()
-    if (user) {
-      // user is now confirmed — the useEffect watching `user` will close the modal
-    } else {
-      setError('Not confirmed yet. Make sure you clicked the link in your email.')
-    }
-    setRechecking(false)
-  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -99,8 +86,16 @@ export default function Auth({ onClose }) {
 
     try {
       if (mode === 'signup') {
-        const { error } = await signUp(email, password)
+        const { data, error } = await signUp(email, password)
         if (error) throw error
+
+        // Supabase returns an existing user with empty identities instead of an error
+        // when the email is already registered.
+        if (data?.user?.identities?.length === 0) {
+          setError('An account with this email already exists. Try signing in instead.')
+          return
+        }
+
         setMode('confirmation')
         setEmail('')
         setPassword('')
@@ -164,13 +159,12 @@ export default function Auth({ onClose }) {
             </div>
             <h2 className="auth-title">Check your email</h2>
             <p className="auth-confirmation__text">
-              We sent a confirmation link to <strong>{email}</strong>. Open it on your phone to activate your account, then click <strong>"Check again"</strong> below to sign in.
+              We sent a confirmation link to <strong>{email}</strong>. Open it to activate your account, then sign in.
             </p>
             {error && <p className="auth-error" role="alert">{error}</p>}
             <div className="auth-confirmation__actions">
-              <button className="btn btn--primary auth-submit" onClick={handleRecheck} disabled={rechecking}>
-                {rechecking ? 'Checking…' : 'Check again'}
-              </button>
+              <button className="btn btn--primary auth-submit" onClick={() => { setMode('signin'); setError('') }}>
+                Sign in now
               <button className="btn btn--text" onClick={() => { setMode('signin'); setError('') }}>
                 Sign in manually
               </button>
