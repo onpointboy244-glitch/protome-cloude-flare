@@ -22,6 +22,9 @@
   <body>
     <script>if(location.hash&&(location.hash.includes('type=signup')||location.hash.includes('access_token')))localStorage.setItem('email_confirmed','1')</script>
 
+    <!-- Keep the OG function warm to prevent cold starts -->
+    <script>fetch('/api/og?username=keepwarm').catch(function(){})</script>
+
     <!-- Preload profile data while React bundle downloads -->
     <script>
     (function(){

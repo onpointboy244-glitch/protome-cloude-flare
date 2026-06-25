@@ -81,6 +81,14 @@ export default function App() {
     }
   }, [user])
 
+  // Keep the OG function warm while the tab is open
+  useEffect(() => {
+    const ping = () => fetch('/api/og?username=keepwarm').catch(() => {})
+    ping()
+    const id = setInterval(ping, 120000)
+    return () => clearInterval(id)
+  }, [])
+
   // Refresh profiles after creating one
   const handleProfileCreated = (data) => {
     setProtofileData(data)

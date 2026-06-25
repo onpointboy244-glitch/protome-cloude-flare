@@ -1,6 +1,13 @@
 {
   "rewrites": [
     {
+      "source": "/((?!api/|assets/|favicon\\.|robots\\.|.*\\.[a-z]+$).+)",
+      "destination": "/api/og?username=$1",
+      "has": [
+        { "type": "header", "key": "user-agent", "value": "Twitterbot|facebookexternalhit|Slack|Discord|Googlebot|bingbot|WhatsApp|Telegram|LinkedInBot|Pinterest|Embedly|Slack-ImgProxy" }
+      ]
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
