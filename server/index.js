@@ -67,17 +67,19 @@ if (serveSPA) {
     let description = `Check out ${username}'s protome profile.`;
     let image = null;
     let accent = "#c45a3c";
+    let profileData = null;
 
     // Fetch profile data from Supabase
     if (supabase) {
       try {
         const { data } = await supabase
           .from("profiles")
-          .select("name, bio, photo_url, accent")
+          .select("*")
           .eq("username", username.toLowerCase())
           .maybeSingle();
 
         if (data) {
+          profileData = data;
           name = data.name || username;
           description = data.bio
             ? data.bio.length > 200
@@ -95,6 +97,13 @@ if (serveSPA) {
     const safeImage = image ? esc(image) : null;
     const url = esc(req.protocol + "://" + req.get("host") + "/" + username);
     const safeAccent = esc(accent);
+
+    // Inject profile data as JSON so the React app skips the fetch entirely
+    const profileJSON = profileData
+      ? JSON.stringify(profileData).replace(/<\//g, "\\u003C/")
+      : "null";
+    const profileHTML =
+      '<script id="__INITIAL_PROFILE__" type="application/json">' + profileJSON + '</script>';
 
     // Build the meta tags block
     const metaTags = [
@@ -119,7 +128,10 @@ if (serveSPA) {
       // Remove the default <title>
       .replace(/<title>.*?<\/title>/, "")
       // Inject our meta tags right before </head>
-      .replace("</head>", `    ${metaTags}\n  </head>`);
+      .replace(
+        "</head>",
+        `    ${metaTags}\n    ${profileHTML}\n  </head>`,
+      );
 
     res.send(html);
   });

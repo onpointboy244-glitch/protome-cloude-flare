@@ -64,6 +64,8 @@ export default async function handler(request) {
   let description = `Check out ${username}'s protome profile.`;
   let image = null;
   let accent = "#c45a3c";
+  /** @type {Record<string,unknown>|null} */
+  let profileData = null;
 
   // --- Fetch profile from Supabase REST API (no SDK needed — works on Edge) ---
   const supabaseUrl = process.env.VITE_SUPABASE_URL;
@@ -74,7 +76,7 @@ export default async function handler(request) {
       const endpoint =
         `${supabaseUrl}/rest/v1/profiles` +
         `?username=eq.${encodeURIComponent(username.toLowerCase())}` +
-        `&select=name,bio,photo_url,accent`;
+        `&select=*`;
 
       const res = await fetch(endpoint, {
         headers: {
@@ -84,20 +86,20 @@ export default async function handler(request) {
       });
 
       if (res.ok) {
-        const rows =
-          /** @type {Array<{name?:string,bio?:string,photo_url?:string,accent?:string}>} */ (
-            await res.json()
-          );
+        const rows = /** @type {Array<Record<string,unknown>>} */ (
+          await res.json()
+        );
         const data = rows[0];
         if (data) {
-          name = data.name || username;
+          profileData = data;
+          name = /** @type {string} */ (data.name) || username;
           description = data.bio
-            ? data.bio.length > 200
-              ? data.bio.slice(0, 200) + "…"
-              : data.bio
+            ? /** @type {string} */ (data.bio).length > 200
+              ? /** @type {string} */ (data.bio).slice(0, 200) + "…"
+              : /** @type {string} */ (data.bio)
             : `Check out ${name}'s protome profile.`;
-          image = data.photo_url || null;
-          accent = data.accent || "#c45a3c";
+          image = /** @type {string|undefined} */ (data.photo_url) || null;
+          accent = /** @type {string} */ (data.accent) || "#c45a3c";
         }
       }
     } catch {
@@ -132,11 +134,22 @@ export default async function handler(request) {
     .filter(Boolean)
     .join("\n    ");
 
+  // Inject profile data as JSON so the React app skips the fetch entirely
+  // Uses type="application/json" + unicode-escaping to prevent </script> injection
+  const profileJSON = profileData
+    ? JSON.stringify(profileData).replace(/<\//g, "\\u003C/")
+    : "null";
+  const lt = "<";
+  const profileScript =
+    lt + `script id="__INITIAL_PROFILE__" type="application/json">${profileJSON}` + lt + "/script>";
+
   // --- Inject into SPA HTML ---
-  const html = HTML.replace(/<title>.*?<\/title>/, "").replace(
-    "</head>",
-    `    ${metaTags}\n  </head>`,
-  );
+  const html = HTML
+    .replace(/<title>.*?<\/title>/, "")
+    .replace(
+      "</head>",
+      `    ${metaTags}\n    ${profileScript}\n  </head>`,
+    );
 
   return new Response(html, {
     status: 200,
@@ -146,3 +159,4 @@ export default async function handler(request) {
     },
   });
 }
+

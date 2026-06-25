@@ -33,12 +33,19 @@ export default function App() {
   const [myProfiles, setMyProfiles] = useState([])
   const [showAuth, setShowAuth] = useState(false)
 
-  const resolveRoute = () => {
+  const resolveRoute = (initialProfile = null) => {
     const path = window.location.pathname.replace(/\/$/, '') || '/'
     const username = path === '/' ? null : path.slice(1)
 
     if (!username) {
       setRoute('landing')
+      return
+    }
+
+    // Use server-injected profile data if available (skips loading + Supabase fetch)
+    if (initialProfile) {
+      setSharedData(initialProfile)
+      setRoute('profile')
       return
     }
 
@@ -53,9 +60,22 @@ export default function App() {
     })
   }
 
+  // On mount: check for __INITIAL_PROFILE__ injected by the Edge Function
+  const getInitialProfile = () => {
+    try {
+      const el = document.getElementById('__INITIAL_PROFILE__')
+      if (!el) return null
+      const data = JSON.parse(el.textContent)
+      el.remove() // clean up
+      return data
+    } catch { return null }
+  }
+
   useEffect(() => {
-    startTransition(() => resolveRoute())
-    const handlePopState = () => startTransition(resolveRoute)
+    // Check for server-injected profile data (Edge Function pre-fetched it)
+    const initial = getInitialProfile()
+    startTransition(() => resolveRoute(initial))
+    const handlePopState = () => startTransition(() => resolveRoute())
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
   }, [])

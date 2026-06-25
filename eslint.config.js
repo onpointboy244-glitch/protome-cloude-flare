@@ -6,8 +6,9 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
   globalIgnores(['dist']),
+  // Frontend (React + JSX) — JSX parser on for all .jsx files
   {
-    files: ['**/*.{js,jsx}'],
+    files: ['**/*.jsx'],
     extends: [
       js.configs.recommended,
       reactHooks.configs.flat.recommended,
@@ -18,8 +19,19 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  // Client-side .js modules (src/)
+  {
+    files: ['src/**/*.js'],
+    extends: [js.configs.recommended],
+    languageOptions: { globals: globals.browser },
+  },
+  // Server / API / build scripts (Node.js globals, no JSX)
   {
     files: ['api/**/*.js', 'server/**/*.js', 'scripts/**/*.js'],
-    languageOptions: { globals: globals.node },
+    extends: [js.configs.recommended],
+    languageOptions: {
+      globals: globals.node,
+      parserOptions: { ecmaFeatures: { jsx: false } },
+    },
   },
 ])
