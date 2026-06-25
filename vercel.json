@@ -1,15 +1,12 @@
 {
-  "routes": [
+  "rewrites": [
     {
-      "src": "/((?!api/|assets/|favicon\\.|robots\\.|.*\\.[a-z]+$).+)",
-      "dest": "/api/og?username=$1",
-      "has": [
-        { "type": "header", "key": "user-agent", "value": "Twitterbot|facebookexternalhit|Slack|Discord|Googlebot|bingbot|WhatsApp|Telegram|LinkedInBot|Pinterest|Embedly|Slack-ImgProxy" }
-      ]
+      "source": "/((?!api/|assets/|favicon\\.|robots\\.|.*\\.[a-z]+$).+)",
+      "destination": "/api/og?username=$1"
     },
     {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
