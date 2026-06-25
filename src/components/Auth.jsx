@@ -6,7 +6,7 @@ const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export default function Auth({ onClose }) {
-  const { user, signUp, signIn } = useAuth();
+  const { signUp, signIn } = useAuth();
   const [mode, setMode] = useState("signin"); // signin | signup | confirmation
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,11 +14,6 @@ export default function Auth({ onClose }) {
   const [submitting, setSubmitting] = useState(false);
   const modalRef = useRef(null);
   const previousFocusRef = useRef(null);
-
-  // Close modal once user is confirmed signed in
-  useEffect(() => {
-    if (user) onClose?.();
-  }, [user]);
 
   // Focus trap
   useEffect(() => {
@@ -106,7 +101,7 @@ export default function Auth({ onClose }) {
       } else {
         const { error } = await signIn(email, password);
         if (error) throw error;
-        // useEffect above closes modal when user updates
+        onClose?.()
       }
     } catch (err) {
       console.error("Auth error:", err);

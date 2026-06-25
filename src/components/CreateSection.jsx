@@ -78,8 +78,11 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
   // Reset the result view when user signs out
   useEffect(() => {
     if (!user) {
-      setSubmitted(false)
-      setCreatedUsername('')
+      const id = setTimeout(() => {
+        setSubmitted(false)
+        setCreatedUsername('')
+      }, 0)
+      return () => clearTimeout(id)
     }
   }, [user])
   const [usernameStatus, setUsernameStatus] = useState('idle')

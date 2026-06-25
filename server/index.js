@@ -23,7 +23,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
         }
       }
     }
-  } catch {}
+  } catch { /* .env not found */ }
 }
 
 const supabase = supabaseUrl && supabaseAnonKey
@@ -87,7 +87,7 @@ if (serveSPA) {
           image = data.photo_url || null;
           accent = data.accent || "#c45a3c";
         }
-      } catch {}
+      } catch { /* supabase unavailable */ }
     }
 
     const safeName = esc(name);

@@ -84,9 +84,10 @@ export default async function handler(request) {
       });
 
       if (res.ok) {
-        const rows = /** @type {Array<{name?:string,bio?:string,photo_url?:string,accent?:string}>} */ (
-          await res.json()
-        );
+        const rows =
+          /** @type {Array<{name?:string,bio?:string,photo_url?:string,accent?:string}>} */ (
+            await res.json()
+          );
         const data = rows[0];
         if (data) {
           name = data.name || username;
@@ -132,16 +133,16 @@ export default async function handler(request) {
     .join("\n    ");
 
   // --- Inject into SPA HTML ---
-  const html = HTML
-    .replace(/<title>.*?<\/title>/, "")
-    .replace("</head>", `    ${metaTags}\n  </head>`);
+  const html = HTML.replace(/<title>.*?<\/title>/, "").replace(
+    "</head>",
+    `    ${metaTags}\n  </head>`,
+  );
 
   return new Response(html, {
     status: 200,
     headers: {
       "content-type": "text/html",
-      "cache-control":
-        "public, s-maxage=60, stale-while-revalidate=86400",
+      "cache-control": "public, s-maxage=60, stale-while-revalidate=86400",
     },
   });
 }

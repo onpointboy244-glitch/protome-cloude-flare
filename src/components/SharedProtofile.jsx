@@ -74,7 +74,7 @@ export default function SharedProtofile({ data }) {
     bgColor: data.bg_color || data.bgColor || '',
     bgGradient: data.bg_gradient || data.bgGradient || '',
   }
-  const { name, role, email, location, bio, photo, photo_url, tags, links, accent, bgColor, bgGradient, font, username } = d
+  const { name, role, email, location, bio, photo, photo_url, tags, links, accent, bgColor, bgGradient, font } = d
   const accentColor = accent || 'var(--color-primary-l)'
   const isSans = font === 'sans'
   const initials = name
