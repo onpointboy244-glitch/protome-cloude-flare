@@ -1,13 +1,27 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
-import { supabase } from './supabase'
 import { AuthContext } from './useAuth'
 import '../components/Toast.css'
+
+let _supabase = null
+let _supabaseLoading = null
+
+async function getSupabase() {
+  if (_supabase) return _supabase
+  if (!_supabaseLoading) {
+    _supabaseLoading = import('./supabase').then(m => {
+      _supabase = m.supabase
+      return _supabase
+    })
+  }
+  return _supabaseLoading
+}
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState(null)
   const toastTimer = useRef(null)
+  const subscriptionRef = useRef(null)
 
   const clearToast = useCallback(() => {
     if (toastTimer.current) clearTimeout(toastTimer.current)
@@ -21,7 +35,8 @@ export function AuthProvider({ children }) {
   }, [])
 
   const refreshSession = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const sb = await getSupabase()
+    const { data: { user } } = await sb.auth.getUser()
     setUser(user)
     setLoading(false)
   }, [])
@@ -39,11 +54,16 @@ export function AuthProvider({ children }) {
     init()
 
     // Listen for auth state changes (same-tab sign in / sign out)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user || null)
-    })
+    getSupabase().then(sb => {
+      const { data: { subscription } } = sb.auth.onAuthStateChange((_event, session) => {
+        setUser(session?.user || null)
+      })
+      subscriptionRef.current = subscription
+    }).catch(() => {})
 
-    return () => subscription.unsubscribe()
+    return () => {
+      subscriptionRef.current?.unsubscribe()
+    }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Cross-tab: detect email confirmation or session changes from other tabs
@@ -72,14 +92,20 @@ export function AuthProvider({ children }) {
     return () => document.removeEventListener('visibilitychange', handleVisibility)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const signUp = (email, password) =>
-    supabase.auth.signUp({ email, password, options: { emailRedirectTo: undefined } })
+  const signUp = async (email, password) => {
+    const sb = await getSupabase()
+    return sb.auth.signUp({ email, password, options: { emailRedirectTo: undefined } })
+  }
 
-  const signIn = (email, password) =>
-    supabase.auth.signInWithPassword({ email, password })
+  const signIn = async (email, password) => {
+    const sb = await getSupabase()
+    return sb.auth.signInWithPassword({ email, password })
+  }
 
-  const signOut = () =>
-    supabase.auth.signOut()
+  const signOut = async () => {
+    const sb = await getSupabase()
+    return sb.auth.signOut()
+  }
 
   return (
     <AuthContext.Provider value={{ user, loading, setUser, signUp, signIn, signOut }}>

@@ -55,6 +55,7 @@ export default async function handler(req, res) {
   if (!username || username.includes(".") || username === "favicon.svg") {
     if (existsSync(distPath)) {
       res.setHeader("Content-Type", "text/html");
+      res.setHeader("Cache-Control", "public, s-maxage=86400");
       return res.status(200).send(getIndexHtml());
     }
     return res.status(200).json({ message: "protome API" });
@@ -124,6 +125,7 @@ export default async function handler(req, res) {
   }
 
   res.setHeader("Content-Type", "text/html");
+  res.setHeader("Cache-Control", "public, s-maxage=60, stale-while-revalidate=86400");
   return res.status(200).send(html);
 }
 

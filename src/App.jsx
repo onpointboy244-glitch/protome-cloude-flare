@@ -1,16 +1,29 @@
-import { useState, useEffect, startTransition } from 'react'
+import { useState, useEffect, startTransition, lazy, Suspense } from 'react'
 import { useAuth } from './lib/useAuth'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import HowItWorks from './components/HowItWorks'
 import Features from './components/Features'
-import CreateSection from './components/CreateSection'
-import Pricing from './components/Pricing'
 import CTA from './components/CTA'
 import Footer from './components/Footer'
-import SharedProtofile from './components/SharedProtofile'
 import Auth from './components/Auth'
 import { getProfile, getMyProfiles } from './lib/api'
+
+const SharedProtofile = lazy(() => import('./components/SharedProtofile'))
+const CreateSection = lazy(() => import('./components/CreateSection'))
+const Pricing = lazy(() => import('./components/Pricing'))
+
+function LoadingSpinner() {
+  return (
+    <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-muted)' }}>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ animation: 'spin 1s linear infinite' }}>
+        <circle cx="12" cy="12" r="10" opacity="0.3" />
+        <path d="M12 2a10 10 0 0 1 10 10" />
+      </svg>
+      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+    </div>
+  )
+}
 
 export default function App() {
   const { user } = useAuth()
@@ -72,7 +85,11 @@ export default function App() {
 
   // --- Profile view ---
   if (route === 'profile' && sharedData) {
-    return <SharedProtofile data={sharedData} />
+    return (
+      <Suspense fallback={<LoadingSpinner />}>
+        <SharedProtofile data={sharedData} />
+      </Suspense>
+    )
   }
 
   // --- Not found ---
@@ -101,15 +118,7 @@ export default function App() {
 
   // --- Loading ---
   if (route === 'loading') {
-    return (
-      <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-muted)' }}>
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ animation: 'spin 1s linear infinite' }}>
-          <circle cx="12" cy="12" r="10" opacity="0.3" />
-          <path d="M12 2a10 10 0 0 1 10 10" />
-        </svg>
-        <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
-      </div>
-    )
+    return <LoadingSpinner />
   }
 
   // --- Landing page ---
@@ -126,14 +135,18 @@ export default function App() {
         <Hero />
         <HowItWorks />
         <Features />
-        <CreateSection
-          latestProtofile={protofileData}
-          onProtofileCreated={handleProfileCreated}
-          onProfileDeleted={handleProfileDeleted}
-          onSignInNeeded={() => setShowAuth(true)}
-          myProfiles={myProfiles}
-        />
-        <Pricing />
+        <Suspense fallback={null}>
+          <CreateSection
+            latestProtofile={protofileData}
+            onProtofileCreated={handleProfileCreated}
+            onProfileDeleted={handleProfileDeleted}
+            onSignInNeeded={() => setShowAuth(true)}
+            myProfiles={myProfiles}
+          />
+        </Suspense>
+        <Suspense fallback={null}>
+          <Pricing />
+        </Suspense>
         <CTA />
       </main>
       <Footer />
