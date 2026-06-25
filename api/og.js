@@ -1,133 +1,30 @@
-/* global process */
+// @ts-check
+
 /**
- * Vercel serverless function — OG meta tag injection for profile pages.
+ * Vercel Edge Function — OG meta tag injection for profile pages.
+ *
+ * Edge Functions run on V8 isolates at the edge, so cold starts are ~50ms
+ * instead of 1-4s for Node.js serverless functions.
  *
  * This replaces the Express `/:username` route from server/index.js
- * so the app can run fully on Vercel's free tier.
+ * for the Vercel deployment.
  *
  * How it works:
  *   1. Someone visits protome.vercel.app/jordan
  *   2. Vercel rewrites the request to /api/og?username=jordan
- *   3. This function fetches the profile from Supabase
+ *   3. This function fetches the profile from Supabase REST API
  *   4. Injects OG / Twitter meta tags into index.html
  *   5. Returns the modified HTML — social crawlers get rich previews
  *
- * To enable it, uncomment the `rewrites` section in vercel.json
- * (and comment it out if you switch back to the Express server).
+ * The index.html is baked in at build time (scripts/build-html.js)
+ * so there's no fs access needed at runtime.
  */
 
-import { createClient } from "@supabase/supabase-js";
-import { readFileSync, existsSync } from "fs";
-import { join, dirname } from "path";
-import { fileURLToPath } from "url";
+import { HTML } from "./_html.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const root = join(__dirname, "..");
-
-// --- Init Supabase ---
-
-const supabaseUrl = process.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
-
-const supabase =
-  supabaseUrl && supabaseAnonKey
-    ? createClient(supabaseUrl, supabaseAnonKey)
-    : null;
-
-// --- Cache the built index.html ---
-
-const distPath = join(root, "dist");
-let cachedHtml = null;
-
-function getIndexHtml() {
-  if (!cachedHtml) {
-    cachedHtml = readFileSync(join(distPath, "index.html"), "utf-8");
-  }
-  return cachedHtml;
-}
-
-// --- Handler ---
-
-export default async function handler(req, res) {
-  const username = req.query.username;
-
-  // Skip if not a profile request
-  if (!username || username.includes(".") || username === "favicon.svg") {
-    if (existsSync(distPath)) {
-      res.setHeader("Content-Type", "text/html");
-      res.setHeader("Cache-Control", "public, s-maxage=86400");
-      return res.status(200).send(getIndexHtml());
-    }
-    return res.status(200).json({ message: "protome API" });
-  }
-
-  let name = username;
-  let description = `Check out ${username}'s protome profile.`;
-  let image = null;
-  let accent = "#c45a3c";
-
-  // Fetch profile data from Supabase
-  if (supabase) {
-    try {
-      const { data } = await supabase
-        .from("profiles")
-        .select("name, bio, photo_url, accent")
-        .eq("username", username.toLowerCase())
-        .maybeSingle();
-
-      if (data) {
-        name = data.name || username;
-        description = data.bio
-          ? data.bio.length > 200
-            ? data.bio.slice(0, 200) + "…"
-            : data.bio
-          : `Check out ${name}'s protome profile.`;
-        image = data.photo_url || null;
-        accent = data.accent || "#c45a3c";
-      }
-    } catch { /* supabase unavailable */ }
-  }
-
-  const safeName = esc(name);
-  const safeDesc = esc(description);
-  const safeImage = image ? esc(image) : null;
-  const url = esc(
-    `${req.headers["x-forwarded-proto"] || "https"}://${req.headers.host || "protome.vercel.app"}/${username}`,
-  );
-  const safeAccent = esc(accent);
-
-  const metaTags = [
-    `<title>${safeName} — protome</title>`,
-    `<meta name="description" content="${safeDesc}" />`,
-    `<meta name="theme-color" content="${safeAccent}" />`,
-    `<meta property="og:title" content="${safeName} — protome" />`,
-    `<meta property="og:description" content="${safeDesc}" />`,
-    `<meta property="og:type" content="profile" />`,
-    `<meta property="og:url" content="${url}" />`,
-    safeImage ? `<meta property="og:image" content="${safeImage}" />` : "",
-    `<meta property="og:image:width" content="400" />`,
-    `<meta property="og:image:height" content="400" />`,
-    `<meta name="twitter:card" content="summary" />`,
-    `<meta name="twitter:title" content="${safeName} — protome" />`,
-    `<meta name="twitter:description" content="${safeDesc}" />`,
-    safeImage ? `<meta name="twitter:image" content="${safeImage}" />` : "",
-  ]
-    .filter(Boolean)
-    .join("\n    ");
-
-  let html;
-  if (existsSync(distPath)) {
-    html = getIndexHtml()
-      .replace(/<title>.*?<\/title>/, "")
-      .replace("</head>", `    ${metaTags}\n  </head>`);
-  } else {
-    html = `<!DOCTYPE html><html><head>${metaTags}</head><body><p>protome</p></body></html>`;
-  }
-
-  res.setHeader("Content-Type", "text/html");
-  res.setHeader("Cache-Control", "public, s-maxage=60, stale-while-revalidate=86400");
-  return res.status(200).send(html);
-}
+export const config = {
+  runtime: "edge",
+};
 
 // --- Helpers ---
 
@@ -139,4 +36,112 @@ function esc(str) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/\n/g, " ");
+}
+
+// --- Handler ---
+
+/**
+ * @param {Request} request
+ * @returns {Promise<Response>}
+ */
+export default async function handler(request) {
+  const url = new URL(request.url);
+  const username = url.searchParams.get("username");
+
+  // --- Skip non-profile requests -> serve SPA as-is ---
+  if (!username || username.includes(".") || username === "favicon.svg") {
+    return new Response(HTML, {
+      status: 200,
+      headers: {
+        "content-type": "text/html",
+        "cache-control": "public, s-maxage=86400",
+      },
+    });
+  }
+
+  // --- Default OG values (used if Supabase is unreachable) ---
+  let name = username;
+  let description = `Check out ${username}'s protome profile.`;
+  let image = null;
+  let accent = "#c45a3c";
+
+  // --- Fetch profile from Supabase REST API (no SDK needed — works on Edge) ---
+  const supabaseUrl = process.env.VITE_SUPABASE_URL;
+  const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
+
+  if (supabaseUrl && supabaseKey) {
+    try {
+      const endpoint =
+        `${supabaseUrl}/rest/v1/profiles` +
+        `?username=eq.${encodeURIComponent(username.toLowerCase())}` +
+        `&select=name,bio,photo_url,accent`;
+
+      const res = await fetch(endpoint, {
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+        },
+      });
+
+      if (res.ok) {
+        const rows = /** @type {Array<{name?:string,bio?:string,photo_url?:string,accent?:string}>} */ (
+          await res.json()
+        );
+        const data = rows[0];
+        if (data) {
+          name = data.name || username;
+          description = data.bio
+            ? data.bio.length > 200
+              ? data.bio.slice(0, 200) + "…"
+              : data.bio
+            : `Check out ${name}'s protome profile.`;
+          image = data.photo_url || null;
+          accent = data.accent || "#c45a3c";
+        }
+      }
+    } catch {
+      /* supabase unavailable — use defaults */
+    }
+  }
+
+  // --- Build meta tags ---
+
+  const safeName = esc(name);
+  const safeDesc = esc(description);
+  const safeImage = image ? esc(image) : null;
+  const pageUrl = esc(`${url.protocol}//${url.host}/${username}`);
+  const safeAccent = esc(accent);
+
+  const metaTags = [
+    `<title>${safeName} — protome</title>`,
+    `<meta name="description" content="${safeDesc}" />`,
+    `<meta name="theme-color" content="${safeAccent}" />`,
+    `<meta property="og:title" content="${safeName} — protome" />`,
+    `<meta property="og:description" content="${safeDesc}" />`,
+    `<meta property="og:type" content="profile" />`,
+    `<meta property="og:url" content="${pageUrl}" />`,
+    safeImage ? `<meta property="og:image" content="${safeImage}" />` : "",
+    `<meta property="og:image:width" content="400" />`,
+    `<meta property="og:image:height" content="400" />`,
+    `<meta name="twitter:card" content="summary" />`,
+    `<meta name="twitter:title" content="${safeName} — protome" />`,
+    `<meta name="twitter:description" content="${safeDesc}" />`,
+    safeImage ? `<meta name="twitter:image" content="${safeImage}" />` : "",
+  ]
+    .filter(Boolean)
+    .join("\n    ");
+
+  // --- Inject into SPA HTML ---
+  const html = HTML
+    .replace(/<title>.*?<\/title>/, "")
+    .replace("</head>", `    ${metaTags}\n  </head>`);
+
+  return new Response(html, {
+    status: 200,
+    headers: {
+      "content-type": "text/html",
+      "cache-control":
+        "public, s-maxage=60, stale-while-revalidate=86400",
+    },
+  });
 }
