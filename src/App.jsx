@@ -13,13 +13,14 @@ const SharedProtofile = lazy(() => import('./components/SharedProtofile'))
 const CreateSection = lazy(() => import('./components/CreateSection'))
 const Pricing = lazy(() => import('./components/Pricing'))
 
-function LoadingSpinner() {
+function LoadingSpinner({ slow }) {
   return (
-    <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-muted)' }}>
+    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-lg)', color: 'var(--color-muted)' }}>
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ animation: 'spin 1s linear infinite' }}>
         <circle cx="12" cy="12" r="10" opacity="0.3" />
         <path d="M12 2a10 10 0 0 1 10 10" />
       </svg>
+      {slow && <p style={{ fontSize: 'var(--text-sm)', maxWidth: 260, textAlign: 'center', lineHeight: 1.5 }}>Still loading… check your connection if this persists.</p>}
       <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>
   )
@@ -27,11 +28,19 @@ function LoadingSpinner() {
 
 export default function App() {
   const { user } = useAuth()
-  const [route, setRoute] = useState('loading') // loading | landing | profile | notfound
+  const [route, setRoute] = useState('loading') // loading | landing | profile | notfound | error
   const [sharedData, setSharedData] = useState(null)
   const [protofileData, setProtofileData] = useState(null)
   const [myProfiles, setMyProfiles] = useState([])
   const [showAuth, setShowAuth] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
+  const [slowLoading, setSlowLoading] = useState(false)
+
+  // Show "still loading" hint after 8s on the loading spinner
+  useEffect(() => {
+    const t = setTimeout(() => setSlowLoading(true), 8000)
+    return () => clearTimeout(t)
+  }, [route])
 
   const resolveRoute = (initialProfile = null) => {
     const path = window.location.pathname.replace(/\/$/, '') || '/'
@@ -57,6 +66,9 @@ export default function App() {
       } else {
         setRoute('notfound')
       }
+    }).catch(() => {
+      setErrorMsg('Could not load profile. Check your connection and try again.')
+      setRoute('error')
     })
   }
 
@@ -138,7 +150,38 @@ export default function App() {
 
   // --- Loading ---
   if (route === 'loading') {
-    return <LoadingSpinner />
+    return <LoadingSpinner slow={slowLoading} />
+  }
+
+  // --- Error ---
+  if (route === 'error') {
+    return (
+      <div className="notfound">
+        <div className="notfound__inner">
+          <div style={{ marginBottom: 'var(--space-xl)' }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-muted)" strokeWidth="1.5" strokeLinecap="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <h1 className="notfound__title">Connection issue</h1>
+          <p className="notfound__text">{errorMsg || 'Something went wrong. Please try again.'}</p>
+          <button className="btn btn--primary" onClick={() => { setRoute('loading'); window.location.reload() }}>
+            Retry
+          </button>
+        </div>
+        <style>{`
+          .notfound {
+            min-height: 100dvh; display: flex; align-items: center; justify-content: center;
+            padding: 2rem; background: var(--color-bg);
+          }
+          .notfound__inner { text-align: center; max-width: 380px; }
+          .notfound__title { font-family: var(--font-display); font-size: var(--text-5xl); margin-bottom: var(--space-lg); color: var(--color-ink); }
+          .notfound__text { color: var(--color-muted); margin-bottom: var(--space-2xl); line-height: 1.6; }
+        `}</style>
+      </div>
+    )
   }
 
   // --- Landing page ---
