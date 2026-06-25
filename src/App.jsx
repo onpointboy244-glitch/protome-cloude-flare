@@ -12,20 +12,6 @@ import SharedProtofile from './components/SharedProtofile'
 import Auth from './components/Auth'
 import { getProfile, getMyProfiles } from './lib/api'
 
-// Check if the inline script in index.html preloaded the profile data
-// while the React bundle was still downloading
-function readPreloadedProfile() {
-  try {
-    const el = document.getElementById('profile-data')
-    if (el && el.textContent) {
-      const data = JSON.parse(el.textContent)
-      el.textContent = '' // consume so it's only used once
-      return data
-    }
-  } catch { /* ignore */ }
-  return null
-}
-
 export default function App() {
   const { user } = useAuth()
   const [route, setRoute] = useState('loading') // loading | landing | profile | notfound
@@ -40,14 +26,6 @@ export default function App() {
 
     if (!username) {
       setRoute('landing')
-      return
-    }
-
-    // Check preloaded data (inline script fetched this while React was loading)
-    const preloaded = readPreloadedProfile()
-    if (preloaded) {
-      setSharedData(preloaded)
-      setRoute('profile')
       return
     }
 
@@ -80,14 +58,6 @@ export default function App() {
       })
     }
   }, [user])
-
-  // Keep the OG function warm while the tab is open
-  useEffect(() => {
-    const ping = () => fetch('/api/og?username=keepwarm').catch(() => {})
-    ping()
-    const id = setInterval(ping, 120000)
-    return () => clearInterval(id)
-  }, [])
 
   // Refresh profiles after creating one
   const handleProfileCreated = (data) => {

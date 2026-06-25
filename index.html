@@ -7,13 +7,6 @@
     <meta name="description" content="Protome turns your raw information into a beautifully designed protofile. Clean, designed, yours." />
     <meta name="theme-color" content="#ffffff" />
     <title>protome — beautifully resolved profiles</title>
-    <meta property="og:title" content="protome — beautifully resolved profiles" />
-    <meta property="og:description" content="Protome turns your raw information into a beautifully designed protofile. Clean, designed, yours." />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="/favicon.svg" />
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="protome — beautifully resolved profiles" />
-    <meta name="twitter:description" content="Protome turns your raw information into a beautifully designed protofile. Clean, designed, yours." />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -21,34 +14,7 @@
   </head>
   <body>
     <script>if(location.hash&&(location.hash.includes('type=signup')||location.hash.includes('access_token')))localStorage.setItem('email_confirmed','1')</script>
-
-    <!-- Keep the OG function warm to prevent cold starts -->
-    <script>fetch('/api/og?username=keepwarm').catch(function(){})</script>
-
-    <!-- Preload profile data while React bundle downloads -->
-    <script>
-    (function(){
-      var username = location.pathname.replace(/\/+$/, '').slice(1)
-      if (!username || username.includes('.') || username === 'favicon.svg') return
-      var url = '%VITE_SUPABASE_URL%/rest/v1/profiles?select=*&username=eq.' + encodeURIComponent(username.toLowerCase())
-      fetch(url, {
-        headers: {
-          apikey: '%VITE_SUPABASE_ANON_KEY%',
-          Authorization: 'Bearer %VITE_SUPABASE_ANON_KEY%',
-          Accept: 'application/json'
-        }
-      }).then(function(r){ return r.json() }).then(function(data){
-        if (data && data.length > 0) {
-          var el = document.getElementById('profile-data')
-          if (el) el.textContent = JSON.stringify(data[0])
-        }
-      }).catch(function(){})
-    })()
-    </script>
-
     <div id="root"></div>
-    <!-- Stored here when the inline fetch completes; React reads it to skip Supabase query -->
-    <script id="profile-data" type="application/json"></script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
