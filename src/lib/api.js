@@ -26,6 +26,14 @@ export async function createProfile(username, profileData) {
   const { data: { user } } = await sb.auth.getUser()
   if (!user) throw new Error('You must be signed in to create a profile.')
 
+  // Enforce free-tier profile limit
+  const { count } = await sb
+    .from('profiles')
+    .select('*', { count: 'exact', head: true })
+    .eq('owner_id', user.id)
+
+  if (count >= 3) throw new Error('Free plan limited to 3 profiles. Delete one or upgrade to create more.')
+
   const { error } = await sb.from('profiles').insert({
     username: username.toLowerCase(),
     owner_id: user.id,

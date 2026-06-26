@@ -1,3 +1,5 @@
+export const MAX_FREE_PROFILES = 3
+
 export const EMPTY_FORM = {
   name: '',
   role: '',

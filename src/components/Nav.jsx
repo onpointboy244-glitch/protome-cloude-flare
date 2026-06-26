@@ -130,22 +130,24 @@ export default function Nav({ onSignIn, myProfiles = [] }) {
                   {myProfiles.length > 0 && (
                     <div className="nav__dropdown-profiles">
                       <div className="nav__dropdown-section-label">Your profiles</div>
-                      {myProfiles.map(p => (
-                        <a
-                          key={p.username}
-                          href={`/${p.username}`}
-                          className="nav__dropdown-item"
-                          role="menuitem"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                            <circle cx="12" cy="12" r="3"/>
-                          </svg>
-                          /{p.username}
-                        </a>
-                      ))}
+                      <div className="nav__dropdown-profiles-list">
+                        {myProfiles.map(p => (
+                          <a
+                            key={p.username}
+                            href={`/${p.username}`}
+                            className="nav__dropdown-item"
+                            role="menuitem"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                              <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            {p.name || p.username}
+                          </a>
+                        ))}
+                      </div>
                       <div className="nav__dropdown-divider" />
                     </div>
                   )}
@@ -171,8 +173,13 @@ export default function Nav({ onSignIn, myProfiles = [] }) {
             </button>
           )}
           <a href="#create" className="btn btn--primary nav__cta">
-            {myProfiles.length > 0 ? 'Edit profile' : 'Create yours'}
+            Create new
           </a>
+          {myProfiles.length > 0 && (
+            <a href="#create" className="btn btn--ghost nav__cta nav__cta--edit">
+              Edit profile
+            </a>
+          )}
         </div>
       </div>
     </nav>

@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react'
 import { useAuth } from '../lib/useAuth'
 import { createProfile, updateProfile, deleteProfile, checkUsername, uploadPhoto, getMyProfiles } from '../lib/api'
-import { EMPTY_FORM, freshLink } from './createSection/formConstants'
+import { EMPTY_FORM, freshLink, MAX_FREE_PROFILES } from './createSection/formConstants'
 import CreateProfileResult from './createSection/CreateProfileResult'
 import ProfileSelector from './createSection/ProfileSelector'
 import ProfilePhotoUploader from './createSection/ProfilePhotoUploader'
@@ -180,9 +180,12 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
         <path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
       </svg>
-      <span>Editing <strong>/{editingUsername}</strong></span>
-      <button type="button" className="btn btn--text" style={{ fontSize: 'var(--text-xs)', padding: '0.25rem 0.5rem' }} onClick={() => selectProfile(null)}>
-        Create new
+      <span className="create-section__editing-text">Editing <strong>/{editingUsername}</strong></span>
+      <button type="button" className="btn btn--ghost create-section__editing-new-btn" onClick={() => selectProfile(null)}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        New profile
       </button>
     </div>
   ) : null, [editingUsername, submitted, selectProfile])
@@ -228,7 +231,20 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
 
             {editingBanner}
 
-            <ProfilePhotoUploader photoData={photoData} photoError={photoError} onPhoto={handlePhoto} onRemove={removePhoto} />
+            {!editingUsername && myProfiles.length >= MAX_FREE_PROFILES ? (
+              <div className="create-section__limit-card">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                <h3>Free limit reached</h3>
+                <p>You can have up to <strong>{MAX_FREE_PROFILES} profiles</strong> on the free plan. Delete one to make room, or upgrade to create more.</p>
+                <div className="create-section__limit-actions">
+                  <a href="#pricing" className="btn btn--primary">View plans</a>
+                </div>
+              </div>
+            ) : (
+              <><ProfilePhotoUploader photoData={photoData} photoError={photoError} onPhoto={handlePhoto} onRemove={removePhoto} />
 
             {/* Basic info */}
             <div className="create-section__field-group">
@@ -290,8 +306,6 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
               onFontChange={setFont}
             />
 
-            <DeleteProfileModal profile={confirmDelete} deleting={deleting} onCancel={() => setConfirmDelete(null)} onConfirm={handleDelete} />
-
             {/* Submit */}
             <div className="create-section__actions">
               <button type="submit" className="btn btn--primary create-section__submit" disabled={saving}>
@@ -299,6 +313,10 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
                 {!saving && <span aria-hidden="true">&rarr;</span>}
               </button>
             </div>
+            </>
+          )}
+
+          <DeleteProfileModal profile={confirmDelete} deleting={deleting} onCancel={() => setConfirmDelete(null)} onConfirm={handleDelete} />
           </form>
         ) : (
           <div className="create-section__auth-required">
