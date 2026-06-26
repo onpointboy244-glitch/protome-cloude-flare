@@ -143,12 +143,25 @@
   color: rgba(255, 255, 255, 0.75);
   text-align: center;
   margin-bottom: var(--space-lg);
-  font-family: var(--font-body);
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 0.35rem 1.2rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: inline-block;
+  max-width: 100%;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .linktree--light .linktree__role {
   color: var(--color-muted);
+  background: oklch(0 0 0 / 0.03);
+  border: 1px solid oklch(0 0 0 / 0.06);
+  text-shadow: none;
 }
 
 /* ---- Bio ---- */
@@ -193,6 +206,61 @@
 .linktree__contact-item svg {
   flex-shrink: 0;
   opacity: 0.7;
+}
+
+/* ---- Social Icon Row ---- */
+
+.linktree__socials {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-2xl);
+}
+
+.linktree__social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.linktree--light .linktree__social-btn {
+  border: 1px solid var(--color-border);
+  background: oklch(1 0 0 / 0.5);
+  color: var(--color-ink);
+}
+
+.linktree__social-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px color-mix(in oklch, var(--accent), transparent 60%);
+}
+
+.linktree--light .linktree__social-btn:hover {
+  box-shadow: 0 8px 24px color-mix(in oklch, var(--accent), transparent 60%);
+}
+
+.linktree__social-btn:active {
+  transform: translateY(0);
+}
+
+.linktree__social-btn svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }
 
 /* ---- Link Buttons ---- */

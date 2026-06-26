@@ -14,6 +14,9 @@ const CreateSection = lazy(() => import('./components/CreateSection'))
 const Pricing = lazy(() => import('./components/Pricing'))
 const Privacy = lazy(() => import('./components/Privacy'))
 const Terms = lazy(() => import('./components/Terms'))
+const About = lazy(() => import('./components/About'))
+const Blog = lazy(() => import('./components/Blog'))
+const Contact = lazy(() => import('./components/Contact'))
 
 function LoadingSpinner({ slow }) {
   return (
@@ -56,6 +59,9 @@ export default function App() {
     // Static pages
     if (username === 'privacy') { setRoute('privacy'); return }
     if (username === 'terms') { setRoute('terms'); return }
+    if (username === 'about') { setRoute('about'); return }
+    if (username === 'blog') { setRoute('blog'); return }
+    if (username === 'contact') { setRoute('contact'); return }
 
     // Use server-injected profile data if available (skips loading + Supabase fetch)
     if (initialProfile) {
@@ -196,6 +202,15 @@ export default function App() {
   }
   if (route === 'terms') {
     return <Suspense fallback={<LoadingSpinner />}><Terms /></Suspense>
+  }
+  if (route === 'about') {
+    return <Suspense fallback={<LoadingSpinner />}><About /></Suspense>
+  }
+  if (route === 'blog') {
+    return <Suspense fallback={<LoadingSpinner />}><Blog /></Suspense>
+  }
+  if (route === 'contact') {
+    return <Suspense fallback={<LoadingSpinner />}><Contact /></Suspense>
   }
 
   // --- Landing page ---

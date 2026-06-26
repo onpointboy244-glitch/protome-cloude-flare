@@ -25,14 +25,14 @@ export default function Footer() {
           </div>
           <div className="footer__group">
             <h4 className="footer__group-title">Company</h4>
-            <a href="#" className="footer__link">About</a>
-            <a href="#" className="footer__link">Blog</a>
-            <a href="#" className="footer__link">Contact</a>
+            <a href="/about" className="footer__link">About</a>
+            <a href="/blog" className="footer__link">Blog</a>
+            <a href="/contact" className="footer__link">Contact</a>
           </div>
           <div className="footer__group">
             <h4 className="footer__group-title">Legal</h4>
-            <a href="#" className="footer__link">Privacy</a>
-            <a href="#" className="footer__link">Terms</a>
+            <a href="/privacy" className="footer__link">Privacy</a>
+            <a href="/terms" className="footer__link">Terms</a>
           </div>
         </div>
 

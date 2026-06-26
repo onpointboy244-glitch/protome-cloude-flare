@@ -31,6 +31,7 @@ const supabase = supabaseUrl && supabaseAnonKey
   : null;
 
 const app = express();
+app.set('trust proxy', 1);
 app.use(express.json());
 
 // --- Report API (must be before the username route) ---
@@ -115,7 +116,10 @@ if (serveSPA) {
       username === "favicon.svg" ||
       username.startsWith("assets/") ||
       username === "privacy" ||
-      username === "terms"
+      username === "terms" ||
+      username === "about" ||
+      username === "blog" ||
+      username === "contact"
     ) {
       return res.send(getIndexHtml());
     }
