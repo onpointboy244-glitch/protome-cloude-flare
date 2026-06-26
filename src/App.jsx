@@ -12,6 +12,8 @@ import { getProfile, getMyProfiles } from './lib/api'
 const SharedProtofile = lazy(() => import('./components/SharedProtofile'))
 const CreateSection = lazy(() => import('./components/CreateSection'))
 const Pricing = lazy(() => import('./components/Pricing'))
+const Privacy = lazy(() => import('./components/Privacy'))
+const Terms = lazy(() => import('./components/Terms'))
 
 function LoadingSpinner({ slow }) {
   return (
@@ -50,6 +52,10 @@ export default function App() {
       setRoute('landing')
       return
     }
+
+    // Static pages
+    if (username === 'privacy') { setRoute('privacy'); return }
+    if (username === 'terms') { setRoute('terms'); return }
 
     // Use server-injected profile data if available (skips loading + Supabase fetch)
     if (initialProfile) {
@@ -182,6 +188,14 @@ export default function App() {
         `}</style>
       </div>
     )
+  }
+
+  // --- Static pages ---
+  if (route === 'privacy') {
+    return <Suspense fallback={<LoadingSpinner />}><Privacy /></Suspense>
+  }
+  if (route === 'terms') {
+    return <Suspense fallback={<LoadingSpinner />}><Terms /></Suspense>
   }
 
   // --- Landing page ---

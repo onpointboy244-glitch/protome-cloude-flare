@@ -219,6 +219,31 @@ export async function getMyProfiles() {
 /**
  * Fetch pricing plans from the database (server-controlled).
  */
+/**
+ * Report a profile for review.
+ * Sends to the server which checks by IP address.
+ */
+export async function reportProfile(username, { reason, details }) {
+  const res = await fetch('/api/report', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: username.toLowerCase(), reason, details }),
+  })
+
+  let data
+  try {
+    data = await res.json()
+  } catch {
+    throw new Error('Server returned an unexpected response. Make sure the server is running.')
+  }
+
+  if (!res.ok) {
+    throw new Error(data.error || 'Failed to submit report.')
+  }
+
+  return true
+}
+
 export async function getPlans() {
   const sb = await getSupabase()
   const { data } = await sb

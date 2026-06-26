@@ -31,6 +31,61 @@ const supabase = supabaseUrl && supabaseAnonKey
   : null;
 
 const app = express();
+app.use(express.json());
+
+// --- Report API (must be before the username route) ---
+
+function getClientIP(req) {
+  const forwarded = req.headers["x-forwarded-for"];
+  if (forwarded) return forwarded.split(",")[0].trim();
+  return req.ip || req.socket.remoteAddress || "unknown";
+}
+
+app.post("/api/report", async (req, res) => {
+  const { username, reason, details } = req.body;
+  const ip = getClientIP(req);
+
+  if (!username || !reason) {
+    return res.status(400).json({ error: "Username and reason are required." });
+  }
+
+  if (!supabase) {
+    return res.status(500).json({ error: "Report service unavailable." });
+  }
+
+  try {
+    // Check if this IP already reported this profile
+    const { data: existing } = await supabase
+      .from("reported_profiles")
+      .select("id")
+      .eq("username", username.toLowerCase())
+      .eq("ip_address", ip)
+      .maybeSingle();
+
+    if (existing) {
+      return res.status(409).json({ error: "You have already reported this profile." });
+    }
+
+    const { error } = await supabase.from("reported_profiles").insert({
+      username: username.toLowerCase(),
+      ip_address: ip,
+      reason,
+      details: details || null,
+      created_at: new Date().toISOString(),
+    });
+
+    if (error) {
+      if (error.code === "23505") {
+        return res.status(409).json({ error: "You have already reported this profile." });
+      }
+      return res.status(500).json({ error: error.message });
+    }
+
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: "Something went wrong." });
+  }
+});
 
 // --- Serve static assets (images, JS, CSS) ---
 
@@ -53,12 +108,14 @@ if (serveSPA) {
   app.get("/:username", async (req, res) => {
     const { username } = req.params;
 
-    // Skip paths that look like asset files or common paths
+    // Skip paths that look like asset files, known static pages, or common paths
     if (
       !username ||
       username.includes(".") ||
       username === "favicon.svg" ||
-      username.startsWith("assets/")
+      username.startsWith("assets/") ||
+      username === "privacy" ||
+      username === "terms"
     ) {
       return res.send(getIndexHtml());
     }

@@ -838,6 +838,32 @@
   font-style: italic;
 }
 
+/* ----- Dark Mode Overrides ----- */
+
+[data-theme="dark"] .create-section__editing-banner {
+  background: color-mix(in oklch, var(--color-primary-l), var(--color-bg) 65%);
+  border-color: color-mix(in oklch, var(--color-primary-l), var(--color-bg) 40%);
+  color: var(--color-ink);
+}
+
+[data-theme="dark"] .create-section__field-label,
+[data-theme="dark"] .create-section__label {
+  color: var(--color-ink-soft);
+}
+
+[data-theme="dark"] .create-section__profiles-list {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .create-section__profile-name {
+  color: var(--color-ink);
+}
+
+[data-theme="dark"] .create-section__profile-url {
+  color: var(--color-muted);
+}
+
 /* ---- Spin keyframe ---- */
 @keyframes spin {
   to { transform: rotate(360deg); }
