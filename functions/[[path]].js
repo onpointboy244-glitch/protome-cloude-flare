@@ -16,6 +16,17 @@ export async function onRequest(context) {
   const url = new URL(request.url)
   const path = url.pathname.replace(/\/$/, '') || '/'
 
+  // ── Serve static assets directly from the CDN ──────────────
+  // Cloudflare serves these at the edge — the function must NOT
+  // intercept them, otherwise JS/CSS files return HTML.
+  const isStaticAsset =
+    path.startsWith('/assets/') ||
+    path === '/favicon.svg' ||
+    /\.(js|css|svg|png|jpg|jpeg|gif|ico|woff2?|ttf|eot|webp|avif)$/i.test(path)
+  if (isStaticAsset) {
+    return env.ASSETS.fetch(request)
+  }
+
   // ── CORS headers for all responses ─────────────────────────
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -106,7 +117,7 @@ export async function onRequest(context) {
   // ── SPA: load index.html ─────────────────────────────────
   let html = await getIndexHtml()
 
-  // ── Known static-page routes → serve as-is ──────────────
+  // ── Known static pages → serve without modification ─────
   const staticPages = ['', '/', '/privacy', '/terms', '/about', '/blog', '/contact']
   if (staticPages.includes(path)) {
     return new Response(html, {
@@ -116,8 +127,7 @@ export async function onRequest(context) {
 
   // ── Profile page: inject OG meta tags ────────────────────
   const username = path.slice(1)
-
-  if (!username || username.includes('.') || username === 'favicon.svg') {
+  if (!username) {
     return new Response(html, {
       headers: { 'content-type': 'text/html', 'cache-control': 'public, max-age=300' },
     })
