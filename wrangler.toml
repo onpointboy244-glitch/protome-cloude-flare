@@ -1,0 +1,29 @@
+# ── Cloudflare Pages configuration ───────────────────────────
+# Name used when creating the Pages project.
+# Change to your desired project name (dashboard or --project-name flag).
+# name = "protome"
+
+compatibility_date = "2025-06-01"
+
+# Environment variables — set these in the Cloudflare dashboard
+# under Pages > your-project > Settings > Environment variables.
+#
+# Production:
+#   SUPABASE_URL    = https://xxxxxxxxxxxx.supabase.co
+#   SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIs...
+#
+# Preview (for branch deploys):
+#   Same vars, or use your dev Supabase instance.
+
+[env.production]
+vars = { SUPABASE_URL = "", SUPABASE_ANON_KEY = "" }
+
+# ── Deploy command ─────────────────────────────────────────
+# npx wrangler pages deploy dist/ --branch main
+#
+# Or with project name:
+# npx wrangler pages deploy dist/ --project-name protome --branch main
+#
+# First time: run without --branch to create the project:
+# npx wrangler pages project create protome
+# npx wrangler pages deploy dist/ --branch main

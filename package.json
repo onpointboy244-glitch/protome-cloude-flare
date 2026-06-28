@@ -1,19 +1,18 @@
 {
-  "name": "2_temp",
+  "name": "protome",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:server": "node server/index.js",
     "build": "vite build",
-    "start": "node server/index.js",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "pages:dev": "npx wrangler pages dev dist/ -- npm run dev",
+    "pages:deploy": "npx wrangler pages deploy dist/ --branch main",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.2",
-    "express": "^4.21.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-icons": "^5.6.0"
@@ -27,6 +26,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
-    "vite": "^8.0.12"
+    "vite": "^8.0.12",
+    "wrangler": "^4.0.0"
   }
 }

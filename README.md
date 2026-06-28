@@ -1,16 +1,73 @@
-# React + Vite
+# protome
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A link-in-bio profile builder. Create beautiful, shareable profile pages.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Frontend**: React 19 + Vite 8
+- **Backend**: Supabase (auth, database, storage)
+- **Server**: Cloudflare Pages Functions (replaces Express)
+- **Hosting**: Cloudflare Pages
 
-## React Compiler
+## Development
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm run dev       # Vite dev server on :5173
+npm run build     # Production build to dist/
+```
 
-## Expanding the ESLint configuration
+The Cloudflare Pages Function (OG meta injection + report API) runs in production only. For local testing of the function:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm run pages:dev # Build + serve with wrangler (includes the function)
+```
+
+## Deploy
+
+### Via CLI (first time)
+
+```bash
+# 1. Create the Pages project (one-time)
+npx wrangler pages project create protome
+
+# 2. Set environment variables in the dashboard
+#    Pages > protome > Settings > Environment variables
+#    - SUPABASE_URL
+#    - SUPABASE_ANON_KEY
+
+# 3. Deploy
+npm run build
+npx wrangler pages deploy dist/ --branch main
+```
+
+### Via GitHub Actions (automatic)
+
+Push to `main` branch — the `.github/workflows/deploy.yml` workflow builds
+and deploys automatically. Requires `CLOUDFLARE_API_TOKEN` secret in GitHub.
+
+### Environment variables
+
+Set these in the Cloudflare Pages dashboard:
+
+| Variable | Description |
+|----------|-------------|
+| `SUPABASE_URL` | Your Supabase project URL |
+| `SUPABASE_ANON_KEY` | Your Supabase anon/public key |
+
+The client-side `VITE_SUPABASE_*` vars go in `.env` for local dev.
+
+## Project structure
+
+```
+├── functions/
+│   └── [[path]].js     Cloudflare Pages Function (OG meta, report API, SPA)
+├── src/
+│   ├── components/     React components
+│   ├── lib/            API layer, auth, Supabase client
+│   ├── App.jsx         Main app with routing
+│   ├── main.jsx        Entry point
+│   └── index.css       Design tokens & global styles
+├── public/             Static assets
+├── dist/               Build output (gitignored)
+└── vite.config.js
+```
