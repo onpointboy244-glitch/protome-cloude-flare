@@ -258,9 +258,75 @@
   background: #fef2f2;
 }
 
+/* ---- Mobile menu toggle (hidden on desktop) ---- */
+
+.nav__mobile-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.nav__mobile-toggle:hover {
+  color: var(--color-ink);
+  border-color: var(--color-primary-l);
+}
+
+/* ---- Mobile navigation panel ---- */
+
+.nav__mobile-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--nav-bg, oklch(1 0 0 / 0.98));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-lg) 0;
+  animation: fade-in 0.15s ease;
+  z-index: var(--z-dropdown);
+}
+
+.nav__mobile-panel .container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.nav__mobile-link {
+  display: block;
+  padding: var(--space-md) var(--space-lg);
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--color-ink);
+  border-radius: 10px;
+  transition: background 0.15s ease;
+}
+
+.nav__mobile-link:hover {
+  background: var(--color-surface);
+}
+
+[data-theme="dark"] .nav__mobile-panel {
+  background: oklch(0.11 0.008 35.8 / 0.98);
+}
+
 @media (max-width: 640px) {
   .nav__links {
     display: none;
+  }
+
+  .nav__mobile-toggle {
+    display: flex;
   }
 
   .nav__user-email {

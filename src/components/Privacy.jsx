@@ -8,7 +8,7 @@ export default function Privacy() {
         <h1>Privacy Policy</h1>
         <p className="legal__date">Effective Date: 26-06-2026</p>
 
-        <p>Your privacy is important to us. It is Protome&apos;s policy to respect your privacy regarding any information we may collect while operating our website. This Privacy Policy applies to protome.up.railway.app (hereinafter, &quot;us&quot;, &quot;we&quot;, or &quot;protome.up.railway.app&quot;).</p>
+        <p>Your privacy is important to us. It is Protome&apos;s policy to respect your privacy regarding any information we may collect while operating our website. This Privacy Policy applies to protome.app (hereinafter, &quot;us&quot;, &quot;we&quot;, or &quot;protome.app&quot;).</p>
 
         <h2>1. Website Visitors</h2>
         <p>Like most website operators, Protome collects non-personally-identifying information of the sort that web browsers and servers typically make available, such as the browser type, language preference, referring site, and the date and time of each visitor request. Protome&apos;s purpose in collecting non-personally identifying information is to better understand how Protome&apos;s visitors use its website.</p>

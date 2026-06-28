@@ -6,25 +6,40 @@ import { createClient } from "@supabase/supabase-js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Read Supabase credentials from .env (used in production; in dev Vite proxies for us)
-let supabaseUrl = process.env.VITE_SUPABASE_URL;
-let supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
-if (!supabaseUrl || !supabaseAnonKey) {
-  try {
-    const env = readFileSync(join(__dirname, "..", ".env"), "utf-8");
-    for (const line of env.split("\n")) {
-      const trimmed = line.trim();
-      if (trimmed && !trimmed.startsWith("#")) {
+// Read Supabase credentials from environment.
+// Priority: SUPABASE_URL/SUPABASE_ANON_KEY (production) >
+//           VITE_SUPABASE_URL/VITE_SUPABASE_ANON_KEY (Vite dev) >
+//           .env file (local convenience)
+function loadSupabaseEnv() {
+  // 1. Non-VITE-prefixed env vars (production — Railway, Fly, etc.)
+  let url = process.env.SUPABASE_URL;
+  let key = process.env.SUPABASE_ANON_KEY;
+
+  // 2. VITE-prefixed env vars (Vite dev or .env file)
+  if (!url) url = process.env.VITE_SUPABASE_URL;
+  if (!key) key = process.env.VITE_SUPABASE_ANON_KEY;
+
+  // 3. Read from .env file (local dev without export)
+  if (!url || !key) {
+    try {
+      const env = readFileSync(join(__dirname, "..", ".env"), "utf-8");
+      for (const line of env.split("\n")) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith("#")) continue;
         const eq = trimmed.indexOf("=");
-        if (eq > 0) {
-          const k = trimmed.slice(0, eq).trim();
-          if (k === "VITE_SUPABASE_URL") supabaseUrl = trimmed.slice(eq + 1).trim();
-          if (k === "VITE_SUPABASE_ANON_KEY") supabaseAnonKey = trimmed.slice(eq + 1).trim();
-        }
+        if (eq <= 0) continue;
+        const k = trimmed.slice(0, eq).trim();
+        const v = trimmed.slice(eq + 1).trim();
+        if (!url && (k === "SUPABASE_URL" || k === "VITE_SUPABASE_URL")) url = v;
+        if (!key && (k === "SUPABASE_ANON_KEY" || k === "VITE_SUPABASE_ANON_KEY")) key = v;
       }
-    }
-  } catch { /* .env not found */ }
+    } catch { /* .env not found */ }
+  }
+
+  return { url, key };
 }
+
+const { url: supabaseUrl, key: supabaseAnonKey } = loadSupabaseEnv();
 
 const supabase = supabaseUrl && supabaseAnonKey
   ? createClient(supabaseUrl, supabaseAnonKey)

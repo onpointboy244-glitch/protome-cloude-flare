@@ -12,6 +12,7 @@ export default function Nav({ onSignIn, myProfiles = [] }) {
   const { user, signOut } = useAuth()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const [dark, setDark] = useState(() => {
     // Check localStorage first, fall back to OS preference
     const stored = localStorage.getItem('theme')
@@ -41,7 +42,10 @@ export default function Nav({ onSignIn, myProfiles = [] }) {
   const toggleTheme = () => setDark(prev => !prev)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
+    const onScroll = () => {
+      setScrolled(window.scrollY > 40)
+      setMobileOpen(false)
+    }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
@@ -57,6 +61,18 @@ export default function Nav({ onSignIn, myProfiles = [] }) {
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [menuOpen])
+
+  // Close mobile menu on outside click
+  useEffect(() => {
+    if (!mobileOpen) return
+    const handleClick = (e) => {
+      if (!e.target.closest('.nav')) {
+        setMobileOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [mobileOpen])
 
   return (
     <nav className={`nav ${scrolled ? 'nav--scrolled' : ''}`} role="navigation" aria-label="Main">
@@ -97,6 +113,24 @@ export default function Nav({ onSignIn, myProfiles = [] }) {
             ) : (
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+            )}
+          </button>
+
+          {/* Mobile menu toggle */}
+          <button
+            className="nav__mobile-toggle"
+            onClick={() => setMobileOpen(prev => !prev)}
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileOpen}
+          >
+            {mobileOpen ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
               </svg>
             )}
           </button>
@@ -182,6 +216,23 @@ export default function Nav({ onSignIn, myProfiles = [] }) {
           )}
         </div>
       </div>
+
+      {mobileOpen && (
+        <div className="nav__mobile-panel">
+          <div className="container">
+            {NAV_LINKS.map(link => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="nav__mobile-link"
+                onClick={() => setMobileOpen(false)}
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </nav>
   )
 }
