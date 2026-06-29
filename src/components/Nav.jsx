@@ -135,85 +135,88 @@ export default function Nav({ onSignIn, myProfiles = [] }) {
             )}
           </button>
 
-          {user ? (
-            <div className="nav__user-menu" ref={menuRef}>
-              <button
-                className="nav__user-trigger"
-                onClick={() => setMenuOpen(prev => !prev)}
-                aria-expanded={menuOpen}
-                aria-haspopup="true"
-              >
-                <span className="nav__user-avatar">
-                  {user.email?.[0].toUpperCase()}
-                </span>
-                <span className="nav__user-email">{user.email}</span>
-                <svg
-                  className={`nav__chevron ${menuOpen ? 'nav__chevron--open' : ''}`}
-                  width="12" height="12" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+          {/* Desktop-only: sign in / user menu + CTAs */}
+          <div className="nav__desktop-actions">
+            {user ? (
+              <div className="nav__user-menu" ref={menuRef}>
+                <button
+                  className="nav__user-trigger"
+                  onClick={() => setMenuOpen(prev => !prev)}
+                  aria-expanded={menuOpen}
+                  aria-haspopup="true"
                 >
-                  <polyline points="6 9 12 15 18 9"/>
-                </svg>
-              </button>
-
-              {menuOpen && (
-                <div className="nav__dropdown" role="menu">
-                  <div className="nav__dropdown-header">
-                    <span className="nav__dropdown-email">{user.email}</span>
-                  </div>
-                  {myProfiles.length > 0 && (
-                    <div className="nav__dropdown-profiles">
-                      <div className="nav__dropdown-section-label">Your profiles</div>
-                      <div className="nav__dropdown-profiles-list">
-                        {myProfiles.map(p => (
-                          <a
-                            key={p.username}
-                            href={`/${p.username}`}
-                            className="nav__dropdown-item"
-                            role="menuitem"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                              <circle cx="12" cy="12" r="3"/>
-                            </svg>
-                            {p.name || p.username}
-                          </a>
-                        ))}
-                      </div>
-                      <div className="nav__dropdown-divider" />
-                    </div>
-                  )}
-
-                  <button
-                    className="nav__dropdown-item nav__dropdown-item--danger"
-                    onClick={signOut}
-                    role="menuitem"
+                  <span className="nav__user-avatar">
+                    {user.email?.[0].toUpperCase()}
+                  </span>
+                  <span className="nav__user-email">{user.email}</span>
+                  <svg
+                    className={`nav__chevron ${menuOpen ? 'nav__chevron--open' : ''}`}
+                    width="12" height="12" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
                   >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                      <polyline points="16 17 21 12 16 7"/>
-                      <line x1="21" y1="12" x2="9" y2="12"/>
-                    </svg>
-                    Sign out
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <button className="btn btn--ghost nav__signin" onClick={onSignIn}>
-              Sign in
-            </button>
-          )}
-          <a href="#create" className="btn btn--primary nav__cta">
-            Create new
-          </a>
-          {myProfiles.length > 0 && (
-            <a href="#create" className="btn btn--ghost nav__cta nav__cta--edit">
-              Edit profile
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </button>
+
+                {menuOpen && (
+                  <div className="nav__dropdown" role="menu">
+                    <div className="nav__dropdown-header">
+                      <span className="nav__dropdown-email">{user.email}</span>
+                    </div>
+                    {myProfiles.length > 0 && (
+                      <div className="nav__dropdown-profiles">
+                        <div className="nav__dropdown-section-label">Your profiles</div>
+                        <div className="nav__dropdown-profiles-list">
+                          {myProfiles.map(p => (
+                            <a
+                              key={p.username}
+                              href={`/${p.username}`}
+                              className="nav__dropdown-item"
+                              role="menuitem"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                              </svg>
+                              {p.name || p.username}
+                            </a>
+                          ))}
+                        </div>
+                        <div className="nav__dropdown-divider" />
+                      </div>
+                    )}
+
+                    <button
+                      className="nav__dropdown-item nav__dropdown-item--danger"
+                      onClick={signOut}
+                      role="menuitem"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                      </svg>
+                      Sign out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button className="btn btn--ghost nav__signin" onClick={onSignIn}>
+                Sign in
+              </button>
+            )}
+            <a href="#create" className="btn btn--primary nav__cta">
+              Create new
             </a>
-          )}
+            {myProfiles.length > 0 && (
+              <a href="#create" className="btn btn--ghost nav__cta nav__cta--edit">
+                Edit profile
+              </a>
+            )}
+          </div>
         </div>
       </div>
 
@@ -230,6 +233,60 @@ export default function Nav({ onSignIn, myProfiles = [] }) {
                 {link.label}
               </a>
             ))}
+
+            <hr className="nav__mobile-divider" />
+
+            {user ? (
+              <>
+                <div className="nav__mobile-user-header">
+                  <span className="nav__user-avatar">
+                    {user.email?.[0].toUpperCase()}
+                  </span>
+                  <span className="nav__mobile-user-email">{user.email}</span>
+                </div>
+
+                {myProfiles.length > 0 && (
+                  <div className="nav__mobile-section">
+                    <span className="nav__mobile-section-label">Your profiles</span>
+                    {myProfiles.map(p => (
+                      <a
+                        key={p.username}
+                        href={`/${p.username}`}
+                        className="nav__mobile-link"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                          <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        {p.name || p.username}
+                      </a>
+                    ))}
+                  </div>
+                )}
+
+                <a href="#create" className="btn btn--primary nav__mobile-cta" onClick={() => setMobileOpen(false)}>
+                  Edit profile
+                </a>
+                <button className="nav__mobile-signout" onClick={() => { signOut(); setMobileOpen(false) }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                  </svg>
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <>
+                <button className="btn btn--primary nav__mobile-cta" onClick={() => { onSignIn(); setMobileOpen(false) }}>
+                  Sign in / Sign up
+                </button>
+                <a href="#create" className="btn btn--ghost nav__mobile-cta nav__mobile-cta--secondary" onClick={() => setMobileOpen(false)}>
+                  Create new profile
+                </a>
+              </>
+            )}
           </div>
         </div>
       )}
