@@ -141,15 +141,18 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
 
       const validLinks = links.filter(l => l.label.trim() && l.url.trim()).map(l => ({ label: l.label.trim(), url: l.url.trim() }))
 
+      const username = editingUsername || form.username.trim().toLowerCase()
+
       const data = {
         name: form.name.trim(), role: form.role.trim() || 'Independent creator',
         email: form.email.trim(), location: form.location.trim(), bio: form.bio.trim(),
         tags: tags.length > 0 ? tags : ['Creator'],
         photo_url: photoUrl || (editingUsername ? originalPhotoUrl.current : '') || photoData || '',
         links: validLinks, accent, bg_color: bgColor, bg_gradient: bgGradient, font,
+        username,
       }
 
-      const result = editingUsername ? await updateProfile(editingUsername, data) : await createProfile(form.username.trim(), data)
+      const result = editingUsername ? await updateProfile(editingUsername, data) : await createProfile(username, data)
       setCreatedUsername(result.username); setSubmitted(true)
       onProtofileCreated(data)
     } catch (err) {

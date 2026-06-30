@@ -22,9 +22,7 @@ export default function CreateProfileResult({ createdUsername, latestProtofile, 
               data={{
                 ...latestProtofile,
                 photo: latestProtofile?.photo_url || '',
-                links: Object.fromEntries(
-                  (latestProtofile?.links || []).map(l => [l.label.toLowerCase().replace(/[^a-z]/g, ''), l.url])
-                ),
+                links: latestProtofile?.links || [],
               }}
             />
           </div>

@@ -138,6 +138,9 @@ export async function onRequest(context) {
       })
     }
 
+    // Profile pages should not be cached — content can change immediately after edit
+    const profileCacheControl = 'private, no-cache, max-age=0'
+
     // Fetch profile via Supabase REST API
     let name = username
     let description = `Check out ${username}'s protome profile.`
@@ -200,7 +203,7 @@ export async function onRequest(context) {
       .replace('</head>', `    ${metaTags}\n    ${profileHTML}\n  </head>`)
 
     return new Response(html, {
-      headers: { 'content-type': 'text/html', 'cache-control': 'public, max-age=300' },
+      headers: { 'content-type': 'text/html', 'cache-control': profileCacheControl },
     })
 
   } catch (err) {
