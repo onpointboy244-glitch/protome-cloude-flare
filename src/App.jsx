@@ -38,6 +38,7 @@ export default function App() {
   const [protofileData, setProtofileData] = useState(null)
   const [myProfiles, setMyProfiles] = useState([])
   const [showAuth, setShowAuth] = useState(false)
+  const [editTarget, setEditTarget] = useState(null)
   const [errorMsg, setErrorMsg] = useState('')
   const [slowLoading, setSlowLoading] = useState(false)
 
@@ -219,6 +220,7 @@ export default function App() {
       <Nav
         onSignIn={() => setShowAuth(true)}
         myProfiles={myProfiles}
+        onEditProfile={(username) => setEditTarget(username)}
       />
 
       {showAuth && <Auth onClose={() => setShowAuth(false)} />}
@@ -234,6 +236,8 @@ export default function App() {
             onProfileDeleted={handleProfileDeleted}
             onSignInNeeded={() => setShowAuth(true)}
             myProfiles={myProfiles}
+            editTarget={editTarget}
+            onEditConsumed={() => setEditTarget(null)}
           />
         </Suspense>
         <Suspense fallback={null}>

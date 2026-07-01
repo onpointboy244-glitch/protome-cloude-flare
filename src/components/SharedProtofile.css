@@ -1,4 +1,9 @@
-/* ---- Linktree-style Profile ---- */
+﻿/* ============================================
+   Profile page â€” premium design
+   protome @ protome.pages.dev
+   ============================================ */
+
+/* ---- Full-page wrapper ---- */
 
 .linktree {
   min-height: 100dvh;
@@ -12,64 +17,95 @@
 
 .linktree--gradient {
   background: var(--bg-gradient, var(--bg-color, var(--color-bg)));
+  background-attachment: fixed;
   background-size: cover;
 }
 
+/* ---- Card wrapper (border-radius + shadow) ---- */
+
+.linktree__card {
+  width: 100%;
+  max-width: 580px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+}
+
+.linktree--light .linktree__card {
+  box-shadow: 0 4px 24px oklch(0 0 0 / 0.08);
+}
+
+/* ---- Accent bar at top of card ---- */
+
+.linktree__accent-bar {
+  height: 4px;
+  flex-shrink: 0;
+}
+
+/* ---- Main content area ---- */
+
 .linktree__main {
   width: 100%;
-  max-width: 480px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--space-3xl) var(--space-2xl);
-  border-radius: 24px;
-  background: oklch(0.12 0.008 35.8 / 0.6);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 48px rgba(0, 0, 0, 0.2);
+  padding: var(--space-3xl) var(--space-2xl) var(--space-2xl);
+  background: oklch(0.11 0.006 30 / 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   overflow-wrap: break-word;
   word-break: break-word;
+  position: relative;
 }
 
-/* Light background variant */
 .linktree--light .linktree__main {
-  background: oklch(1 0 0 / 0.55);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid oklch(0 0 0 / 0.08);
-  box-shadow: var(--shadow-xl);
+  background: oklch(1 0 0 / 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
-/* ---- Photo ---- */
+.linktree--light.linktree--gradient .linktree__main,
+.linktree--light.linktree--bgcolor .linktree__main {
+  background: oklch(1 0 0 / 0.65);
+}
+
+/* ============================================
+   Photo / Avatar
+   ============================================ */
 
 .linktree__photo-wrapper {
-  width: 110px;
-  height: 110px;
+  width: 112px;
+  height: 112px;
   border-radius: 50%;
   overflow: hidden;
-  border: 3px solid var(--accent);
+  border: 2.5px solid var(--accent);
   margin-bottom: var(--space-lg);
   flex-shrink: 0;
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 0 0 5px oklch(1 0 0 / 0.08),
+    0 8px 24px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.3s ease;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s ease;
 }
 
 .linktree--light .linktree__photo-wrapper {
-  box-shadow: 0 0 0 4px oklch(1 0 0 / 0.6);
+  box-shadow:
+    0 0 0 5px oklch(0 0 0 / 0.04),
+    0 8px 24px oklch(0 0 0 / 0.1);
 }
 
 .linktree__photo-wrapper:hover {
-  transform: scale(1.15);
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1),
-              0 12px 32px rgba(0, 0, 0, 0.3);
+  transform: scale(1.08);
+  box-shadow:
+    0 0 0 5px oklch(1 0 0 / 0.12),
+    0 12px 32px rgba(0, 0, 0, 0.3);
 }
 
 .linktree--light .linktree__photo-wrapper:hover {
-  box-shadow: 0 0 0 4px oklch(1 0 0 / 0.6),
-              0 12px 32px rgba(0, 0, 0, 0.15);
+  box-shadow:
+    0 0 0 5px oklch(0 0 0 / 0.06),
+    0 12px 32px oklch(0 0 0 / 0.15);
 }
 
 .linktree__photo {
@@ -81,12 +117,14 @@
 }
 
 .linktree__photo-wrapper:hover .linktree__photo {
-  transform: scale(1.1);
+  transform: scale(1.08);
 }
 
+/* Initials avatar fallback */
+
 .linktree__avatar {
-  width: 110px;
-  height: 110px;
+  width: 112px;
+  height: 112px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -96,127 +134,114 @@
   font-size: var(--text-3xl);
   margin-bottom: var(--space-lg);
   flex-shrink: 0;
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.3s ease;
+  letter-spacing: 0.02em;
+  box-shadow:
+    0 0 0 5px oklch(1 0 0 / 0.08),
+    0 8px 24px rgba(0, 0, 0, 0.2);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s ease;
 }
 
 .linktree--light .linktree__avatar {
-  box-shadow: 0 0 0 4px oklch(1 0 0 / 0.6);
+  box-shadow:
+    0 0 0 5px oklch(0 0 0 / 0.04),
+    0 8px 24px oklch(0 0 0 / 0.1);
 }
 
 .linktree__avatar:hover {
-  transform: scale(1.15);
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1),
-              0 12px 32px rgba(0, 0, 0, 0.3);
+  transform: scale(1.08);
+  box-shadow:
+    0 0 0 5px oklch(1 0 0 / 0.12),
+    0 12px 32px rgba(0, 0, 0, 0.3);
 }
 
 .linktree--light .linktree__avatar:hover {
-  box-shadow: 0 0 0 4px oklch(1 0 0 / 0.6),
-              0 12px 32px rgba(0, 0, 0, 0.15);
+  box-shadow:
+    0 0 0 5px oklch(0 0 0 / 0.06),
+    0 12px 32px oklch(0 0 0 / 0.15);
 }
 
-/* ---- Header ---- */
+/* ============================================
+   Name
+   ============================================ */
 
 .linktree__name {
   font-family: var(--font-display);
   font-size: var(--text-2xl);
-  font-weight: 700;
+  font-weight: 400;
   color: #fff;
-  margin-bottom: var(--space-xs);
+  margin-bottom: var(--space-sm);
   text-align: center;
   text-wrap: balance;
-  line-height: 1.3;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
   max-width: 100%;
   overflow-wrap: break-word;
   word-break: break-word;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .linktree--light .linktree__name {
-  color: var(--color-ink);
+  color: oklch(0.08 0.008 35.8);
   text-shadow: none;
 }
 
 .linktree--sans .linktree__name {
   font-family: var(--font-body);
-  font-weight: 800;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
+/* ============================================
+   Role
+   ============================================ */
+
 .linktree__role {
-  font-size: var(--text-base);
-  color: rgba(255, 255, 255, 0.75);
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.7);
   text-align: center;
   margin-bottom: var(--space-lg);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-weight: 500;
-  letter-spacing: 0.02em;
-  padding: 0.35rem 1.2rem;
+  letter-spacing: 0.03em;
+  padding: 0.4rem 1.25rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: oklch(0 0 0 / 0.2);
   border: 1px solid rgba(255, 255, 255, 0.08);
   display: inline-block;
   max-width: 100%;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .linktree--light .linktree__role {
-  color: var(--color-muted);
-  background: oklch(0 0 0 / 0.03);
+  color: oklch(0.4 0.01 35 / 0.9);
+  background: oklch(0 0 0 / 0.04);
   border: 1px solid oklch(0 0 0 / 0.06);
-  text-shadow: none;
 }
 
-/* ---- Bio ---- */
+/* ============================================
+   Bio
+   ============================================ */
 
 .linktree__bio {
   font-size: var(--text-sm);
-  color: rgba(255, 255, 255, 0.7);
-  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.75;
   text-align: center;
   max-width: 440px;
   width: 100%;
   margin-bottom: var(--space-xl);
-  font-weight: 500;
+  font-weight: 400;
   overflow-wrap: break-word;
   word-break: break-word;
 }
 
 .linktree--light .linktree__bio {
-  color: var(--color-ink-soft);
+  color: oklch(0.2 0.008 35 / 0.85);
 }
 
-/* ---- Contact ---- */
-
-.linktree__contact {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-lg);
-  margin-bottom: var(--space-2xl);
-}
-
-.linktree__contact-item {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-sm);
-  font-size: var(--text-xs);
-  color: #fff;
-  font-weight: 700;
-}
-
-.linktree--light .linktree__contact-item {
-  color: var(--color-muted);
-}
-
-.linktree__contact-item svg {
-  flex-shrink: 0;
-  opacity: 0.7;
-}
-
-/* ---- Social Icon Row ---- */
+/* ============================================
+   Social Icon Row â€” brand-colored hover
+   ============================================ */
 
 .linktree__socials {
   display: flex;
@@ -230,35 +255,32 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  color: #fff;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  background: oklch(0 0 0 / 0.15);
+  color: rgba(255, 255, 255, 0.75);
   text-decoration: none;
-  transition: all 0.25s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
 
 .linktree--light .linktree__social-btn {
-  border: 1px solid var(--color-border);
   background: oklch(1 0 0 / 0.5);
-  color: var(--color-ink);
+  border-color: oklch(0 0 0 / 0.08);
+  color: oklch(0.35 0.008 35 / 0.8);
 }
 
 .linktree__social-btn:hover {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: #fff;
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px color-mix(in oklch, var(--accent), transparent 60%);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .linktree--light .linktree__social-btn:hover {
-  box-shadow: 0 8px 24px color-mix(in oklch, var(--accent), transparent 60%);
+  box-shadow: 0 6px 16px oklch(0 0 0 / 0.12);
 }
 
 .linktree__social-btn:active {
@@ -269,6 +291,70 @@
   width: 20px;
   height: 20px;
   flex-shrink: 0;
+}
+
+/* Brand-color hover states */
+
+.linktree__social-btn[data-platform="instagram"]:hover {
+  background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+.linktree__social-btn[data-platform="twitter"]:hover {
+  background: #000;
+}
+.linktree__social-btn[data-platform="linkedin"]:hover {
+  background: #0a66c2;
+}
+.linktree__social-btn[data-platform="youtube"]:hover {
+  background: #ff0000;
+}
+.linktree__social-btn[data-platform="tiktok"]:hover {
+  background: #010101;
+}
+.linktree__social-btn[data-platform="github"]:hover {
+  background: #24292e;
+}
+.linktree__social-btn[data-platform="facebook"]:hover {
+  background: #1877f2;
+}
+.linktree__social-btn[data-platform="snapchat"]:hover {
+  background: #fffc00;
+  color: #111;
+}
+.linktree__social-btn[data-platform="discord"]:hover {
+  background: #5865f2;
+}
+.linktree__social-btn[data-platform="twitch"]:hover {
+  background: #9146ff;
+}
+.linktree__social-btn[data-platform="pinterest"]:hover {
+  background: #e60023;
+}
+.linktree__social-btn[data-platform="reddit"]:hover {
+  background: #ff4500;
+}
+.linktree__social-btn[data-platform="telegram"]:hover {
+  background: #0088cc;
+}
+.linktree__social-btn[data-platform="whatsapp"]:hover {
+  background: #25d366;
+  color: #111;
+}
+.linktree__social-btn[data-platform="threads"]:hover {
+  background: #000;
+}
+.linktree__social-btn[data-platform="bluesky"]:hover {
+  background: #0085ff;
+}
+.linktree__social-btn[data-platform="website"]:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.linktree--light .linktree__social-btn[data-platform="snapchat"]:hover {
+  color: #111;
+}
+.linktree--light .linktree__social-btn[data-platform="whatsapp"]:hover {
+  color: #111;
 }
 
 /* ---- Link Buttons ---- */
@@ -284,166 +370,181 @@
 .linktree__link-btn {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
   width: 100%;
-  padding: var(--space-lg) var(--space-xl);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  color: #fff;
+  padding: 0.875rem 2.75rem;
+  border: none;
+  border-radius: 12px;
+  background: oklch(1 0 0 / 0.09);
   text-decoration: none;
-  font-family: var(--font-body);
-  font-size: var(--text-base);
-  font-weight: 600;
-  transition: all 0.25s ease;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  color: #fff;
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.05);
+  transition:
+    background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s ease;
   position: relative;
 }
 
 .linktree--light .linktree__link-btn {
-  border: 1px solid var(--color-border);
-  background: oklch(1 0 0 / 0.5);
-  color: var(--color-ink);
+  background: oklch(1 0 0 / 0.55);
+  color: oklch(0.12 0.008 35.8);
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.04);
 }
 
 .linktree__link-btn:hover {
-  border-color: var(--accent);
-  background: color-mix(in oklch, var(--accent), rgba(255, 255, 255, 0.85) 85%);
+  background: var(--accent);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-}
-
-.linktree--light .linktree__link-btn:hover {
-  background: color-mix(in oklch, var(--accent), white 90%);
-  box-shadow: var(--shadow-lg);
-}
-
-.linktree__link-btn:active {
-  transform: translateY(0);
-}
-
-.linktree__link-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px oklch(0 0 0 / 0.2);
   color: #fff;
 }
 
-.linktree--light .linktree__link-icon {
-  background: var(--color-surface-alt);
-  color: var(--color-muted);
+.linktree--light .linktree__link-btn:hover {
+  background: color-mix(in oklch, var(--accent), oklch(0 0 0) 8%);
+  color: #fff;
+  box-shadow: 0 8px 24px oklch(0 0 0 / 0.12);
 }
 
-.linktree__link-btn:hover .linktree__link-icon {
-  color: var(--accent);
-  background: rgba(255, 255, 255, 0.9);
+.linktree__link-btn:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 6px oklch(0 0 0 / 0.1);
 }
 
-.linktree--light .linktree__link-btn:hover .linktree__link-icon {
-  color: var(--accent);
-  background: var(--color-bg);
+/* ---- Body (label centered) ---- */
+
+.linktree__link-body {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+/* ---- Per-link share button ---- */
+
+.linktree__link-share {
+  position: absolute;
+  right: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 0.25s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.linktree--light .linktree__link-share {
+  color: oklch(0.35 0.008 35 / 0.35);
+}
+
+.linktree__link-btn:hover .linktree__link-share {
+  opacity: 1;
+}
+
+.linktree__link-share:hover {
+  background: oklch(1 0 0 / 0.15);
+  color: #fff;
+}
+
+.linktree--light .linktree__link-share:hover {
+  background: oklch(0 0 0 / 0.06);
+  color: oklch(0.12 0.008 35.8);
+}
+
+.linktree__link-share--shared {
+  opacity: 1 !important;
+  color: #22c55e !important;
+}
+
+/* ---- Section headings ---- */
+
+.linktree__section-heading {
+  width: 100%;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.35);
+  padding: var(--space-lg) 0 var(--space-sm);
+}
+
+.linktree--light .linktree__section-heading {
+  color: oklch(0.35 0.008 35 / 0.4);
+}
+
+.linktree__section-heading:first-child {
+  padding-top: 0;
+}
+
+/* ---- Label ---- */
 
 .linktree__link-label {
-  flex: 1;
+  text-align: center;
   min-width: 0;
-  text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.linktree__link-arrow {
-  flex-shrink: 0;
-  color: rgba(255, 255, 255, 0.5);
-  opacity: 0.6;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+/* ---- Share wrapper (top-left of main content) ---- */
+
+.linktree__share-wrapper {
+  position: absolute;
+  top: var(--space-lg);
+  left: var(--space-lg);
+  z-index: 2;
 }
 
-.linktree--light .linktree__link-arrow {
-  color: var(--color-muted);
-}
-
-.linktree__link-btn:hover .linktree__link-arrow {
-  opacity: 1;
-  transform: translate(3px, -2px);
-  color: #fff;
-}
-
-.linktree--light .linktree__link-btn:hover .linktree__link-arrow {
-  color: var(--accent);
-}
-
-/* ---- Tags ---- */
-
-.linktree__tags {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-3xl);
-}
-
-.linktree__tag {
-  display: inline-block;
-  padding: 0.35rem 0.9rem;
-  font-size: var(--text-xs);
-  font-weight: 600;
-  border-radius: 999px;
-  line-height: 1.4;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-.linktree--light .linktree__tag {
-  backdrop-filter: none;
-}
-
-/* ---- Share Button ---- */
+/* ---- Share Button (icon circle) ---- */
 
 .linktree__share-btn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: 0.5rem 1.2rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  color: rgba(255, 255, 255, 0.6);
-  font-family: var(--font-body);
-  font-size: var(--text-xs);
-  font-weight: 600;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: oklch(0 0 0 / 0.18);
+  color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
-  transition: all 0.25s ease;
-  margin-bottom: var(--space-2xl);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .linktree__share-btn--light {
-  border: 1px solid var(--color-border);
-  background: oklch(1 0 0 / 0.5);
-  color: var(--color-muted);
+  background: oklch(0 0 0 / 0.04);
+  border-color: oklch(0 0 0 / 0.08);
+  color: oklch(0.35 0.008 35 / 0.5);
 }
 
 .linktree__share-btn:hover {
   border-color: var(--share-accent);
-  background: color-mix(in oklch, var(--share-accent), rgba(255, 255, 255, 0.85) 85%);
+  background: color-mix(in oklch, var(--share-accent), oklch(0 0 0 / 0.85) 75%);
   color: #fff;
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .linktree__share-btn--light:hover {
-  background: color-mix(in oklch, var(--share-accent), white 90%);
+  background: color-mix(in oklch, var(--share-accent), #fff 88%);
   color: var(--share-accent);
-  box-shadow: var(--shadow-md);
+  border-color: var(--share-accent);
+  box-shadow: 0 4px 12px oklch(0 0 0 / 0.06);
 }
 
 .linktree__share-btn:active {
@@ -453,25 +554,29 @@
 .linktree__share-btn--copied {
   border-color: #22c55e;
   color: #22c55e;
-  background: rgba(34, 197, 94, 0.1);
+  background: oklch(0.55 0.15 145 / 0.15);
   pointer-events: none;
 }
 
 .linktree__share-btn--light.linktree__share-btn--copied {
-  background: color-mix(in oklch, #22c55e, white 90%);
+  background: color-mix(in oklch, #22c55e, #fff 90%);
   color: #22c55e;
   border-color: #22c55e;
 }
 
 .linktree__share-btn svg {
+  width: 16px;
+  height: 16px;
   flex-shrink: 0;
 }
 
-/* ---- Footer ---- */
+/* ============================================
+   Footer
+   ============================================ */
 
 .linktree__footer {
   text-align: center;
-  margin-top: var(--space-lg);
+  margin-top: var(--space-sm);
 }
 
 .linktree__brand {
@@ -479,30 +584,51 @@
   align-items: center;
   gap: var(--space-md);
   font-family: 'Outfit', var(--font-body);
-  font-size: var(--text-xs);
+  font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.2);
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 .linktree--light .linktree__brand {
-  color: var(--color-muted);
-  opacity: 0.5;
+  color: oklch(0 0 0 / 0.2);
 }
 
 .linktree__brand:hover {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .linktree--light .linktree__brand:hover {
-  color: var(--color-ink);
-  opacity: 0.8;
+  color: oklch(0 0 0 / 0.45);
 }
 
-/* ---- Footer Links ---- */
+/* Brand mark (diamond + line) */
+
+.linktree__brand-mark {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.linktree__brand-diamond {
+  width: 5px;
+  height: 5px;
+  background: currentColor;
+  transform: rotate(45deg);
+  opacity: 0.5;
+}
+
+.linktree__brand-line {
+  width: 20px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.2;
+}
+
+/* Footer links */
 
 .linktree__footer-links {
   display: flex;
@@ -517,12 +643,12 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.25);
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.2);
   text-decoration: none;
   transition: color 0.2s ease;
   font-weight: 500;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
   background: none;
   border: none;
   padding: 0;
@@ -531,15 +657,15 @@
 }
 
 .linktree--light .linktree__footer-link {
-  color: rgba(0, 0, 0, 0.2);
+  color: oklch(0 0 0 / 0.18);
 }
 
 .linktree__footer-link:hover {
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.45);
 }
 
 .linktree--light .linktree__footer-link:hover {
-  color: rgba(0, 0, 0, 0.4);
+  color: oklch(0 0 0 / 0.4);
 }
 
 .linktree__footer-link--report:hover {
@@ -551,31 +677,12 @@
 }
 
 .linktree__footer-link svg {
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
-.linktree__brand-mark {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.linktree__brand-diamond {
-  width: 5px;
-  height: 5px;
-  background: currentColor;
-  transform: rotate(45deg);
-  opacity: 0.6;
-}
-
-.linktree__brand-line {
-  width: 20px;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.3;
-}
-
-/* ---- Report Modal ---- */
+/* ============================================
+   Report Modal
+   ============================================ */
 
 .linktree__modal-overlay {
   position: fixed;
@@ -586,7 +693,7 @@
   justify-content: center;
   z-index: 500;
   padding: var(--space-lg);
-  animation: fade-in 0.2s ease;
+  animation: linktree-fade-in 0.2s ease;
 }
 
 .linktree__modal {
@@ -596,7 +703,7 @@
   width: 100%;
   max-width: 400px;
   box-shadow: var(--shadow-xl);
-  animation: scale-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: linktree-scale-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   max-height: 90vh;
   overflow-y: auto;
 }
@@ -733,19 +840,57 @@
   background: color-mix(in oklch, var(--color-primary-l), var(--color-bg) 70%);
 }
 
-/* ---- Animations ---- */
+/* ============================================
+   Animations
+   ============================================ */
 
-@keyframes fade-in {
+@keyframes linktree-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-@keyframes scale-in {
+@keyframes linktree-scale-in {
   from { opacity: 0; transform: scale(0.9); }
   to { opacity: 1; transform: scale(1); }
 }
 
-/* ---- Responsive ---- */
+/* ---- Reduced motion ---- */
+
+@media (prefers-reduced-motion: reduce) {
+  .linktree__photo-wrapper,
+  .linktree__avatar,
+  .linktree__photo,
+  .linktree__link-btn,
+  .linktree__social-btn {
+    transition-duration: 0.01ms !important;
+    transform: none !important;
+  }
+
+  .linktree__share-btn {
+    transition-duration: 0.01ms !important;
+  }
+  .linktree__link-share {
+    transition-duration: 0.01ms !important;
+    transform: translateY(-50%) !important;
+  }
+
+  .linktree__link-btn {
+    transition-duration: 0.01ms !important;
+    background: oklch(1 0 0 / 0.09) !important;
+    box-shadow: 0 1px 2px oklch(0 0 0 / 0.05) !important;
+    transform: none !important;
+  }
+  .linktree--light .linktree__link-btn {
+    background: oklch(1 0 0 / 0.55) !important;
+  }
+  .linktree__link-share {
+    opacity: 1 !important;
+  }
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
 
 @media (max-width: 480px) {
   .linktree {
@@ -754,7 +899,6 @@
 
   .linktree__main {
     padding: var(--space-2xl) var(--space-lg);
-    border-radius: 20px;
   }
 
   .linktree__photo-wrapper,
@@ -764,16 +908,22 @@
   }
 
   .linktree__name {
-    font-size: var(--text-xl);
+    font-size: var(--text-2xl);
   }
 
   .linktree__link-btn {
     padding: var(--space-md) var(--space-lg);
-    font-size: var(--text-sm);
+    font-size: var(--text-xs);
   }
 
   .linktree__link-icon {
     width: 32px;
     height: 32px;
   }
+
+  .linktree__social-btn {
+    width: 42px;
+    height: 42px;
+  }
 }
+

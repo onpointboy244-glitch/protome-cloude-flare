@@ -1,23 +1,21 @@
-import { useState, useRef, useCallback, useEffect, useMemo } from 'react'
+import { useState, useRef, useCallback, useEffect, useMemo, startTransition } from 'react'
 import { useAuth } from '../lib/useAuth'
 import { createProfile, updateProfile, deleteProfile, checkUsername, uploadPhoto, getMyProfiles } from '../lib/api'
-import { EMPTY_FORM, freshLink, MAX_FREE_PROFILES } from './createSection/formConstants'
+import { EMPTY_FORM, freshLink, freshSection, MAX_FREE_PROFILES } from './createSection/formConstants'
 import CreateProfileResult from './createSection/CreateProfileResult'
 import ProfileSelector from './createSection/ProfileSelector'
 import ProfilePhotoUploader from './createSection/ProfilePhotoUploader'
 import UsernameField from './createSection/UsernameField'
-import TagsManager from './createSection/TagsManager'
 import LinksEditor from './createSection/LinksEditor'
 import DesignControls from './createSection/DesignControls'
 import DeleteProfileModal from './createSection/DeleteProfileModal'
 import './CreateSection.css'
 
-export default function CreateSection({ onProtofileCreated, onProfileDeleted, latestProtofile, onSignInNeeded, myProfiles = [] }) {
+export default function CreateSection({ onProtofileCreated, onProfileDeleted, latestProtofile, onSignInNeeded, myProfiles = [], editTarget, onEditConsumed }) {
   const { user, loading } = useAuth()
 
   // --- All state ---
   const [form, setForm] = useState({ ...EMPTY_FORM })
-  const [tags, setTags] = useState([])
   const [photoData, setPhotoData] = useState('')
   const [photoFile, setPhotoFile] = useState(null)
   const [links, setLinks] = useState([])
@@ -51,7 +49,7 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
   // --- Profile selection ---
   const selectProfile = useCallback((profile) => {
     if (!profile) {
-      setForm({ ...EMPTY_FORM }); setTags([]); setLinks([])
+      setForm({ ...EMPTY_FORM }); setLinks([])
       setPhotoData(''); setPhotoFile(null)
       setAccent('#c45a3c'); setBgGradient(null); setBgColor('#ffffff'); setFont('serif')
       setUsernameStatus('idle'); setUsernameError('')
@@ -59,12 +57,11 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
       return
     }
     setForm({
-      name: profile.name || '', role: profile.role || '', email: profile.email || '',
-      location: profile.location || '', bio: profile.bio || '', tagInput: '',
+      name: profile.name || '', role: profile.role || '',
+      bio: profile.bio || '',
       username: profile.username || '',
     })
-    setTags(profile.tags || [])
-    setLinks((profile.links || []).map(l => ({ id: Math.random().toString(36).slice(2, 9), label: l.label, url: l.url })))
+    setLinks((profile.links || []).map(l => ({ id: Math.random().toString(36).slice(2, 9), label: l.label, url: l.url || '', ...(l.isSection ? { isSection: true } : {}), ...(l.type ? { type: l.type } : {}) })))
     setAccent(profile.accent || '#c45a3c')
     setBgGradient(profile.bg_gradient || null)
     setBgColor(profile.bg_color || '#ffffff')
@@ -74,6 +71,16 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
     originalPhotoUrl.current = profile.photo_url || ''
     setEditingUsername(profile.username)
   }, [])
+
+  // Auto-select profile when Edit is clicked in nav
+  useEffect(() => {
+    if (!user || !editTarget || myProfiles.length === 0) return
+    const profile = myProfiles.find(p => p.username === editTarget)
+    if (profile) {
+      startTransition(() => selectProfile(profile))
+    }
+    onEditConsumed?.()
+  }, [editTarget, user, myProfiles, onEditConsumed, selectProfile])
 
   // --- Username validation ---
   const validateUsername = useCallback((value) => {
@@ -112,16 +119,31 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
 
   const removePhoto = () => { setPhotoData(''); setPhotoFile(null) }
 
-  // --- Tags ---
-  const addTag = () => {
-    const t = form.tagInput.trim()
-    if (t && !tags.includes(t)) { setTags(prev => [...prev, t]); update('tagInput', '') }
-  }
-  const removeTag = (tag) => setTags(prev => prev.filter(t => t !== tag))
-  const handleTagKey = (e) => { if (e.key === 'Enter') { e.preventDefault(); addTag() } }
-
   // --- Links ---
-  const addLink = (label = '') => setLinks(prev => [...prev, freshLink(label)])
+  const addLink = (label = '', type) => setLinks(prev => {
+    // Always insert before the first section so ungrouped links stay at top
+    const firstSection = prev.findIndex(l => l.isSection)
+    if (firstSection === -1) return [...prev, freshLink(label, '', type)]
+    return [...prev.slice(0, firstSection), freshLink(label, '', type), ...prev.slice(firstSection)]
+  })
+  const addLinkToGroup = (sectionId, label = '', type) => setLinks(prev => {
+    if (!sectionId) {
+      // Ungrouped group — insert before first section like quick-add does
+      const firstSection = prev.findIndex(l => l.isSection)
+      if (firstSection === -1) return [...prev, freshLink(label, '', type)]
+      return [...prev.slice(0, firstSection), freshLink(label, '', type), ...prev.slice(firstSection)]
+    }
+    const idx = prev.findIndex(l => l.id === sectionId)
+    if (idx === -1) return [...prev, freshLink(label, '', type)]
+    let insertAt = idx + 1
+    for (let i = idx + 1; i < prev.length; i++) {
+      if (prev[i].isSection) break
+      insertAt = i + 1
+    }
+    const newLink = freshLink(label, '', type)
+    return [...prev.slice(0, insertAt), newLink, ...prev.slice(insertAt)]
+  })
+  const addSection = (label = '') => setLinks(prev => [...prev, freshSection(label)])
   const updateLink = (id, field, value) => setLinks(prev => prev.map(l => l.id === id ? { ...l, [field]: value } : l))
   const removeLink = (id) => setLinks(prev => prev.filter(l => l.id !== id))
 
@@ -139,14 +161,18 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
       let photoUrl = ''
       if (photoFile) photoUrl = await uploadPhoto(photoFile, form.username.trim())
 
-      const validLinks = links.filter(l => l.label.trim() && l.url.trim()).map(l => ({ label: l.label.trim(), url: l.url.trim() }))
+      const validLinks = links
+        .filter(l => l.isSection ? l.label.trim() : (l.label.trim() && l.url.trim()))
+        .map(l => l.isSection
+          ? { label: l.label.trim(), isSection: true }
+          : { label: l.label.trim(), url: l.url.trim(), ...(l.type ? { type: l.type } : {}) }
+        )
 
       const username = editingUsername || form.username.trim().toLowerCase()
 
       const data = {
-        name: form.name.trim(), role: form.role.trim() || 'Independent creator',
-        email: form.email.trim(), location: form.location.trim(), bio: form.bio.trim(),
-        tags: tags.length > 0 ? tags : ['Creator'],
+        name: form.name.trim(), role: form.role.trim(),
+        bio: form.bio.trim(),
         photo_url: photoUrl || (editingUsername ? originalPhotoUrl.current : '') || photoData || '',
         links: validLinks, accent, bg_color: bgColor, bg_gradient: bgGradient, font,
         username,
@@ -161,7 +187,7 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
   }
 
   const handleReset = () => {
-    setForm({ ...EMPTY_FORM }); setTags([]); setPhotoData(''); setPhotoFile(null); setLinks([])
+    setForm({ ...EMPTY_FORM }); setPhotoData(''); setPhotoFile(null); setLinks([])
     setAccent('#c45a3c'); setBgGradient(null); setBgColor('#ffffff'); setFont('serif')
     setSubmitted(false); setError(''); setPhotoError(''); setCreatedUsername('')
     setEditingUsername(''); originalPhotoUrl.current = ''
@@ -261,14 +287,6 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
                   <label htmlFor="pf-role" className="create-section__label">Role / title</label>
                   <input id="pf-role" type="text" className="create-section__input" placeholder="e.g. Product Designer" value={form.role} onChange={e => update('role', e.target.value)} />
                 </div>
-                <div className="create-section__field">
-                  <label htmlFor="pf-email" className="create-section__label">Email</label>
-                  <input id="pf-email" type="email" className="create-section__input" placeholder="jordan@protome.io" value={form.email} onChange={e => update('email', e.target.value)} />
-                </div>
-                <div className="create-section__field">
-                  <label htmlFor="pf-location" className="create-section__label">Location</label>
-                  <input id="pf-location" type="text" className="create-section__input" placeholder="e.g. San Francisco, CA" value={form.location} onChange={e => update('location', e.target.value)} />
-                </div>
               </div>
             </div>
 
@@ -286,16 +304,7 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
               <textarea id="pf-bio" className="create-section__textarea" rows={3} placeholder="Tell people about yourself — your work, what you build, what you're about." value={form.bio} onChange={e => update('bio', e.target.value)} />
             </div>
 
-            <TagsManager
-              tagInput={form.tagInput}
-              tags={tags}
-              onTagInput={val => update('tagInput', val)}
-              onAddTag={addTag}
-              onRemoveTag={removeTag}
-              onKeyDown={handleTagKey}
-            />
-
-            <LinksEditor links={links} onAddLink={addLink} onUpdateLink={updateLink} onRemoveLink={removeLink} />
+            <LinksEditor links={links} onAddLink={addLink} onAddLinkToGroup={addLinkToGroup} onAddSection={addSection} onUpdateLink={updateLink} onRemoveLink={removeLink} />
 
             <DesignControls
               accent={accent}

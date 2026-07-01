@@ -71,9 +71,21 @@ function detectIcon(label = '', url = '') {
   return null
 }
 
-function isSocialLink(label = '', url = '') {
+function isSocialLink(label = '', url = '', type) {
+  if (type === 'website' || type === 'coding') return false
+  if (type === 'social') return true
   const text = `${label} ${url}`.toLowerCase()
-  return SOCIAL_PLATFORMS.some(p => new RegExp(`\\b${p}\\b`).test(text))
+  return [...SOCIAL_PLATFORMS, 'github'].some(p => new RegExp(`\\b${p}\\b`).test(text))
+}
+
+function detectPlatformKey(label = '', url = '') {
+  const text = `${label} ${url}`.toLowerCase()
+  const PLATFORMS = ['instagram', 'twitter', 'facebook', 'linkedin', 'youtube', 'tiktok', 'snapchat', 'discord', 'twitch', 'pinterest', 'reddit', 'telegram', 'whatsapp', 'threads', 'bluesky', 'github']
+  for (const p of PLATFORMS) {
+    if (text.includes(p)) return p
+  }
+  if (/\b(website|web|site|portfolio)\b/.test(text)) return 'website'
+  return null
 }
 
 const REPORT_REASONS = [
@@ -171,7 +183,7 @@ function ReportModal({ username, onClose }) {
   )
 }
 
-function ShareButton({ accentColor, isDarkBg, isLightBg }) {
+function ShareButton({ accentColor, isLightBg }) {
   const [copied, setCopied] = useState(false)
 
   const handleShare = async () => {
@@ -198,7 +210,7 @@ function ShareButton({ accentColor, isDarkBg, isLightBg }) {
 
   return (
     <button
-      className={`linktree__share-btn ${copied ? 'linktree__share-btn--copied' : ''} ${isDarkBg ? 'linktree__share-btn--dark' : ''} ${isLightBg ? 'linktree__share-btn--light' : ''}`}
+      className={`linktree__share-btn ${copied ? 'linktree__share-btn--copied' : ''} ${isLightBg ? 'linktree__share-btn--light' : ''}`}
       onClick={handleShare}
       aria-label={copied ? 'Link copied!' : 'Share profile'}
       title={copied ? 'Link copied!' : 'Share profile'}
@@ -210,22 +222,23 @@ function ShareButton({ accentColor, isDarkBg, isLightBg }) {
         </svg>
       ) : (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+          <polyline points="16 6 12 2 8 6" />
+          <line x1="12" y1="2" x2="12" y2="15" />
         </svg>
       )}
-      <span>{copied ? 'Copied!' : 'Share'}</span>
     </button>
   )
 }
 
 export default function SharedProtofile({ data }) {
+  const [copiedLink, setCopiedLink] = useState(null)
   const d = {
     ...data,
     bgColor: data.bg_color || data.bgColor || '',
     bgGradient: data.bg_gradient || data.bgGradient || '',
   }
-  const { name, role, email, location, bio, photo, photo_url, tags, links, accent, bgColor, bgGradient, font } = d
+  const { name, role, bio, photo, photo_url, links, accent, bgColor, bgGradient, font } = d
   const accentColor = accent || 'var(--color-primary-l)'
   const isSans = font === 'sans'
   const initials = name
@@ -248,7 +261,14 @@ export default function SharedProtofile({ data }) {
         ...(bgGradient ? { '--bg-gradient': bgGradient } : {}),
       }}
     >
-      <main className="linktree__main">
+      <div className="linktree__card">
+        <div className="linktree__accent-bar" style={{ background: accentColor }} />
+        <main className="linktree__main">
+        {/* Share — top left */}
+        <div className="linktree__share-wrapper">
+          <ShareButton accentColor={accentColor} isLightBg={isLightBg} />
+        </div>
+
         {/* Photo / Avatar */}
         {hasPhoto ? (
           <div className="linktree__photo-wrapper">
@@ -269,28 +289,9 @@ export default function SharedProtofile({ data }) {
         {/* Bio */}
         {bio && <p className="linktree__bio">{bio}</p>}
 
-        {/* Contact info (inline small) */}
-        {(email || location) && (
-          <div className="linktree__contact">
-            {email && (
-              <span className="linktree__contact-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                {email}
-              </span>
-            )}
-            {location && (
-              <span className="linktree__contact-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                {location}
-              </span>
-            )}
-          </div>
-        )}
-
         {/* Link buttons */}
         {linkItems.length > 0 && (() => {
-          const socialLinks = linkItems.filter(l => isSocialLink(l.label, l.url))
-          const regularLinks = linkItems.filter(l => !isSocialLink(l.label, l.url))
+          const socialLinks = linkItems.filter(l => !l.isSection && isSocialLink(l.label, l.url, l.type))
           return (
             <>
               {/* Social icon row */}
@@ -308,6 +309,7 @@ export default function SharedProtofile({ data }) {
                         className="linktree__social-btn"
                         title={link.label}
                         aria-label={link.label}
+                        data-platform={detectPlatformKey(link.label, link.url)}
                       >
                         {icon}
                       </a>
@@ -316,47 +318,59 @@ export default function SharedProtofile({ data }) {
                 </div>
               )}
 
-              {/* Regular link buttons */}
-              {regularLinks.length > 0 && (
-                <div className="linktree__links">
-                  {regularLinks.map((link, i) => {
-                    const icon = detectIcon(link.label, link.url) || GENERIC_ICON
-                    const href = link.url.startsWith('http') ? link.url : `https://${link.url}`
-                    return (
-                      <a
-                        key={`link-${i}`}
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="linktree__link-btn"
+              {/* Non-social links in order: sections + buttons */}
+              <div className="linktree__links">
+                {linkItems.filter(l => !isSocialLink(l.label, l.url, l.type)).map((item, i) =>
+                  item.isSection ? (
+                    <div key={`sect-${i}`} className="linktree__section-heading">{item.label}</div>
+                  ) : (
+                    <a
+                      key={`link-${i}`}
+                      href={item.url.startsWith('http') ? item.url : `https://${item.url}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="linktree__link-btn"
+                      data-platform={detectPlatformKey(item.label, item.url)}
+                    >
+                      <span className="linktree__link-body">
+                        <span className="linktree__link-label">{item.label}</span>
+                      </span>
+                      <button
+                        className={`linktree__link-share ${copiedLink === item.url ? 'linktree__link-share--shared' : ''}`}
+                        onClick={e => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          const href = item.url.startsWith('http') ? item.url : `https://${item.url}`
+                          if (navigator.share) {
+                            navigator.share({ url: href }).catch(() => {})
+                          } else {
+                            navigator.clipboard.writeText(href)
+                            setCopiedLink(item.url)
+                            setTimeout(() => setCopiedLink(null), 2000)
+                          }
+                        }}
+                        aria-label={copiedLink === item.url ? 'Link shared!' : 'Share link'}
+                        title={copiedLink === item.url ? 'Link shared!' : 'Share link'}
                       >
-                        <span className="linktree__link-icon">{icon}</span>
-                        <span className="linktree__link-label">{link.label}</span>
-                        <svg className="linktree__link-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                          <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
-                        </svg>
-                      </a>
-                    )
-                  })}
-                </div>
-              )}
+                        {copiedLink === item.url ? (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20 6 9 17 4 12"/>
+                          </svg>
+                        ) : (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                            <polyline points="16 6 12 2 8 6" />
+                            <line x1="12" y1="2" x2="12" y2="15" />
+                          </svg>
+                        )}
+                      </button>
+                    </a>
+                  )
+                )}
+              </div>
             </>
           )
         })()}
-
-        {/* Tags */}
-        {tags && tags.length > 0 && (
-          <div className="linktree__tags">
-            {tags.map(tag => (
-              <span key={tag} className="linktree__tag" style={{ color: accentColor, background: `color-mix(in oklch, ${accentColor}, white 80%)` }}>
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {/* Share */}
-        <ShareButton accentColor={accentColor} isDarkBg={isDarkBg} isLightBg={isLightBg} />
 
         {/* Footer */}
         <div className="linktree__footer">
@@ -379,6 +393,7 @@ export default function SharedProtofile({ data }) {
           </div>
         </div>
       </main>
+      </div>
       {reportOpen && <ReportModal username={data.username} onClose={() => setReportOpen(false)} />}
     </div>
   )

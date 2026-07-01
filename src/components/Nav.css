@@ -61,15 +61,6 @@
   color: var(--color-ink);
 }
 
-.nav__cta {
-  font-size: var(--text-xs);
-  padding: 0.5rem 1.25rem;
-}
-
-.nav__cta--edit {
-  padding: 0.5rem 1rem !important;
-}
-
 .nav__actions {
   display: flex;
   align-items: center;
@@ -167,7 +158,7 @@
   position: absolute;
   top: calc(100% + 6px);
   right: 0;
-  min-width: 200px;
+  min-width: 240px;
   background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: 12px;
@@ -192,7 +183,7 @@
 }
 
 .nav__dropdown-profiles-list {
-  max-height: 260px;
+  max-height: 300px;
   overflow-y: auto;
 }
 
@@ -209,12 +200,6 @@
   border-radius: 4px;
 }
 
-.nav__dropdown-item--all {
-  color: var(--color-primary) !important;
-  font-weight: 600;
-  border-top: 1px solid var(--color-border);
-}
-
 .nav__dropdown-section-label {
   font-size: 10px;
   font-weight: 600;
@@ -223,6 +208,65 @@
   color: var(--color-muted);
   padding: var(--space-xs) var(--space-lg) 0;
   margin-bottom: 2px;
+}
+
+/* ---- Dropdown profile row with inline Edit ---- */
+
+.nav__dropdown-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: var(--space-xs) var(--space-lg);
+  transition: background 0.15s;
+}
+
+.nav__dropdown-profile-row:hover {
+  background: var(--color-surface);
+}
+
+.nav__dropdown-profile-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-sm);
+  color: var(--color-ink);
+  text-decoration: none;
+  padding: var(--space-sm) 0;
+}
+
+.nav__dropdown-profile-link svg {
+  flex-shrink: 0;
+  color: var(--color-muted);
+}
+
+.nav__dropdown-profile-link:hover {
+  color: var(--color-ink);
+}
+
+.nav__dropdown-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-muted);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.nav__dropdown-edit-btn:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary-l);
+  background: color-mix(in oklch, var(--color-primary-xl), transparent 30%);
 }
 
 .nav__dropdown-divider {
@@ -244,6 +288,7 @@
   cursor: pointer;
   transition: background 0.15s;
   text-align: left;
+  text-decoration: none;
 }
 
 .nav__dropdown-item:hover {
@@ -312,6 +357,7 @@
   color: var(--color-ink);
   border-radius: 10px;
   transition: background 0.15s ease;
+  text-decoration: none;
 }
 
 .nav__mobile-link:hover {
@@ -359,6 +405,53 @@
   margin-bottom: 2px;
 }
 
+/* ---- Mobile profile row (name + View/Edit) ---- */
+
+.nav__mobile-profile-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-lg);
+  gap: var(--space-md);
+}
+
+.nav__mobile-profile-name {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-sm) 0;
+  font-size: var(--text-sm);
+}
+
+.nav__mobile-profile-actions {
+  display: flex;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+.nav__mobile-action-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: inherit;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.nav__mobile-action-btn:hover {
+  border-color: var(--color-primary-l);
+}
+
+.nav__mobile-action-btn--edit {
+  color: var(--color-primary);
+}
+
 .nav__mobile-cta {
   width: 100%;
   justify-content: center;
@@ -398,6 +491,10 @@
   background: oklch(0.11 0.008 35.8 / 0.98);
 }
 
+[data-theme="dark"] .nav__dropdown-edit-btn:hover {
+  background: color-mix(in oklch, var(--color-primary-l), var(--color-bg) 75%);
+}
+
 @media (max-width: 640px) {
   .nav__links {
     display: none;
@@ -413,11 +510,6 @@
 
   .nav__user-trigger {
     padding: 0.35rem;
-  }
-
-  .nav__cta {
-    font-size: var(--text-xs);
-    padding: 0.4rem 1rem;
   }
 
   .nav__desktop-actions {

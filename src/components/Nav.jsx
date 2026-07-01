@@ -8,13 +8,12 @@ const NAV_LINKS = [
   { label: 'Pricing', href: '#pricing' },
 ]
 
-export default function Nav({ onSignIn, myProfiles = [] }) {
+export default function Nav({ onSignIn, myProfiles = [], onEditProfile }) {
   const { user, signOut } = useAuth()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [dark, setDark] = useState(() => {
-    // Check localStorage first, fall back to OS preference
     const stored = localStorage.getItem('theme')
     if (stored) return stored === 'dark'
     return window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -73,6 +72,17 @@ export default function Nav({ onSignIn, myProfiles = [] }) {
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [mobileOpen])
+
+  const handleEdit = (username) => {
+    onEditProfile?.(username)
+    // Scroll to the create section smoothly
+    const el = document.getElementById('create')
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } else {
+      window.location.hash = 'create'
+    }
+  }
 
   return (
     <nav className={`nav ${scrolled ? 'nav--scrolled' : ''}`} role="navigation" aria-label="Main">
@@ -135,7 +145,7 @@ export default function Nav({ onSignIn, myProfiles = [] }) {
             )}
           </button>
 
-          {/* Desktop-only: sign in / user menu + CTAs */}
+          {/* Desktop actions */}
           <div className="nav__desktop-actions">
             {user ? (
               <div className="nav__user-menu" ref={menuRef}>
@@ -168,25 +178,48 @@ export default function Nav({ onSignIn, myProfiles = [] }) {
                         <div className="nav__dropdown-section-label">Your profiles</div>
                         <div className="nav__dropdown-profiles-list">
                           {myProfiles.map(p => (
-                            <a
-                              key={p.username}
-                              href={`/${p.username}`}
-                              className="nav__dropdown-item"
-                              role="menuitem"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                <circle cx="12" cy="12" r="3"/>
-                              </svg>
-                              {p.name || p.username}
-                            </a>
+                            <div key={p.username} className="nav__dropdown-profile-row" role="menuitem">
+                              <a
+                                href={`/${p.username}`}
+                                className="nav__dropdown-profile-link"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                  <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                {p.name || p.username}
+                              </a>
+                              <button
+                                className="nav__dropdown-edit-btn"
+                                onClick={() => { setMenuOpen(false); handleEdit(p.username) }}
+                                aria-label={`Edit ${p.name || p.username}`}
+                              >
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                  <path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+                                </svg>
+                                Edit
+                              </button>
+                            </div>
                           ))}
                         </div>
-                        <div className="nav__dropdown-divider" />
                       </div>
                     )}
+
+                    <a
+                      href="#create"
+                      className="nav__dropdown-item"
+                      role="menuitem"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                      </svg>
+                      Create new profile
+                    </a>
+
+                    <div className="nav__dropdown-divider" />
 
                     <button
                       className="nav__dropdown-item nav__dropdown-item--danger"
@@ -207,14 +240,6 @@ export default function Nav({ onSignIn, myProfiles = [] }) {
               <button className="btn btn--ghost nav__signin" onClick={onSignIn}>
                 Sign in
               </button>
-            )}
-            <a href="#create" className="btn btn--primary nav__cta">
-              Create new
-            </a>
-            {myProfiles.length > 0 && (
-              <a href="#create" className="btn btn--ghost nav__cta nav__cta--edit">
-                Edit profile
-              </a>
             )}
           </div>
         </div>
@@ -249,24 +274,45 @@ export default function Nav({ onSignIn, myProfiles = [] }) {
                   <div className="nav__mobile-section">
                     <span className="nav__mobile-section-label">Your profiles</span>
                     {myProfiles.map(p => (
-                      <a
-                        key={p.username}
-                        href={`/${p.username}`}
-                        className="nav__mobile-link"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                          <circle cx="12" cy="12" r="3"/>
-                        </svg>
-                        {p.name || p.username}
-                      </a>
+                      <div key={p.username} className="nav__mobile-profile-row">
+                        <a
+                          href={`/${p.username}`}
+                          className="nav__mobile-link nav__mobile-profile-name"
+                          onClick={() => setMobileOpen(false)}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                          </svg>
+                          {p.name || p.username}
+                        </a>
+                        <div className="nav__mobile-profile-actions">
+                          <a
+                            href={`/${p.username}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="nav__mobile-action-btn"
+                            onClick={() => setMobileOpen(false)}
+                          >
+                            View
+                          </a>
+                          <button
+                            className="nav__mobile-action-btn nav__mobile-action-btn--edit"
+                            onClick={() => { setMobileOpen(false); handleEdit(p.username) }}
+                          >
+                            Edit
+                          </button>
+                        </div>
+                      </div>
                     ))}
                   </div>
                 )}
 
                 <a href="#create" className="btn btn--primary nav__mobile-cta" onClick={() => setMobileOpen(false)}>
-                  Edit profile
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                  Create new profile
                 </a>
                 <button className="nav__mobile-signout" onClick={() => { signOut(); setMobileOpen(false) }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

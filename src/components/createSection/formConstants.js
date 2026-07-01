@@ -3,15 +3,18 @@ export const MAX_FREE_PROFILES = 3
 export const EMPTY_FORM = {
   name: '',
   role: '',
-  email: '',
-  location: '',
   bio: '',
-  tagInput: '',
   username: '',
 }
 
-export function freshLink(label = '', url = '') {
-  return { id: Math.random().toString(36).slice(2, 9), label, url }
+export function freshLink(label = '', url = '', type) {
+  const link = { id: Math.random().toString(36).slice(2, 9), label, url }
+  if (type) link.type = type
+  return link
+}
+
+export function freshSection(label = '') {
+  return { id: Math.random().toString(36).slice(2, 9), label, url: '', isSection: true }
 }
 
 export const GRADIENT_PRESETS = [
@@ -42,36 +45,57 @@ export const GRADIENT_PRESETS = [
 ]
 
 const SOCIAL_PLATFORMS = [
-  'instagram', 'twitter', 'github', 'linkedin', 'youtube', 'tiktok',
-  'facebook', 'snapchat', 'discord', 'twitch', 'pinterest', 'reddit',
-  'telegram', 'whatsapp', 'threads', 'bluesky',
+  'instagram', 'twitter', 'linkedin', 'youtube', 'tiktok',
+  'facebook', 'snapchat', 'discord', 'twitch', 'pinterest',
+  'reddit', 'telegram', 'whatsapp', 'threads', 'bluesky',
 ]
+
+const CODING_PLATFORMS = ['github']
 
 export function isSocial(label = '') {
   const lbl = label.toLowerCase()
-  return SOCIAL_PLATFORMS.some(p => new RegExp(`\\b${p}\\b`).test(lbl))
+  return SOCIAL_PLATFORMS.some(p => {
+    const alias = PLATFORM_ALIASES[p] || p
+    return new RegExp(`\\b${alias}\\b`).test(lbl)
+  })
+}
+
+export function isCoding(label = '') {
+  const lbl = label.toLowerCase()
+  return CODING_PLATFORMS.some(p => {
+    const alias = PLATFORM_ALIASES[p] || p
+    return new RegExp(`\\b${alias}\\b`).test(lbl)
+  })
+}
+
+// Map display labels to their canonical keys for icon lookup
+const PLATFORM_ALIASES = {
+  twitter: 'x',
 }
 
 export const SOCIAL_QUICK_LINKS = [
-  { label: 'Instagram' },
-  { label: 'Twitter / X' },
-  { label: 'Facebook' },
-  { label: 'LinkedIn' },
-  { label: 'GitHub' },
-  { label: 'YouTube' },
-  { label: 'TikTok' },
-  { label: 'Snapchat' },
-  { label: 'Discord' },
-  { label: 'Twitch' },
-  { label: 'Pinterest' },
-  { label: 'Reddit' },
-  { label: 'Telegram' },
-  { label: 'WhatsApp' },
-  { label: 'Threads' },
-  { label: 'Bluesky' },
+  { label: 'Instagram', key: 'instagram' },
+  { label: 'Twitter / X', key: 'twitter' },
+  { label: 'Facebook', key: 'facebook' },
+  { label: 'LinkedIn', key: 'linkedin' },
+  { label: 'YouTube', key: 'youtube' },
+  { label: 'TikTok', key: 'tiktok' },
+  { label: 'Snapchat', key: 'snapchat' },
+  { label: 'Discord', key: 'discord' },
+  { label: 'Twitch', key: 'twitch' },
+  { label: 'Pinterest', key: 'pinterest' },
+  { label: 'Reddit', key: 'reddit' },
+  { label: 'Telegram', key: 'telegram' },
+  { label: 'WhatsApp', key: 'whatsapp' },
+  { label: 'Threads', key: 'threads' },
+  { label: 'Bluesky', key: 'bluesky' },
+]
+
+export const CODING_QUICK_LINKS = [
+  { label: 'GitHub', key: 'github' },
 ]
 
 export const WEBSITE_QUICK_LINKS = [
-  { label: 'Website' },
-  { label: 'Portfolio' },
+  { label: 'Website', key: 'website' },
+  { label: 'Portfolio', key: 'portfolio' },
 ]

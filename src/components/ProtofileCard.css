@@ -1,13 +1,23 @@
-/* ---- Protofile Card ---- */
+/* ============================================
+   Protofile Card — premium preview card
+   protome @ protome.pages.dev
+   ============================================ */
 
 .protofile-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 560px;
   background: var(--card-bg, var(--color-bg));
   border: 1px solid var(--color-border);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: var(--shadow-xl);
+  box-shadow: 0 8px 32px oklch(0 0 0 / 0.08);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s ease;
+}
+
+.protofile-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px oklch(0 0 0 / 0.12);
 }
 
 .protofile-card--gradient {
@@ -18,7 +28,7 @@
 }
 
 .protofile-card--gradient .protofile-card__bar {
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 .protofile-card--compact {
@@ -30,25 +40,35 @@
   padding: var(--space-xl);
 }
 
-/* ---- Bar ---- */
+.protofile-card--compact:hover {
+  transform: translateY(-3px);
+}
+
+/* ---- Accent bar ---- */
+
 .protofile-card__bar {
-  height: 6px;
-  background: var(--color-primary-l);
+  height: 4px;
+  background: var(--card-accent, var(--color-primary-l));
 }
 
 /* ---- Body ---- */
+
 .protofile-card__body {
   padding: var(--space-2xl);
 }
 
-/* ---- Avatar (photo) ---- */
+/* ---- Photo ---- */
+
 .protofile-card__photo-wrapper {
   width: 56px;
   height: 56px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid var(--color-primary-l);
+  border: 2px solid var(--card-accent, var(--color-primary-l));
   margin-bottom: var(--space-lg);
+  box-shadow:
+    0 0 0 3px oklch(1 0 0 / 0.6),
+    0 4px 12px oklch(0 0 0 / 0.08);
 }
 
 .protofile-card--compact .protofile-card__photo-wrapper {
@@ -64,39 +84,51 @@
 }
 
 /* ---- Avatar (initials fallback) ---- */
+
 .protofile-card__avatar {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: var(--color-primary-xl);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-display);
   font-weight: 600;
   font-size: var(--text-lg);
-  color: var(--color-primary);
+  color: var(--card-accent, var(--color-primary));
   margin-bottom: var(--space-lg);
+  box-shadow:
+    0 0 0 3px oklch(1 0 0 / 0.6),
+    0 4px 12px oklch(0 0 0 / 0.08);
+}
+
+.protofile-card--compact .protofile-card__avatar {
+  width: 44px;
+  height: 44px;
+  font-size: var(--text-base);
 }
 
 /* ---- Header ---- */
+
 .protofile-card__header {
   margin-bottom: var(--space-lg);
 }
 
 .protofile-card__name {
   font-family: var(--font-display);
-  font-size: var(--text-xl);
-  font-weight: 600;
+  font-size: var(--text-lg);
+  font-weight: 400;
   color: var(--card-text, var(--color-ink));
   margin-bottom: var(--space-xs);
   text-wrap: balance;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
 }
 
-/* Sans mode: use Sora instead of Spectral */
 .protofile-card--sans .protofile-card__name {
   font-family: var(--font-body);
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .protofile-card__role {
@@ -106,30 +138,8 @@
   font-weight: 400;
 }
 
-/* ---- Contact ---- */
-.protofile-card__contact {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-lg);
-  margin-bottom: var(--space-lg);
-  padding-bottom: var(--space-lg);
-  border-bottom: 1px solid var(--card-border, var(--color-border));
-}
-
-.protofile-card__contact-item {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-sm);
-  font-size: var(--text-xs);
-  color: var(--card-text-muted, var(--color-muted));
-}
-
-.protofile-card__contact-item svg {
-  flex-shrink: 0;
-  opacity: 0.6;
-}
-
 /* ---- Bio ---- */
+
 .protofile-card__bio {
   margin-bottom: var(--space-lg);
 }
@@ -141,6 +151,7 @@
 }
 
 /* ---- Social Links ---- */
+
 .protofile-card__links {
   display: flex;
   gap: var(--space-sm);
@@ -156,13 +167,63 @@
   align-items: center;
   justify-content: center;
   color: var(--color-muted);
-  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .protofile-card__link:hover {
-  color: var(--card-accent, var(--color-primary-l));
-  border-color: var(--card-accent, var(--color-primary-l));
-  background: color-mix(in oklch, var(--card-accent, var(--color-primary-l)), white 90%);
+  color: #fff;
+  border-color: transparent;
+  transform: translateY(-2px);
+}
+
+/* Brand-color hover states */
+
+.protofile-card__link[data-platform="instagram"]:hover {
+  background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+.protofile-card__link[data-platform="twitter"]:hover {
+  background: #000;
+}
+.protofile-card__link[data-platform="linkedin"]:hover {
+  background: #0a66c2;
+}
+.protofile-card__link[data-platform="youtube"]:hover {
+  background: #ff0000;
+}
+.protofile-card__link[data-platform="tiktok"]:hover {
+  background: #010101;
+}
+.protofile-card__link[data-platform="github"]:hover {
+  background: #24292e;
+}
+.protofile-card__link[data-platform="facebook"]:hover {
+  background: #1877f2;
+}
+.protofile-card__link[data-platform="discord"]:hover {
+  background: #5865f2;
+}
+.protofile-card__link[data-platform="twitch"]:hover {
+  background: #9146ff;
+}
+.protofile-card__link[data-platform="pinterest"]:hover {
+  background: #e60023;
+}
+.protofile-card__link[data-platform="reddit"]:hover {
+  background: #ff4500;
+}
+.protofile-card__link[data-platform="telegram"]:hover {
+  background: #0088cc;
+}
+.protofile-card__link[data-platform="whatsapp"]:hover {
+  background: #25d366;
+  color: #111;
+}
+.protofile-card__link[data-platform="bluesky"]:hover {
+  background: #0085ff;
+}
+.protofile-card__link[data-platform="website"]:hover {
+  background: var(--card-accent, var(--color-primary-l));
+  color: #fff;
 }
 
 .protofile-card__link svg {
@@ -170,27 +231,21 @@
   height: 16px;
 }
 
-/* ---- Tags ---- */
-.protofile-card__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
+/* ---- Gradient variant ---- */
+
+.protofile-card--gradient .protofile-card__link {
+  border-color: var(--card-border, rgba(255, 255, 255, 0.15));
+  color: var(--card-text-muted, rgba(255, 255, 255, 0.6));
 }
 
-.protofile-card__tag {
-  display: inline-block;
-  padding: 0.3rem 0.75rem;
-  font-size: var(--text-xs);
-  font-weight: 500;
-  color: var(--color-primary);
-  background: var(--color-primary-xl);
-  border-radius: 999px;
-}
+/* ---- Reduced motion ---- */
 
-/* ---- Responsive ---- */
-@media (max-width: 480px) {
-  .protofile-card__contact {
-    flex-direction: column;
-    gap: var(--space-sm);
+@media (prefers-reduced-motion: reduce) {
+  .protofile-card,
+  .protofile-card--compact,
+  .protofile-card__link {
+    transition-duration: 0.01ms !important;
+    transform: none !important;
   }
 }
+

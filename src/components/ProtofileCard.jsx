@@ -4,10 +4,7 @@ import { FaGlobe, FaLinkedin, FaTwitter, FaGithub, FaInstagram, FaYoutube, FaTik
 const DEFAULT_DATA = {
   name: 'Jordan Mitchell',
   role: 'Product Designer · Independent',
-  email: 'jordan@protome.io',
-  location: 'San Francisco, CA',
   bio: 'Designing thoughtful digital experiences at the intersection of craft and purpose. Previously at Figma, currently building protome.',
-  tags: ['Product Design', 'Design Systems', 'Prototyping'],
   photo: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=face',
   links: [
     { label: 'Website', url: '#' },
@@ -60,6 +57,16 @@ function detectIconKey(label = '', url = '') {
   if (/\btiktok\b/.test(full)) return 'tiktok'
   if (/\b(website|web|site|portfolio)\b/.test(full)) return 'website'
   return 'website'
+}
+
+function detectPlatformKey(label = '', url = '') {
+  const text = `${label} ${url}`.toLowerCase()
+  const PLATFORMS = ['instagram', 'twitter', 'facebook', 'linkedin', 'youtube', 'tiktok', 'snapchat', 'discord', 'twitch', 'pinterest', 'reddit', 'telegram', 'whatsapp', 'threads', 'bluesky', 'github']
+  for (const p of PLATFORMS) {
+    if (text.includes(p)) return p
+  }
+  if (/\b(website|web|site|portfolio)\b/.test(text)) return 'website'
+  return null
 }
 
 export default function ProtofileCard({ data = DEFAULT_DATA, compact }) {
@@ -126,21 +133,6 @@ export default function ProtofileCard({ data = DEFAULT_DATA, compact }) {
           <p className="protofile-card__role">{d.role}</p>
         </div>
 
-        <div className="protofile-card__contact">
-          {d.email && (
-            <span className="protofile-card__contact-item">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              {d.email}
-            </span>
-          )}
-          {d.location && (
-            <span className="protofile-card__contact-item">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              {d.location}
-            </span>
-          )}
-        </div>
-
         {d.bio && (
           <div className="protofile-card__bio">
             <p>{d.bio}</p>
@@ -150,16 +142,17 @@ export default function ProtofileCard({ data = DEFAULT_DATA, compact }) {
         {/* Social Links */}
         {activeLinks.length > 0 && (
           <div className="protofile-card__links">
-            {activeLinks.map(([label, url]) => {
+            {activeLinks.map(([label, url], i) => {
                 const iconKey = detectIconKey(label, url)
                 return (
                 <a
-                  key={label}
+                  key={`${label}-${i}`}
                   href={url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="protofile-card__link"
                   title={LINK_LABELS[label] || label}
+                  data-platform={detectPlatformKey(label, url)}
                 >
                   {LINK_ICONS[iconKey] || LINK_ICONS.website}
                 </a>
@@ -168,16 +161,6 @@ export default function ProtofileCard({ data = DEFAULT_DATA, compact }) {
           </div>
         )}
 
-        {/* Tags */}
-        {d.tags?.length > 0 && (
-          <div className="protofile-card__tags">
-            {d.tags.map(tag => (
-              <span key={tag} className="protofile-card__tag" style={{ color: accentColor, background: `color-mix(in oklch, ${accentColor}, white 80%)` }}>
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   )
