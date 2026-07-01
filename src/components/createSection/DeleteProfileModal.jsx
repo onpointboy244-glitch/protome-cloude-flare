@@ -1,9 +1,44 @@
+import { useEffect, useRef } from 'react'
+
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+
 export default function DeleteProfileModal({ profile, deleting, onCancel, onConfirm }) {
+  const modalRef = useRef(null)
+
+  // Focus trap + Escape key
+  useEffect(() => {
+    if (!profile) return
+    const modal = modalRef.current
+    if (!modal) return
+    const focusable = modal.querySelectorAll(FOCUSABLE)
+    if (focusable.length > 0) focusable[0].focus()
+    const handleKey = (e) => {
+      if (e.key === 'Escape') { onCancel?.(); return }
+      if (e.key !== 'Tab') return
+      const els = modal.querySelectorAll(FOCUSABLE)
+      if (els.length === 0) return
+      const first = els[0]
+      const last = els[els.length - 1]
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus() }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus() }
+      }
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => {
+      document.removeEventListener('keydown', handleKey)
+      // Restore focus to previously focused element
+      const btn = document.querySelector('[data-restore-focus]')
+      btn?.focus()
+    }
+  }, [profile, onCancel])
+
   if (!profile) return null
 
   return (
     <div className="create-section__delete-overlay" onClick={onCancel}>
-      <div className="create-section__delete-modal" onClick={e => e.stopPropagation()}>
+      <div ref={modalRef} className="create-section__delete-modal" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-label="Delete profile">
         <div className="create-section__delete-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.5" strokeLinecap="round">
             <circle cx="12" cy="12" r="10"/>
@@ -21,6 +56,7 @@ export default function DeleteProfileModal({ profile, deleting, onCancel, onConf
             className="btn btn--ghost"
             onClick={onCancel}
             disabled={deleting}
+            data-restore-focus
           >
             Cancel
           </button>

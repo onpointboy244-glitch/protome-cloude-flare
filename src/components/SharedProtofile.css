@@ -422,6 +422,13 @@
   justify-content: center;
 }
 
+/* ---- Link row wrapper (contains both link-btn and share-btn) ---- */
+
+.linktree__link-row {
+  position: relative;
+  width: 100%;
+}
+
 /* ---- Per-link share button ---- */
 
 .linktree__link-share {
@@ -450,7 +457,7 @@
   color: oklch(0.35 0.008 35 / 0.35);
 }
 
-.linktree__link-btn:hover .linktree__link-share {
+.linktree__link-row:hover .linktree__link-share {
   opacity: 1;
 }
 

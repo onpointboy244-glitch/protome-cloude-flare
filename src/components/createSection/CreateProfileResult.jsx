@@ -1,8 +1,28 @@
+import { useState, useRef, useEffect } from 'react'
 import ProtofileCard from '../ProtofileCard'
 import { profileUrl } from '../../lib/api'
 
 export default function CreateProfileResult({ createdUsername, latestProtofile, onReset }) {
+  const [copied, setCopied] = useState(false)
+  const timeoutRef = useRef(null)
   const url = profileUrl(createdUsername)
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    }
+  }, [])
+
+  const handleCopy = async () => {
+    if (!url) return
+    try {
+      await navigator.clipboard?.writeText(url)
+      setCopied(true)
+      timeoutRef.current = setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // clipboard unavailable
+    }
+  }
 
   return (
     <section id="create" className="section create-section">
@@ -36,16 +56,10 @@ export default function CreateProfileResult({ createdUsername, latestProtofile, 
               </div>
               <button
                 className="btn btn--ghost create-section__copy-btn"
-                onClick={(e) => {
-                  if (url) {
-                    navigator.clipboard?.writeText(url)
-                    const btn = e.currentTarget
-                    btn.textContent = 'Copied!'
-                    setTimeout(() => { btn.textContent = 'Copy link' }, 2000)
-                  }
-                }}
+                onClick={handleCopy}
+                aria-live="polite"
               >
-                Copy link
+                {copied ? 'Copied!' : 'Copy link'}
               </button>
             </div>
 

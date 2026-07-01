@@ -62,19 +62,19 @@ export default function Auth({ onClose }) {
     };
   }, [onClose, mode]);
 
-  // Cross-tab sync: auto-close when session becomes active after email confirmation
+  // Cross-tab sync: close modal when session appears (email confirmed in another tab)
   useEffect(() => {
     const handleStorage = (e) => {
       if (
         (e.key?.startsWith("sb-") || e.key === "supabase.auth.token") &&
         e.newValue
       ) {
-        // Session appeared in another tab — re-check will update `user` and modal will close
+        onClose?.();
       }
     };
     window.addEventListener("storage", handleStorage);
     return () => window.removeEventListener("storage", handleStorage);
-  }, []);
+  }, [onClose]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

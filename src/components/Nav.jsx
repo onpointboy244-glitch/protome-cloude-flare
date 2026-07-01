@@ -41,9 +41,16 @@ export default function Nav({ onSignIn, myProfiles = [], onEditProfile }) {
   const toggleTheme = () => setDark(prev => !prev)
 
   useEffect(() => {
+    let ticking = false
     const onScroll = () => {
-      setScrolled(window.scrollY > 40)
-      setMobileOpen(false)
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 40)
+          setMobileOpen(false)
+          ticking = false
+        })
+        ticking = true
+      }
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -106,7 +113,7 @@ export default function Nav({ onSignIn, myProfiles = [], onEditProfile }) {
             className="nav__theme-toggle"
             onClick={toggleTheme}
             aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-            title={dark ? 'Light mode' : 'Dark mode'}
+            title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
           >
             {dark ? (
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -156,7 +163,7 @@ export default function Nav({ onSignIn, myProfiles = [], onEditProfile }) {
                   aria-haspopup="true"
                 >
                   <span className="nav__user-avatar">
-                    {user.email?.[0].toUpperCase()}
+                    {user.email?.charAt(0)?.toUpperCase() ?? '?'}
                   </span>
                   <span className="nav__user-email">{user.email}</span>
                   <svg
@@ -265,7 +272,7 @@ export default function Nav({ onSignIn, myProfiles = [], onEditProfile }) {
               <>
                 <div className="nav__mobile-user-header">
                   <span className="nav__user-avatar">
-                    {user.email?.[0].toUpperCase()}
+                    {user.email?.charAt(0)?.toUpperCase() ?? '?'}
                   </span>
                   <span className="nav__mobile-user-email">{user.email}</span>
                 </div>

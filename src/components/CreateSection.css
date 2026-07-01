@@ -798,6 +798,36 @@
   align-items: center;
 }
 
+.create-section__link-entry--dragging {
+  background: color-mix(in oklch, var(--color-primary-l), var(--color-bg) 88%);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.create-section__link-drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 36px;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--color-muted);
+  opacity: 0.3;
+  cursor: grab;
+  transition: opacity 0.2s ease, color 0.2s ease;
+  touch-action: none;
+}
+
+.create-section__link-entry:hover .create-section__link-drag-handle {
+  opacity: 0.7;
+}
+
+.create-section__link-drag-handle:active {
+  cursor: grabbing;
+}
+
 .create-section__link-entry-icon {
   display: flex;
   align-items: center;

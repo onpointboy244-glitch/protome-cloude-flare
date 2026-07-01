@@ -26,7 +26,6 @@ function LoadingSpinner({ slow }) {
         <path d="M12 2a10 10 0 0 1 10 10" />
       </svg>
       {slow && <p style={{ fontSize: 'var(--text-sm)', maxWidth: 260, textAlign: 'center', lineHeight: 1.5 }}>Still loading… check your connection if this persists.</p>}
-      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>
   )
 }
@@ -148,15 +147,6 @@ export default function App() {
           </p>
           <a href="/" className="btn btn--primary">Create yours →</a>
         </div>
-        <style>{`
-          .notfound {
-            min-height: 100dvh; display: flex; align-items: center; justify-content: center;
-            padding: 2rem; background: var(--color-bg);
-          }
-          .notfound__inner { text-align: center; max-width: 380px; }
-          .notfound__title { font-family: var(--font-display); font-size: var(--text-5xl); margin-bottom: var(--space-lg); color: var(--color-ink); }
-          .notfound__text { color: var(--color-muted); margin-bottom: var(--space-2xl); line-height: 1.6; }
-        `}</style>
       </div>
     )
   }
@@ -184,15 +174,6 @@ export default function App() {
             Retry
           </button>
         </div>
-        <style>{`
-          .notfound {
-            min-height: 100dvh; display: flex; align-items: center; justify-content: center;
-            padding: 2rem; background: var(--color-bg);
-          }
-          .notfound__inner { text-align: center; max-width: 380px; }
-          .notfound__title { font-family: var(--font-display); font-size: var(--text-5xl); margin-bottom: var(--space-lg); color: var(--color-ink); }
-          .notfound__text { color: var(--color-muted); margin-bottom: var(--space-2xl); line-height: 1.6; }
-        `}</style>
       </div>
     )
   }

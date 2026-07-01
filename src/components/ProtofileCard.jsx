@@ -1,4 +1,5 @@
 import './ProtofileCard.css'
+import { detectIconKey, detectPlatformKey } from './createSection/formConstants'
 import { FaGlobe, FaLinkedin, FaTwitter, FaGithub, FaInstagram, FaYoutube, FaTiktok } from 'react-icons/fa'
 
 const DEFAULT_DATA = {
@@ -36,39 +37,6 @@ const LINK_LABELS = {
   tiktok: 'TikTok',
 }
 
-function detectIconKey(label = '', url = '') {
-  const lbl = label.toLowerCase()
-  const full = `${lbl} ${url}`.toLowerCase()
-
-  // Label-only checks — what the user chose beats anything in the URL
-  if (/\btiktok\b/.test(lbl)) return 'tiktok'
-  if (/\binstagram\b/.test(lbl)) return 'instagram'
-  if (/\byoutube\b/.test(lbl)) return 'youtube'
-  if (/\blinkedin\b/.test(lbl)) return 'linkedin'
-  if (/\btwitter\b/.test(lbl) || /\bx\b/.test(lbl)) return 'twitter'
-  if (/\bgithub\b/.test(lbl)) return 'github'
-
-  // Fallback: check full text (label + URL)
-  if (/\blinkedin\b/.test(full)) return 'linkedin'
-  if (/\btwitter\b/.test(full) || /\bx\.com\b/.test(full) || /\/x\b/.test(full)) return 'twitter'
-  if (/\bgithub\b/.test(full)) return 'github'
-  if (/\binstagram\b/.test(full)) return 'instagram'
-  if (/\byoutube\b/.test(full)) return 'youtube'
-  if (/\btiktok\b/.test(full)) return 'tiktok'
-  if (/\b(website|web|site|portfolio)\b/.test(full)) return 'website'
-  return 'website'
-}
-
-function detectPlatformKey(label = '', url = '') {
-  const text = `${label} ${url}`.toLowerCase()
-  const PLATFORMS = ['instagram', 'twitter', 'facebook', 'linkedin', 'youtube', 'tiktok', 'snapchat', 'discord', 'twitch', 'pinterest', 'reddit', 'telegram', 'whatsapp', 'threads', 'bluesky', 'github']
-  for (const p of PLATFORMS) {
-    if (text.includes(p)) return p
-  }
-  if (/\b(website|web|site|portfolio)\b/.test(text)) return 'website'
-  return null
-}
-
 export default function ProtofileCard({ data = DEFAULT_DATA, compact }) {
   const d = {
     ...DEFAULT_DATA,
@@ -90,10 +58,10 @@ export default function ProtofileCard({ data = DEFAULT_DATA, compact }) {
     .toUpperCase()
 
   // Support both array format (Linktree) and object format (legacy)
-  const links = Array.isArray(rawLinks) ? rawLinks : rawLinks
+  const links = Array.isArray(rawLinks) ? rawLinks : Object.values(rawLinks).filter(v => v)
   const activeLinks = Array.isArray(links)
     ? links.filter(l => l.url?.trim()).map(l => [l.label, l.url])
-    : Object.entries(links).filter(([, v]) => v?.trim())
+    : []
 
   return (
     <div

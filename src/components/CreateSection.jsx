@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect, useMemo, startTransition } from 'react'
 import { useAuth } from '../lib/useAuth'
 import { createProfile, updateProfile, deleteProfile, checkUsername, uploadPhoto, getMyProfiles } from '../lib/api'
+import { arrayMove } from '@dnd-kit/sortable'
 import { EMPTY_FORM, freshLink, freshSection, MAX_FREE_PROFILES } from './createSection/formConstants'
 import CreateProfileResult from './createSection/CreateProfileResult'
 import ProfileSelector from './createSection/ProfileSelector'
@@ -113,6 +114,7 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
     if (!file.type.startsWith('image/')) { setPhotoError('Please select an image file.'); return }
     const reader = new FileReader()
     reader.onload = (ev) => setPhotoData(ev.target?.result || '')
+    reader.onerror = () => setPhotoError('Failed to read image file. Please try another.')
     reader.readAsDataURL(file)
     setPhotoFile(file)
   }
@@ -146,6 +148,15 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
   const addSection = (label = '') => setLinks(prev => [...prev, freshSection(label)])
   const updateLink = (id, field, value) => setLinks(prev => prev.map(l => l.id === id ? { ...l, [field]: value } : l))
   const removeLink = (id) => setLinks(prev => prev.filter(l => l.id !== id))
+  const moveLink = useCallback((activeId, overId) => {
+    if (activeId === overId) return
+    setLinks(prev => {
+      const oldIndex = prev.findIndex(l => l.id === activeId)
+      const newIndex = prev.findIndex(l => l.id === overId)
+      if (oldIndex === -1 || newIndex === -1) return prev
+      return arrayMove(prev, oldIndex, newIndex)
+    })
+  }, [])
 
   // --- Submit ---
   const handleSubmit = async (e) => {
@@ -304,7 +315,7 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
               <textarea id="pf-bio" className="create-section__textarea" rows={3} placeholder="Tell people about yourself — your work, what you build, what you're about." value={form.bio} onChange={e => update('bio', e.target.value)} />
             </div>
 
-            <LinksEditor links={links} onAddLink={addLink} onAddLinkToGroup={addLinkToGroup} onAddSection={addSection} onUpdateLink={updateLink} onRemoveLink={removeLink} />
+            <LinksEditor links={links} onAddLink={addLink} onAddLinkToGroup={addLinkToGroup} onAddSection={addSection} onUpdateLink={updateLink} onRemoveLink={removeLink} onMoveLink={moveLink} />
 
             <DesignControls
               accent={accent}

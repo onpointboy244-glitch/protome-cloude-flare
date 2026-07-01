@@ -1,14 +1,33 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { getPlans } from '../lib/api'
 import './Pricing.css'
 
 export default function Pricing() {
   const [plans, setPlans] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const [comingSoon, setComingSoon] = useState(null)
+  const modalRef = useRef(null)
 
   useEffect(() => {
-    getPlans().then(setPlans)
+    getPlans()
+      .then(data => { setPlans(data); setLoading(false) })
+      .catch(e => { setError(e?.message || 'Failed to load plans.'); setLoading(false) })
   }, [])
+
+  // Focus trap for coming soon modal
+  useEffect(() => {
+    if (!comingSoon) return
+    const modal = modalRef.current
+    if (!modal) return
+    const focusable = modal.querySelectorAll('button')
+    if (focusable.length > 0) focusable[0].focus()
+    const handleKey = (e) => {
+      if (e.key === 'Escape') setComingSoon(null)
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [comingSoon])
 
   return (
     <section id="pricing" className="section pricing">
@@ -22,6 +41,15 @@ export default function Pricing() {
           </p>
         </div>
 
+        {loading ? (
+          <div className="pricing__loading" style={{ textAlign: 'center', padding: 'var(--space-4xl) 0' }}>
+            <p style={{ color: 'var(--color-muted)' }}>Loading plans…</p>
+          </div>
+        ) : error ? (
+          <div className="pricing__error" style={{ textAlign: 'center', padding: 'var(--space-4xl) 0' }}>
+            <p style={{ color: 'var(--color-danger)' }}>{error}</p>
+          </div>
+        ) : (
         <div className="pricing__grid">
           {plans.map(plan => (
             <div
@@ -70,12 +98,13 @@ export default function Pricing() {
             </div>
           ))}
         </div>
+        )}
       </div>
 
       {/* Coming Soon Modal */}
       {comingSoon && (
         <div className="pricing-overlay" onClick={() => setComingSoon(null)}>
-          <div className="pricing-modal" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-label="Coming soon">
+          <div ref={modalRef} className="pricing-modal" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-label="Coming soon">
             <button className="pricing-modal__close" onClick={() => setComingSoon(null)} aria-label="Close">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>

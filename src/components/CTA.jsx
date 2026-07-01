@@ -19,7 +19,7 @@ export default function CTA() {
       setEmail('')
     } catch (err) {
       setStatus('error')
-      setMessage(err.message)
+      setMessage(err?.message || 'Something went wrong. Please try again.')
     }
   }
 
