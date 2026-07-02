@@ -1,0 +1,150 @@
+/* ---- Link Buttons ---- */
+
+.linktree__links {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-2xl);
+}
+
+.linktree__link-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.875rem 2.75rem;
+  border: none;
+  border-radius: 12px;
+  background: oklch(1 0 0 / 0.09);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  color: #fff;
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.05);
+  transition:
+    background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s ease;
+  position: relative;
+}
+
+.linktree--light .linktree__link-btn {
+  background: oklch(1 0 0 / 0.55);
+  color: oklch(0.12 0.008 35.8);
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.04);
+}
+
+.linktree__link-btn:hover {
+  background: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px oklch(0 0 0 / 0.2);
+  color: #fff;
+}
+
+.linktree--light .linktree__link-btn:hover {
+  background: color-mix(in oklch, var(--accent), oklch(0 0 0) 8%);
+  color: #fff;
+  box-shadow: 0 8px 24px oklch(0 0 0 / 0.12);
+}
+
+.linktree__link-btn:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 6px oklch(0 0 0 / 0.1);
+}
+
+/* ---- Link body ---- */
+
+.linktree__link-body {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- Link row ---- */
+
+.linktree__link-row {
+  position: relative;
+  width: 100%;
+}
+
+/* ---- Per-link share button ---- */
+
+.linktree__link-share {
+  position: absolute;
+  right: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 0.25s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.linktree--light .linktree__link-share {
+  color: oklch(0.35 0.008 35 / 0.35);
+}
+
+.linktree__link-row:hover .linktree__link-share {
+  opacity: 1;
+}
+
+.linktree__link-share:hover {
+  background: oklch(1 0 0 / 0.15);
+  color: #fff;
+}
+
+.linktree--light .linktree__link-share:hover {
+  background: oklch(0 0 0 / 0.06);
+  color: oklch(0.12 0.008 35.8);
+}
+
+.linktree__link-share--shared {
+  opacity: 1 !important;
+  color: #22c55e !important;
+}
+
+/* ---- Section headings ---- */
+
+.linktree__section-heading {
+  width: 100%;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.35);
+  padding: var(--space-lg) 0 var(--space-sm);
+}
+
+.linktree--light .linktree__section-heading {
+  color: oklch(0.35 0.008 35 / 0.4);
+}
+
+.linktree__section-heading:first-child {
+  padding-top: 0;
+}
+
+/* ---- Link label ---- */
+
+.linktree__link-label {
+  text-align: center;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

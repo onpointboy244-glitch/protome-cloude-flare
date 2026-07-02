@@ -1,0 +1,18 @@
+/* ============================================
+   Profile page — premium design
+   protome @ protome.pages.dev
+   ============================================
+
+   Styles are split across partial files for
+   maintainability. Import order here matches
+   the visual cascade.
+   ============================================ */
+
+@import './Layout.css';
+@import './PhotoAvatar.css';
+@import './Typography.css';
+@import './SocialIcons.css';
+@import './LinkButtons.css';
+@import './ShareButton.css';
+@import './Footer.css';
+@import './Utilities.css';

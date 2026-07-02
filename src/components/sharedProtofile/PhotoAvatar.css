@@ -1,0 +1,89 @@
+/* ---- Photo ---- */
+
+.linktree__photo-wrapper {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2.5px solid var(--accent);
+  margin-bottom: var(--space-lg);
+  flex-shrink: 0;
+  box-shadow:
+    0 0 0 5px oklch(1 0 0 / 0.08),
+    0 8px 24px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s ease;
+}
+
+.linktree--light .linktree__photo-wrapper {
+  box-shadow:
+    0 0 0 5px oklch(0 0 0 / 0.04),
+    0 8px 24px oklch(0 0 0 / 0.1);
+}
+
+.linktree__photo-wrapper:hover {
+  transform: scale(1.08);
+  box-shadow:
+    0 0 0 5px oklch(1 0 0 / 0.12),
+    0 12px 32px rgba(0, 0, 0, 0.3);
+}
+
+.linktree--light .linktree__photo-wrapper:hover {
+  box-shadow:
+    0 0 0 5px oklch(0 0 0 / 0.06),
+    0 12px 32px oklch(0 0 0 / 0.15);
+}
+
+.linktree__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.linktree__photo-wrapper:hover .linktree__photo {
+  transform: scale(1.08);
+}
+
+/* ---- Avatar (initials fallback) ---- */
+
+.linktree__avatar {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-3xl);
+  margin-bottom: var(--space-lg);
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+  box-shadow:
+    0 0 0 5px oklch(1 0 0 / 0.08),
+    0 8px 24px rgba(0, 0, 0, 0.2);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s ease;
+}
+
+.linktree--light .linktree__avatar {
+  box-shadow:
+    0 0 0 5px oklch(0 0 0 / 0.04),
+    0 8px 24px oklch(0 0 0 / 0.1);
+}
+
+.linktree__avatar:hover {
+  transform: scale(1.08);
+  box-shadow:
+    0 0 0 5px oklch(1 0 0 / 0.12),
+    0 12px 32px rgba(0, 0, 0, 0.3);
+}
+
+.linktree--light .linktree__avatar:hover {
+  box-shadow:
+    0 0 0 5px oklch(0 0 0 / 0.06),
+    0 12px 32px oklch(0 0 0 / 0.15);
+}

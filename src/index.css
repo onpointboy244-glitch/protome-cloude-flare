@@ -391,13 +391,18 @@ p, li, blockquote {
 .notfound__inner {
   text-align: center;
   max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .notfound__title {
   font-family: var(--font-display);
-  font-size: var(--text-5xl);
+  font-size: var(--text-4xl);
   margin-bottom: var(--space-lg);
   color: var(--color-ink);
+  word-break: break-all;
+  line-height: 1.2;
 }
 
 .notfound__text {
@@ -405,6 +410,29 @@ p, li, blockquote {
   margin-bottom: var(--space-2xl);
   line-height: 1.6;
 }
+
+.notfound__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin-bottom: var(--space-2xl);
+  color: var(--color-muted);
+  opacity: 0.35;
+}
+
+.notfound__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.notfound__arrow {
+  margin-left: var(--space-sm);
+}
+
 
 @keyframes float {
   0%, 100% { transform: translateY(0); }

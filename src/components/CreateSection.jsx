@@ -1,8 +1,8 @@
 import { useState, useRef, useCallback, useEffect, useMemo, startTransition } from 'react'
 import { useAuth } from '../lib/useAuth'
-import { createProfile, updateProfile, deleteProfile, checkUsername, uploadPhoto, getMyProfiles } from '../lib/api'
-import { arrayMove } from '@dnd-kit/sortable'
-import { EMPTY_FORM, freshLink, freshSection, MAX_FREE_PROFILES } from './createSection/formConstants'
+import { useProfileForm } from '../lib/useProfileForm'
+import { createProfile, updateProfile, deleteProfile, checkUsername, uploadPhoto, deleteProfilePhoto } from '../lib/api'
+import { MAX_FREE_PROFILES } from './createSection/formConstants'
 import CreateProfileResult from './createSection/CreateProfileResult'
 import ProfileSelector from './createSection/ProfileSelector'
 import ProfilePhotoUploader from './createSection/ProfilePhotoUploader'
@@ -10,32 +10,32 @@ import UsernameField from './createSection/UsernameField'
 import LinksEditor from './createSection/LinksEditor'
 import DesignControls from './createSection/DesignControls'
 import DeleteProfileModal from './createSection/DeleteProfileModal'
+import { useToast } from './Toast'
 import './CreateSection.css'
 
-export default function CreateSection({ onProtofileCreated, onProfileDeleted, latestProtofile, onSignInNeeded, myProfiles = [], editTarget, onEditConsumed }) {
+export default function CreateSection({ onProtofileCreated, onProfileDeleted, latestProtofile, onSignInNeeded, myProfiles = [], profilesLoading, editTarget, onEditConsumed }) {
   const { user, loading } = useAuth()
+  const addToast = useToast()
+  const {
+    state: f, originalPhotoUrl: originalPhotoUrlRef,
+    setField, handlePhoto, removePhoto, setDesign,
+    reset, loadProfile,
+    addLink, addLinkToGroup, addSection, updateLink, removeLink, moveLink,
+  } = useProfileForm()
 
-  // --- All state ---
-  const [form, setForm] = useState({ ...EMPTY_FORM })
-  const [photoData, setPhotoData] = useState('')
-  const [photoFile, setPhotoFile] = useState(null)
-  const [links, setLinks] = useState([])
-  const [accent, setAccent] = useState('#c45a3c')
-  const [bgGradient, setBgGradient] = useState(null)
-  const [bgColor, setBgColor] = useState('#ffffff')
-  const [font, setFont] = useState('serif')
+  // --- UI-only state ---
   const [submitted, setSubmitted] = useState(false)
+  const [createdUsername, setCreatedUsername] = useState('')
   const [error, setError] = useState('')
   const [photoError, setPhotoError] = useState('')
-  const [createdUsername, setCreatedUsername] = useState('')
   const [saving, setSaving] = useState(false)
   const [usernameStatus, setUsernameStatus] = useState('idle')
   const [usernameError, setUsernameError] = useState('')
   const [editingUsername, setEditingUsername] = useState('')
   const [confirmDelete, setConfirmDelete] = useState(null)
   const [deleting, setDeleting] = useState(false)
-  const originalPhotoUrl = useRef('')
   const usernameTimeout = useRef(null)
+  const actionsRef = useRef(null)
 
   // Reset result view on sign out
   useEffect(() => {
@@ -45,41 +45,40 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
     }
   }, [user])
 
-  const update = (field, value) => setForm(prev => ({ ...prev, [field]: value }))
+  // Scroll to actions error so the user sees it
+  useEffect(() => {
+    if (error && actionsRef.current) {
+      actionsRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [error])
+
+  // Fire a toast + set inline error for form-level errors
+  const showError = useCallback((msg) => {
+    setError(msg)
+    addToast(msg, 'error')
+  }, [addToast])
 
   // --- Profile selection ---
   const selectProfile = useCallback((profile) => {
     if (!profile) {
-      setForm({ ...EMPTY_FORM }); setLinks([])
-      setPhotoData(''); setPhotoFile(null)
-      setAccent('#c45a3c'); setBgGradient(null); setBgColor('#ffffff'); setFont('serif')
-      setUsernameStatus('idle'); setUsernameError('')
-      originalPhotoUrl.current = ''; setEditingUsername('')
+      reset()
+      setEditingUsername('')
+      setUsernameStatus('idle')
+      setUsernameError('')
+      originalPhotoUrlRef.current = ''
       return
     }
-    setForm({
-      name: profile.name || '', role: profile.role || '',
-      bio: profile.bio || '',
-      username: profile.username || '',
-    })
-    setLinks((profile.links || []).map(l => ({ id: Math.random().toString(36).slice(2, 9), label: l.label, url: l.url || '', ...(l.isSection ? { isSection: true } : {}), ...(l.type ? { type: l.type } : {}) })))
-    setAccent(profile.accent || '#c45a3c')
-    setBgGradient(profile.bg_gradient || null)
-    setBgColor(profile.bg_color || '#ffffff')
-    setFont(profile.font || 'serif')
-    setUsernameStatus('available')
-    setPhotoData(profile.photo_url || '')
-    originalPhotoUrl.current = profile.photo_url || ''
+    loadProfile(profile)
     setEditingUsername(profile.username)
-  }, [])
+    setUsernameStatus('available')
+    setUsernameError('')
+  }, [reset, loadProfile, originalPhotoUrlRef])
 
   // Auto-select profile when Edit is clicked in nav
   useEffect(() => {
     if (!user || !editTarget || myProfiles.length === 0) return
     const profile = myProfiles.find(p => p.username === editTarget)
-    if (profile) {
-      startTransition(() => selectProfile(profile))
-    }
+    if (profile) startTransition(() => selectProfile(profile))
     onEditConsumed?.()
   }, [editTarget, user, myProfiles, onEditConsumed, selectProfile])
 
@@ -107,85 +106,42 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
   }, [editingUsername])
 
   // --- Photo ---
-  const handlePhoto = (e) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+  const wrappedHandlePhoto = (e) => {
     setPhotoError('')
-    if (!file.type.startsWith('image/')) { setPhotoError('Please select an image file.'); return }
-    const reader = new FileReader()
-    reader.onload = (ev) => setPhotoData(ev.target?.result || '')
-    reader.onerror = () => setPhotoError('Failed to read image file. Please try another.')
-    reader.readAsDataURL(file)
-    setPhotoFile(file)
+    const err = handlePhoto(e)
+    if (err) setPhotoError(err)
   }
-
-  const removePhoto = () => { setPhotoData(''); setPhotoFile(null) }
-
-  // --- Links ---
-  const addLink = (label = '', type) => setLinks(prev => {
-    // Always insert before the first section so ungrouped links stay at top
-    const firstSection = prev.findIndex(l => l.isSection)
-    if (firstSection === -1) return [...prev, freshLink(label, '', type)]
-    return [...prev.slice(0, firstSection), freshLink(label, '', type), ...prev.slice(firstSection)]
-  })
-  const addLinkToGroup = (sectionId, label = '', type) => setLinks(prev => {
-    if (!sectionId) {
-      // Ungrouped group — insert before first section like quick-add does
-      const firstSection = prev.findIndex(l => l.isSection)
-      if (firstSection === -1) return [...prev, freshLink(label, '', type)]
-      return [...prev.slice(0, firstSection), freshLink(label, '', type), ...prev.slice(firstSection)]
-    }
-    const idx = prev.findIndex(l => l.id === sectionId)
-    if (idx === -1) return [...prev, freshLink(label, '', type)]
-    let insertAt = idx + 1
-    for (let i = idx + 1; i < prev.length; i++) {
-      if (prev[i].isSection) break
-      insertAt = i + 1
-    }
-    const newLink = freshLink(label, '', type)
-    return [...prev.slice(0, insertAt), newLink, ...prev.slice(insertAt)]
-  })
-  const addSection = (label = '') => setLinks(prev => [...prev, freshSection(label)])
-  const updateLink = (id, field, value) => setLinks(prev => prev.map(l => l.id === id ? { ...l, [field]: value } : l))
-  const removeLink = (id) => setLinks(prev => prev.filter(l => l.id !== id))
-  const moveLink = useCallback((activeId, overId) => {
-    if (activeId === overId) return
-    setLinks(prev => {
-      const oldIndex = prev.findIndex(l => l.id === activeId)
-      const newIndex = prev.findIndex(l => l.id === overId)
-      if (oldIndex === -1 || newIndex === -1) return prev
-      return arrayMove(prev, oldIndex, newIndex)
-    })
-  }, [])
 
   // --- Submit ---
   const handleSubmit = async (e) => {
     e.preventDefault(); setError(''); setUsernameError('')
     if (!user) { onSignInNeeded?.(); return }
-    if (!form.name.trim()) { setError('Please enter your name.'); return }
-    if (!form.username.trim()) { setError('Choose a username for your profile.'); return }
-    if (usernameStatus === 'taken' && form.username.trim().toLowerCase() !== editingUsername) { setError('That username is taken. Try another.'); return }
-    if (usernameStatus === 'checking') { setError('Wait for the username check to finish.'); return }
+    if (!f.name.trim()) { showError('Please enter your name.'); return }
+    if (!f.username.trim()) { showError('Choose a username for your profile.'); return }
+    if (usernameStatus === 'taken' && f.username.trim().toLowerCase() !== editingUsername) { showError('That username is taken. Try another.'); return }
+    if (usernameStatus === 'checking') { showError('Wait for the username check to finish.'); return }
+    if (f.links.some(l => !l.isSection && !l.label.trim() && l.url.trim())) { showError('Give each link a label or remove the empty ones.'); return }
 
     setSaving(true)
     try {
       let photoUrl = ''
-      if (photoFile) photoUrl = await uploadPhoto(photoFile, form.username.trim())
+      if (f.photoFile) photoUrl = await uploadPhoto(f.photoFile, f.username.trim())
+      if (f.photoRemoved && !f.photoFile && editingUsername) await deleteProfilePhoto(editingUsername)
 
-      const validLinks = links
-        .filter(l => l.isSection ? l.label.trim() : (l.label.trim() && l.url.trim()))
+      const validLinks = f.links
+        .filter(l => l.isSection ? l.label.trim() : l.url.trim())
         .map(l => l.isSection
           ? { label: l.label.trim(), isSection: true }
-          : { label: l.label.trim(), url: l.url.trim(), ...(l.type ? { type: l.type } : {}) }
+          : { label: l.label.trim() || 'Website', url: l.url.trim(), ...(l.type ? { type: l.type } : {}) }
         )
 
-      const username = editingUsername || form.username.trim().toLowerCase()
+      const username = editingUsername || f.username.trim().toLowerCase()
 
       const data = {
-        name: form.name.trim(), role: form.role.trim(),
-        bio: form.bio.trim(),
-        photo_url: photoUrl || (editingUsername ? originalPhotoUrl.current : '') || photoData || '',
-        links: validLinks, accent, bg_color: bgColor, bg_gradient: bgGradient, font,
+        name: f.name.trim(), role: f.role.trim(),
+        bio: f.bio.trim(),
+        photo_url: f.photoRemoved && !f.photoFile ? '' : (photoUrl || (editingUsername ? originalPhotoUrlRef.current : '') || f.photoData || ''),
+        links: validLinks, accent: f.accent, bg_color: f.bgColor, bg_gradient: f.bgGradient, font: f.font,
         username,
       }
 
@@ -193,15 +149,14 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
       setCreatedUsername(result.username); setSubmitted(true)
       onProtofileCreated(data)
     } catch (err) {
-      setError(err.message || 'Something went wrong. Try again.')
+      showError(err.message || 'Something went wrong. Try again.')
     } finally { setSaving(false) }
   }
 
   const handleReset = () => {
-    setForm({ ...EMPTY_FORM }); setPhotoData(''); setPhotoFile(null); setLinks([])
-    setAccent('#c45a3c'); setBgGradient(null); setBgColor('#ffffff'); setFont('serif')
+    reset()
     setSubmitted(false); setError(''); setPhotoError(''); setCreatedUsername('')
-    setEditingUsername(''); originalPhotoUrl.current = ''
+    setEditingUsername(''); originalPhotoUrlRef.current = ''
     setUsernameStatus('idle'); setUsernameError('')
   }
 
@@ -209,9 +164,9 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
     setDeleting(true); setError('')
     try {
       await deleteProfile(profile.username); setConfirmDelete(null)
-      const updated = await getMyProfiles(); onProfileDeleted?.(updated)
+      onProfileDeleted?.()
       if (editingUsername === profile.username) selectProfile(null)
-    } catch (err) { setError(err.message || 'Failed to delete profile.') }
+    } catch (err) { showError(err.message || 'Failed to delete profile.') }
     finally { setDeleting(false) }
   }
 
@@ -236,7 +191,6 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
   }
 
   // =========== FORM VIEW ===========
-
   return (
     <section id="create" className="section create-section">
       <div className="container">
@@ -258,16 +212,13 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
                 <circle cx="12" cy="12" r="10" opacity="0.3" />
                 <path d="M12 2a10 10 0 0 1 10 10" />
               </svg>
-              <p style={{ color: 'var(--color-muted)' }}>Checking your session…</p>
+              <p style={{ color: 'var(--color-muted)' }}>Checking your session&hellip;</p>
             </div>
           </div>
         ) : user ? (
           <form className="create-section__form" onSubmit={handleSubmit}>
-            {error && <p className="create-section__form-error">{error}</p>}
 
-            {!editingUsername && (
-              <ProfileSelector myProfiles={myProfiles} onEdit={selectProfile} onDelete={setConfirmDelete} />
-            )}
+            <ProfileSelector myProfiles={myProfiles} profilesLoading={profilesLoading} onEdit={selectProfile} onDelete={setConfirmDelete} editingProfile={editingUsername} />
 
             {editingBanner}
 
@@ -284,62 +235,65 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
                 </div>
               </div>
             ) : (
-              <><ProfilePhotoUploader photoData={photoData} photoError={photoError} onPhoto={handlePhoto} onRemove={removePhoto} />
+              <><ProfilePhotoUploader photoData={f.photoData} photoError={photoError} onPhoto={wrappedHandlePhoto} onRemove={removePhoto} />
 
-            {/* Basic info */}
-            <div className="create-section__field-group">
-              <label className="create-section__field-label">About you</label>
-              <div className="create-section__grid">
-                <div className="create-section__field">
-                  <label htmlFor="pf-name" className="create-section__label">Full name *</label>
-                  <input id="pf-name" type="text" className="create-section__input" placeholder="e.g. Jordan Mitchell" value={form.name} onChange={e => update('name', e.target.value)} required />
-                </div>
-                <div className="create-section__field">
-                  <label htmlFor="pf-role" className="create-section__label">Role / title</label>
-                  <input id="pf-role" type="text" className="create-section__input" placeholder="e.g. Product Designer" value={form.role} onChange={e => update('role', e.target.value)} />
+              <div className="create-section__field-group">
+                <label className="create-section__field-label">About you</label>
+                <div className="create-section__grid">
+                  <div className="create-section__field">
+                    <label htmlFor="pf-name" className="create-section__label">Full name *</label>
+                    <input id="pf-name" type="text" className="create-section__input" placeholder="e.g. Jordan Mitchell" value={f.name} onChange={e => setField('name', e.target.value)} required />
+                  </div>
+                  <div className="create-section__field">
+                    <label htmlFor="pf-role" className="create-section__label">Role / title</label>
+                    <input id="pf-role" type="text" className="create-section__input" placeholder="e.g. Product Designer" value={f.role} onChange={e => setField('role', e.target.value)} />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <UsernameField
-              username={form.username}
-              editingUsername={editingUsername}
-              usernameStatus={usernameStatus}
-              usernameError={usernameError}
-              onChange={val => { update('username', val); validateUsername(val) }}
-            />
+              <UsernameField
+                username={f.username}
+                editingUsername={editingUsername}
+                usernameStatus={usernameStatus}
+                usernameError={usernameError}
+                onChange={val => { setField('username', val); validateUsername(val) }}
+              />
 
-            {/* Bio */}
-            <div className="create-section__field-group">
-              <label htmlFor="pf-bio" className="create-section__field-label">Bio</label>
-              <textarea id="pf-bio" className="create-section__textarea" rows={3} placeholder="Tell people about yourself — your work, what you build, what you're about." value={form.bio} onChange={e => update('bio', e.target.value)} />
-            </div>
+              <div className="create-section__field-group">
+                <label htmlFor="pf-bio" className="create-section__field-label">Bio</label>
+                <textarea id="pf-bio" className="create-section__textarea" rows={3} placeholder="Tell people about yourself — your work, what you build, what you're about." value={f.bio} onChange={e => setField('bio', e.target.value)} />
+              </div>
 
-            <LinksEditor links={links} onAddLink={addLink} onAddLinkToGroup={addLinkToGroup} onAddSection={addSection} onUpdateLink={updateLink} onRemoveLink={removeLink} onMoveLink={moveLink} />
+              <LinksEditor links={f.links} onAddLink={addLink} onAddLinkToGroup={addLinkToGroup} onAddSection={addSection} onUpdateLink={updateLink} onRemoveLink={removeLink} onMoveLink={moveLink} />
 
-            <DesignControls
-              accent={accent}
-              bgGradient={bgGradient}
-              font={font}
-              onAccentChange={setAccent}
-              onBgChange={g => {
-                if (g.id === 'none') { setBgGradient(null); setBgColor('#ffffff') }
-                else { setBgGradient(g.css); setBgColor(g.bg) }
-              }}
-              onFontChange={setFont}
-            />
+              <DesignControls
+                accent={f.accent}
+                bgGradient={f.bgGradient}
+                font={f.font}
+                onAccentChange={val => setDesign({ accent: val })}
+                onBgChange={g => {
+                  if (g.id === 'none') setDesign({ bgGradient: null, bgColor: '#ffffff' })
+                  else setDesign({ bgGradient: g.css, bgColor: g.bg })
+                }}
+                onFontChange={val => setDesign({ font: val })}
+              />
 
-            {/* Submit */}
-            <div className="create-section__actions">
-              <button type="submit" className="btn btn--primary create-section__submit" disabled={saving}>
-                {saving ? 'Saving…' : editingUsername ? 'Save changes' : 'Create your protome'}
-                {!saving && <span aria-hidden="true">&rarr;</span>}
-              </button>
-            </div>
-            </>
-          )}
+              <div className="create-section__actions">
+                <button type="submit" className="btn btn--primary create-section__submit" disabled={saving}>
+                  {saving ? 'Saving…' : editingUsername ? 'Save changes' : 'Create your protome'}
+                  {!saving && <span aria-hidden="true">&rarr;</span>}
+                </button>
+                {error && (
+                  <p ref={actionsRef} className="create-section__actions-error">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    {error}
+                  </p>
+                )}
+              </div>
+              </>
+            )}
 
-          <DeleteProfileModal profile={confirmDelete} deleting={deleting} onCancel={() => setConfirmDelete(null)} onConfirm={handleDelete} />
+            <DeleteProfileModal profile={confirmDelete} deleting={deleting} onCancel={() => setConfirmDelete(null)} onConfirm={handleDelete} />
           </form>
         ) : (
           <div className="create-section__auth-required">

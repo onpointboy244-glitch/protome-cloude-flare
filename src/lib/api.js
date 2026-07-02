@@ -17,6 +17,8 @@ async function getSupabase() {
   return _supabaseLoading
 }
 
+import { MAX_FREE_PROFILES } from '../components/createSection/formConstants'
+
 /**
  * Create a new profile.
  * Requires the user to be authenticated.
@@ -32,7 +34,7 @@ export async function createProfile(username, profileData) {
     .select('*', { count: 'exact', head: true })
     .eq('owner_id', user.id)
 
-  if (count >= 3) throw new Error('Free plan limited to 3 profiles. Delete one or upgrade to create more.')
+  if (count >= MAX_FREE_PROFILES) throw new Error(`Free plan limited to ${MAX_FREE_PROFILES} profiles. Delete one or upgrade to create more.`)
 
   const { error } = await sb.from('profiles').insert({
     username: username.toLowerCase(),
@@ -151,15 +153,21 @@ function resizeImage(file) {
 export async function uploadPhoto(file, username) {
   // Resize + compress before upload (max 400×400, WebP)
   const resized = await resizeImage(file)
-  const path = `${username}/photo.webp`
+  const ts = Date.now()
+  const path = `${username}/photo_${ts}.webp`
 
   const sb = await getSupabase()
-  // Try to delete existing photo first (ignore error if none exists)
-  await sb.storage.from('photos').remove([path]).catch(() => {})
+  // Clean up old photos for this user to avoid accumulation
+  const { data: existing } = await sb.storage.from('photos').list(username)
+  if (existing?.length) {
+    await sb.storage.from('photos').remove(
+      existing.map(f => `${username}/${f.name}`)
+    ).catch(() => {})
+  }
 
   const { error: uploadError } = await sb.storage
     .from('photos')
-    .upload(path, resized, { contentType: 'image/webp', upsert: true })
+    .upload(path, resized, { contentType: 'image/webp' })
 
   if (uploadError) throw new Error(uploadError.message)
 
@@ -168,6 +176,20 @@ export async function uploadPhoto(file, username) {
     .getPublicUrl(path)
 
   return publicUrl
+}
+
+/**
+ * Delete all stored photos for a given username.
+ * Used when the user explicitly removes their photo during editing.
+ */
+export async function deleteProfilePhoto(username) {
+  const sb = await getSupabase()
+  const { data: existing } = await sb.storage.from('photos').list(username)
+  if (existing?.length) {
+    await sb.storage.from('photos').remove(
+      existing.map(f => `${username}/${f.name}`)
+    ).catch(() => {})
+  }
 }
 
 /**

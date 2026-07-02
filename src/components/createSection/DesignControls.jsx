@@ -1,4 +1,5 @@
 import { GRADIENT_PRESETS } from './formConstants'
+import './DesignControls.css'
 
 export default function DesignControls({ accent, bgGradient, font, onAccentChange, onBgChange, onFontChange }) {
   return (

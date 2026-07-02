@@ -15,9 +15,11 @@ const DEMO_PROFILES = [
       { label: 'LinkedIn', url: '#' },
       { label: 'GitHub', url: '#' },
       { label: 'Twitter', url: '#' },
+      { label: 'Reddit', url: '#' },
     ],
     accent: '#c45a3c',
-    bgColor: '',
+    bgColor: '#1c1a19',
+    bgGradient: 'radial-gradient(ellipse at 50% 0%, #2d2a27 0%, #1a1817 100%)',
     font: '',
   },
   {
@@ -29,9 +31,11 @@ const DEMO_PROFILES = [
       { label: 'Personal site', url: '#' },
       { label: 'GitHub', url: '#' },
       { label: 'Twitter', url: '#' },
+      { label: 'Discord', url: '#' },
     ],
     accent: '#2563eb',
-    bgColor: '',
+    bgColor: '#e8eff5',
+    bgGradient: 'linear-gradient(145deg, #f0f5fa 0%, #e0e8f2 50%, #f0f5fa 100%)',
     font: 'sans',
   },
   {
@@ -45,8 +49,9 @@ const DEMO_PROFILES = [
       { label: 'Instagram', url: '#' },
       { label: 'Website', url: '#' },
     ],
-    accent: '#8b5cf6',
-    bgColor: '',
+    accent: '#e8a0b0',
+    bgColor: '#221515',
+    bgGradient: 'radial-gradient(ellipse at 50% 0%, #3d2323 0%, #1f1212 100%)',
     font: '',
   },
   {
@@ -60,9 +65,11 @@ const DEMO_PROFILES = [
       { label: 'Twitter', url: '#' },
       { label: 'TikTok', url: '#' },
       { label: 'Website', url: '#' },
+      { label: 'WhatsApp', url: '#' },
     ],
     accent: '#059669',
-    bgColor: '',
+    bgColor: '#f7efe5',
+    bgGradient: 'linear-gradient(145deg, #fefaf5 0%, #f5ede3 50%, #fefaf5 100%)',
     font: 'sans',
   },
 ]
@@ -122,6 +129,16 @@ function isSocialLink(label = '', url = '', type) {
   return SOCIAL_PLATFORMS.some(p => new RegExp(`\\b${p}\\b`).test(text))
 }
 
+function isLightColor(hex) {
+  if (!hex || hex === '#ffffff') return true
+  const c = hex.replace('#', '')
+  if (c.length < 6) return true
+  const r = parseInt(c.substring(0, 2), 16)
+  const g = parseInt(c.substring(2, 4), 16)
+  const b = parseInt(c.substring(4, 6), 16)
+  return (r * 299 + g * 587 + b * 114) / 1000 > 128
+}
+
 export default function ProtofileCard({ data, compact, animateIn }) {
   // Cycle through demo profiles when animateIn is active (Hero section)
   const [profileIndex, setProfileIndex] = useState(0)
@@ -156,8 +173,10 @@ export default function ProtofileCard({ data, compact, animateIn }) {
   const { links: rawLinks = {}, accent = '', bgColor = '', bgGradient = '', font = '' } = d
   const accentColor = accent || 'var(--color-primary-l)'
   const isSans = font === 'sans'
-  // Detect dark gradient for text contrast
-  const isDarkBg = !!bgGradient && bgGradient.includes('radial')
+  // Detect dark background for text contrast — check gradient or solid color
+  const isDarkBg = bgGradient
+    ? bgGradient.includes('radial')
+    : !isLightColor(bgColor)
   const initials = d.name
     .split(' ')
     .map(w => w[0])
@@ -177,21 +196,27 @@ export default function ProtofileCard({ data, compact, animateIn }) {
 
   return (
     <div
-      className={`protofile-card ${compact ? 'protofile-card--compact' : ''} ${isSans ? 'protofile-card--sans' : ''} ${bgGradient ? 'protofile-card--gradient' : ''} ${fading ? 'protofile-card--fading' : ''}`}
+      className={`protofile-card ${compact ? 'protofile-card--compact' : ''} ${isSans ? 'protofile-card--sans' : ''} ${bgGradient ? 'protofile-card--gradient' : ''} ${fading ? 'protofile-card--fading' : ''} ${animateIn ? 'protofile-card--hero' : ''}`}
       role="article"
       aria-label="Protofile preview"
       style={{
         '--card-accent': accentColor,
         '--card-bg': bgColor || 'var(--color-bg)',
-        ...(bgGradient ? {
-          '--card-gradient': bgGradient,
-          ...(isDarkBg ? {
-            '--card-text': '#fff',
-            '--card-text-muted': 'rgba(255, 255, 255, 0.7)',
-            '--card-text-soft': 'rgba(255, 255, 255, 0.85)',
-            '--card-border': 'rgba(255, 255, 255, 0.15)',
-            '--card-bio': 'rgba(255, 255, 255, 0.8)',
-          } : {}),
+        ...(bgGradient ? { '--card-gradient': bgGradient } : {}),
+        ...(isDarkBg ? {
+          '--card-text': '#fff',
+          '--card-text-muted': 'rgba(255, 255, 255, 0.7)',
+          '--card-text-soft': 'rgba(255, 255, 255, 0.85)',
+          '--card-border': 'rgba(255, 255, 255, 0.15)',
+          '--card-bio': 'rgba(255, 255, 255, 0.8)',
+          '--card-link-bg': 'rgba(255, 255, 255, 0.08)',
+        } : bgGradient ? {
+          '--card-text': '#111',
+          '--card-text-muted': '#555',
+          '--card-text-soft': '#333',
+          '--card-border': 'rgba(0, 0, 0, 0.1)',
+          '--card-bio': '#333',
+          '--card-link-bg': 'rgba(0, 0, 0, 0.04)',
         } : {}),
       }}
     >
@@ -231,6 +256,7 @@ export default function ProtofileCard({ data, compact, animateIn }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="protofile-card__link"
+                  onClick={animateIn ? e => e.preventDefault() : null}
                   title={LINK_LABELS[label] || label}
                   data-platform={detectPlatformKey(label, url)}
                 >
@@ -251,6 +277,7 @@ export default function ProtofileCard({ data, compact, animateIn }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="protofile-card__card-link"
+                onClick={animateIn ? e => e.preventDefault() : null}
               >
                 <span className="protofile-card__card-link-label">{label}</span>
               </a>

@@ -200,7 +200,7 @@
 /* Gradient variant for card links */
 
 .protofile-card--gradient .protofile-card__card-link {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--card-link-bg, rgba(255, 255, 255, 0.08));
   border-color: var(--card-border, rgba(255, 255, 255, 0.15));
   color: var(--card-text, #fff);
 }
@@ -278,7 +278,6 @@
 }
 .protofile-card__link[data-platform="whatsapp"]:hover {
   background: #25d366;
-  color: #111;
 }
 .protofile-card__link[data-platform="bluesky"]:hover {
   background: #0085ff;
@@ -300,10 +299,28 @@
   color: var(--card-text-muted, rgba(255, 255, 255, 0.6));
 }
 
+.protofile-card--gradient .protofile-card__link:hover {
+  color: #fff;
+  border-color: transparent;
+}
+
 /* ---- Profile cycling fade ---- */
 
 .protofile-card--fading {
   opacity: 0;
+}
+
+/* ---- Hero cycling card (fixed height, no layout jumping) ---- */
+
+.protofile-card--hero {
+  min-height: 420px;
+}
+
+.protofile-card--hero .protofile-card__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(420px - 4px); /* minus the accent bar */
 }
 
 /* ---- Reduced motion ---- */

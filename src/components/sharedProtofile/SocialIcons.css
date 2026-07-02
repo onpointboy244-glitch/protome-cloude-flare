@@ -1,0 +1,115 @@
+/* ---- Social Icon Row ---- */
+
+.linktree__socials {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-2xl);
+}
+
+.linktree__social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  background: oklch(0 0 0 / 0.15);
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.linktree--light .linktree__social-btn {
+  background: oklch(1 0 0 / 0.5);
+  border-color: oklch(0 0 0 / 0.08);
+  color: oklch(0.35 0.008 35 / 0.8);
+}
+
+.linktree__social-btn:hover {
+  transform: translateY(-3px);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.linktree--light .linktree__social-btn:hover {
+  box-shadow: 0 6px 16px oklch(0 0 0 / 0.12);
+}
+
+.linktree__social-btn:active {
+  transform: translateY(0);
+}
+
+.linktree__social-btn svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Brand-color hover states */
+
+.linktree__social-btn[data-platform="instagram"]:hover {
+  background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+.linktree__social-btn[data-platform="twitter"]:hover {
+  background: #000;
+}
+.linktree__social-btn[data-platform="linkedin"]:hover {
+  background: #0a66c2;
+}
+.linktree__social-btn[data-platform="youtube"]:hover {
+  background: #ff0000;
+}
+.linktree__social-btn[data-platform="tiktok"]:hover {
+  background: #010101;
+}
+.linktree__social-btn[data-platform="github"]:hover {
+  background: #24292e;
+}
+.linktree__social-btn[data-platform="facebook"]:hover {
+  background: #1877f2;
+}
+.linktree__social-btn[data-platform="snapchat"]:hover {
+  background: #fffc00;
+  color: #111;
+}
+.linktree__social-btn[data-platform="discord"]:hover {
+  background: #5865f2;
+}
+.linktree__social-btn[data-platform="twitch"]:hover {
+  background: #9146ff;
+}
+.linktree__social-btn[data-platform="pinterest"]:hover {
+  background: #e60023;
+}
+.linktree__social-btn[data-platform="reddit"]:hover {
+  background: #ff4500;
+}
+.linktree__social-btn[data-platform="telegram"]:hover {
+  background: #0088cc;
+}
+.linktree__social-btn[data-platform="whatsapp"]:hover {
+  background: #25d366;
+  color: #111;
+}
+.linktree__social-btn[data-platform="threads"]:hover {
+  background: #000;
+}
+.linktree__social-btn[data-platform="bluesky"]:hover {
+  background: #0085ff;
+}
+.linktree__social-btn[data-platform="website"]:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.linktree--light .linktree__social-btn[data-platform="snapchat"]:hover {
+  color: #111;
+}
+.linktree--light .linktree__social-btn[data-platform="whatsapp"]:hover {
+  color: #111;
+}

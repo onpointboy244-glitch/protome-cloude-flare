@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import ProtofileCard from '../ProtofileCard'
 import { profileUrl } from '../../lib/api'
+import './CreateProfileResult.css'
 
 export default function CreateProfileResult({ createdUsername, latestProtofile, onReset }) {
   const [copied, setCopied] = useState(false)
@@ -21,6 +22,17 @@ export default function CreateProfileResult({ createdUsername, latestProtofile, 
       timeoutRef.current = setTimeout(() => setCopied(false), 2000)
     } catch {
       // clipboard unavailable
+    }
+  }
+
+  const handleShare = async () => {
+    if (!url) return
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'protome', text: 'Check out my protome!', url })
+      } catch { /* user cancelled */ }
+    } else {
+      handleCopy()
     }
   }
 
@@ -91,6 +103,12 @@ export default function CreateProfileResult({ createdUsername, latestProtofile, 
                 </svg>
                 See it live &rarr;
               </a>
+              <button className="btn btn--ghost" onClick={handleShare}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/>
+                </svg>
+                Share
+              </button>
               <button className="btn btn--text" onClick={onReset}>
                 Create another
               </button>

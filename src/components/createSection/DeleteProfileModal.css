@@ -1,0 +1,80 @@
+/* ---- Delete confirmation modal ---- */
+
+.create-section__delete-overlay {
+  position: fixed;
+  inset: 0;
+  background: oklch(0 0 0 / 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal-bg);
+  padding: var(--space-lg);
+  animation: fade-in 0.2s ease;
+}
+
+.create-section__delete-modal {
+  background: var(--color-bg);
+  border-radius: 16px;
+  padding: var(--space-2xl);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: var(--shadow-xl);
+  animation: scale-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.create-section__delete-icon {
+  margin-bottom: var(--space-lg);
+  display: flex;
+  justify-content: center;
+}
+
+.create-section__delete-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 500;
+  margin-bottom: var(--space-md);
+  color: var(--color-ink);
+}
+
+.create-section__delete-text {
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  line-height: 1.6;
+  margin-bottom: var(--space-2xl);
+}
+
+.create-section__delete-text strong {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.create-section__delete-actions {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+}
+
+.create-section__delete-confirm {
+  background: #ef4444 !important;
+  color: #fff !important;
+  border: 1px solid #ef4444 !important;
+  font-size: var(--text-sm) !important;
+  padding: 0.6rem 1.5rem !important;
+}
+
+.create-section__delete-confirm:hover {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

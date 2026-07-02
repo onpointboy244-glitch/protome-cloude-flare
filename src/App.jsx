@@ -1,4 +1,5 @@
 import { useState, useEffect, startTransition, lazy, Suspense } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from './lib/useAuth'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
@@ -9,7 +10,8 @@ import Footer from './components/Footer'
 import Auth from './components/Auth'
 import { getProfile, getMyProfiles } from './lib/api'
 
-const SharedProtofile = lazy(() => import('./components/SharedProtofile'))
+const SharedProtofile = lazy(() => import('./components/sharedProtofile/SharedProtofile'))
+import ProfileSkeleton from './components/sharedProtofile/ProfileSkeleton'
 const CreateSection = lazy(() => import('./components/CreateSection'))
 const Pricing = lazy(() => import('./components/Pricing'))
 const Privacy = lazy(() => import('./components/Privacy'))
@@ -18,119 +20,117 @@ const About = lazy(() => import('./components/About'))
 const Blog = lazy(() => import('./components/Blog'))
 const Contact = lazy(() => import('./components/Contact'))
 
-function LoadingSpinner({ slow }) {
-  return (
-    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-lg)', color: 'var(--color-muted)' }}>
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ animation: 'spin 1s linear infinite' }}>
-        <circle cx="12" cy="12" r="10" opacity="0.3" />
-        <path d="M12 2a10 10 0 0 1 10 10" />
-      </svg>
-      {slow && <p style={{ fontSize: 'var(--text-sm)', maxWidth: 260, textAlign: 'center', lineHeight: 1.5 }}>Still loading… check your connection if this persists.</p>}
-    </div>
-  )
-}
-
 export default function App() {
   const { user } = useAuth()
-  const [route, setRoute] = useState('loading') // loading | landing | profile | notfound | error
+
+  // Determine route synchronously from URL so the first paint is correct
+  // (no skeleton flash on landing page or static pages)
+  const [route, setRoute] = useState(() => {
+    const path = window.location.pathname.replace(/\/$/, '') || '/'
+    const username = path === '/' ? null : path.slice(1)
+    if (!username) return 'landing'
+    if (['privacy', 'terms', 'about', 'blog', 'contact'].includes(username)) return username
+    return 'loading' // profile page — needs async fetch
+  })
+
   const [sharedData, setSharedData] = useState(null)
   const [protofileData, setProtofileData] = useState(null)
-  const [myProfiles, setMyProfiles] = useState([])
+  const { data: myProfiles = [], isLoading: profilesLoading } = useQuery({
+    queryKey: ['profiles', user?.id],
+    queryFn: getMyProfiles,
+    enabled: !!user,
+  })
   const [showAuth, setShowAuth] = useState(false)
   const [editTarget, setEditTarget] = useState(null)
+  const [notFoundUsername, setNotFoundUsername] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
-  const [slowLoading, setSlowLoading] = useState(false)
-
-  // Show "still loading" hint after 8s on the loading spinner
-  useEffect(() => {
-    const t = setTimeout(() => setSlowLoading(true), 8000)
-    return () => clearTimeout(t)
-  }, [route])
 
   const resolveRoute = (initialProfile = null) => {
     const path = window.location.pathname.replace(/\/$/, '') || '/'
     const username = path === '/' ? null : path.slice(1)
 
+    // Landing page — no loading needed
     if (!username) {
       setRoute('landing')
       return
     }
 
-    // Static pages
+    // Static pages — no loading needed
     if (username === 'privacy') { setRoute('privacy'); return }
     if (username === 'terms') { setRoute('terms'); return }
     if (username === 'about') { setRoute('about'); return }
     if (username === 'blog') { setRoute('blog'); return }
     if (username === 'contact') { setRoute('contact'); return }
 
-    // Use server-injected profile data if available (skips loading + Supabase fetch)
+    // Profile page — show skeleton before async fetch
     if (initialProfile) {
-      setSharedData(initialProfile)
-      setRoute('profile')
+      startTransition(() => {
+        setSharedData(initialProfile)
+        setRoute('profile')
+      })
       return
     }
 
     setRoute('loading')
     getProfile(username).then(data => {
-      if (data) {
-        setSharedData(data)
-        setRoute('profile')
-      } else {
-        setRoute('notfound')
-      }
+      startTransition(() => {
+        if (data) {
+          setSharedData(data)
+          setRoute('profile')
+        } else {
+          setNotFoundUsername(username)
+          setRoute('notfound')
+        }
+      })
     }).catch(() => {
-      setErrorMsg('Could not load profile. Check your connection and try again.')
-      setRoute('error')
+      startTransition(() => {
+        setErrorMsg('Could not load profile. Check your connection and try again.')
+        setRoute('error')
+      })
     })
   }
 
-  // On mount: check for __INITIAL_PROFILE__ injected by the Edge Function
+  // Check for __INITIAL_PROFILE__ injected by the Edge Function
   const getInitialProfile = () => {
     try {
       const el = document.getElementById('__INITIAL_PROFILE__')
       if (!el) return null
       const data = JSON.parse(el.textContent)
-      el.remove() // clean up
+      el.remove()
       return data
     } catch { return null }
   }
 
   useEffect(() => {
-    // Check for server-injected profile data (Edge Function pre-fetched it)
     const initial = getInitialProfile()
-    startTransition(() => resolveRoute(initial))
-    const handlePopState = () => startTransition(() => resolveRoute())
+    resolveRoute(initial)
+    const handlePopState = () => resolveRoute()
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
   }, [])
 
-  // Fetch current user's profiles when signed in
+  // Clear local state on sign out
   useEffect(() => {
-    if (user) {
-      getMyProfiles().then(setMyProfiles)
-    } else {
-      startTransition(() => {
-        setMyProfiles([])
-        setProtofileData(null)
-      })
+    if (!user) {
+      setProtofileData(null)
     }
   }, [user])
 
   // Refresh profiles after creating one
   const handleProfileCreated = (data) => {
     setProtofileData(data)
-    getMyProfiles().then(setMyProfiles)
+    queryClient.invalidateQueries({ queryKey: ['profiles', user?.id] })
   }
 
   // Refresh profiles after deleting one
-  const handleProfileDeleted = (updated) => {
-    setMyProfiles(updated)
+  const handleProfileDeleted = () => {
+    queryClient.invalidateQueries({ queryKey: ['profiles', user?.id] })
   }
 
   // --- Profile view ---
   if (route === 'profile' && sharedData) {
     return (
-      <Suspense fallback={<LoadingSpinner />}>
+      <Suspense fallback={<ProfileSkeleton />}>
         <SharedProtofile data={sharedData} />
       </Suspense>
     )
@@ -141,11 +141,25 @@ export default function App() {
     return (
       <div className="notfound">
         <div className="notfound__inner">
-          <h1 className="notfound__title">Not found</h1>
+          <div className="notfound__icon">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M8 15s1.5-2 4-2 4 2 4 2" />
+              <circle cx="9" cy="9" r="1" fill="currentColor" stroke="none"/>
+              <circle cx="15" cy="9" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+          </div>
+          <h1 className="notfound__title">/{notFoundUsername}</h1>
           <p className="notfound__text">
-            This protome doesn't exist yet. Claim your name and make it yours.
+            This protome doesn't exist yet. It's waiting for someone to claim it.
           </p>
-          <a href="/" className="btn btn--primary">Create yours →</a>
+          <div className="notfound__actions">
+            <a href={`/#create`} className="btn btn--primary">
+              Claim /{notFoundUsername}
+              <span aria-hidden="true" className="notfound__arrow">&rarr;</span>
+            </a>
+            <a href="/" className="btn btn--text">Go home</a>
+          </div>
         </div>
       </div>
     )
@@ -153,7 +167,7 @@ export default function App() {
 
   // --- Loading ---
   if (route === 'loading') {
-    return <LoadingSpinner slow={slowLoading} />
+    return <ProfileSkeleton />
   }
 
   // --- Error ---
@@ -180,19 +194,19 @@ export default function App() {
 
   // --- Static pages ---
   if (route === 'privacy') {
-    return <Suspense fallback={<LoadingSpinner />}><Privacy /></Suspense>
+    return <Suspense fallback={<ProfileSkeleton />}><Privacy /></Suspense>
   }
   if (route === 'terms') {
-    return <Suspense fallback={<LoadingSpinner />}><Terms /></Suspense>
+    return <Suspense fallback={<ProfileSkeleton />}><Terms /></Suspense>
   }
   if (route === 'about') {
-    return <Suspense fallback={<LoadingSpinner />}><About /></Suspense>
+    return <Suspense fallback={<ProfileSkeleton />}><About /></Suspense>
   }
   if (route === 'blog') {
-    return <Suspense fallback={<LoadingSpinner />}><Blog /></Suspense>
+    return <Suspense fallback={<ProfileSkeleton />}><Blog /></Suspense>
   }
   if (route === 'contact') {
-    return <Suspense fallback={<LoadingSpinner />}><Contact /></Suspense>
+    return <Suspense fallback={<ProfileSkeleton />}><Contact /></Suspense>
   }
 
   // --- Landing page ---
@@ -201,6 +215,7 @@ export default function App() {
       <Nav
         onSignIn={() => setShowAuth(true)}
         myProfiles={myProfiles}
+        profilesLoading={profilesLoading}
         onEditProfile={(username) => setEditTarget(username)}
       />
 
@@ -217,6 +232,7 @@ export default function App() {
             onProfileDeleted={handleProfileDeleted}
             onSignInNeeded={() => setShowAuth(true)}
             myProfiles={myProfiles}
+            profilesLoading={profilesLoading}
             editTarget={editTarget}
             onEditConsumed={() => setEditTarget(null)}
           />

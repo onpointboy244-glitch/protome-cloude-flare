@@ -9,6 +9,7 @@ import {
   FaTelegram, FaWhatsapp,
 } from 'react-icons/fa'
 import { FaThreads, FaBluesky, FaLink } from 'react-icons/fa6'
+import './LinksEditor.css'
 
 const LINK_ICONS = {
   instagram: <FaInstagram size={16} />,
@@ -60,6 +61,7 @@ function groupOtherLinks(links) {
 
 function SortableLinkEntry({ link, icon, onUpdate, onRemove }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: link.id })
+  const missingLabel = !link.label.trim() && link.url.trim()
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -95,7 +97,7 @@ function SortableLinkEntry({ link, icon, onUpdate, onRemove }) {
       <span className="create-section__link-entry-icon">{icon}</span>
       <input
         type="text"
-        className="create-section__input create-section__link-label-input"
+        className={`create-section__input create-section__link-label-input ${missingLabel ? 'create-section__link-label-input--error' : ''}`}
         placeholder="Label"
         value={link.label}
         onChange={e => onUpdate(link.id, 'label', e.target.value)}
@@ -115,6 +117,7 @@ function SortableLinkEntry({ link, icon, onUpdate, onRemove }) {
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
+      {missingLabel && <span className="create-section__link-hint">Add a label</span>}
     </div>
   )
 }
@@ -306,6 +309,7 @@ export default function LinksEditor({ links, onAddLink, onUpdateLink, onRemoveLi
 }
 
 function LinkEntry({ link, icon, onUpdate, onRemove }) {
+  const missingLabel = !link.label.trim() && link.url.trim()
   return (
     <div className="create-section__link-entry">
       <span className="create-section__link-entry-icon">
@@ -313,7 +317,7 @@ function LinkEntry({ link, icon, onUpdate, onRemove }) {
       </span>
       <input
         type="text"
-        className="create-section__input create-section__link-label-input"
+        className={`create-section__input create-section__link-label-input ${missingLabel ? 'create-section__link-label-input--error' : ''}`}
         placeholder="Label"
         value={link.label}
         onChange={e => onUpdate(link.id, 'label', e.target.value)}
@@ -333,6 +337,7 @@ function LinkEntry({ link, icon, onUpdate, onRemove }) {
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
+      {missingLabel && <span className="create-section__link-hint">Add a label</span>}
     </div>
   )
 }

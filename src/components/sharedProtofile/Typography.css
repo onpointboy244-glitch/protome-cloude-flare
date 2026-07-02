@@ -1,0 +1,71 @@
+/* ---- Name ---- */
+
+.linktree__name {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 400;
+  color: #fff;
+  margin-bottom: var(--space-sm);
+  text-align: center;
+  text-wrap: balance;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.linktree--light .linktree__name {
+  color: oklch(0.08 0.008 35.8);
+  text-shadow: none;
+}
+
+.linktree--sans .linktree__name {
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* ---- Role ---- */
+
+.linktree__role {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  margin-bottom: var(--space-lg);
+  font-family: var(--font-body);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  padding: 0.4rem 1.25rem;
+  border-radius: 999px;
+  background: oklch(0 0 0 / 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: inline-block;
+  max-width: 100%;
+}
+
+.linktree--light .linktree__role {
+  color: oklch(0.4 0.01 35 / 0.9);
+  background: oklch(0 0 0 / 0.04);
+  border: 1px solid oklch(0 0 0 / 0.06);
+}
+
+/* ---- Bio ---- */
+
+.linktree__bio {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.75;
+  text-align: center;
+  max-width: 440px;
+  width: 100%;
+  margin-bottom: var(--space-xl);
+  font-weight: 400;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.linktree--light .linktree__bio {
+  color: oklch(0.2 0.008 35 / 0.85);
+}

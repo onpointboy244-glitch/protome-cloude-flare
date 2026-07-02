@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import './ProfilePhotoUploader.css'
 
 export default function ProfilePhotoUploader({ photoData, photoError, onPhoto, onRemove }) {
   const fileInputRef = useRef(null)

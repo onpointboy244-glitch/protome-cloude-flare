@@ -1,0 +1,51 @@
+/* ---- Username ---- */
+
+.create-section__username-input {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+}
+
+.create-section__username-prefix {
+  position: absolute;
+  left: 1rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.create-section__input--username {
+  padding-left: 2.2rem !important;
+  font-family: var(--font-mono);
+  letter-spacing: 0.01em;
+  flex: 1;
+}
+
+.create-section__input--readonly {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.create-section__input--readonly:focus {
+  box-shadow: none;
+  border-color: var(--color-border);
+}
+
+.create-section__username-status {
+  position: absolute;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.create-section__field-success {
+  font-size: var(--text-xs);
+  color: #16a34a;
+  margin-top: var(--space-sm);
+}

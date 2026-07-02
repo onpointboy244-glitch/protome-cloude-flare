@@ -1,0 +1,65 @@
+/* ---- Reduced motion ---- */
+
+@media (prefers-reduced-motion: reduce) {
+  .linktree__photo-wrapper,
+  .linktree__avatar,
+  .linktree__photo,
+  .linktree__link-btn,
+  .linktree__social-btn {
+    transition-duration: 0.01ms !important;
+    transform: none !important;
+  }
+
+  .linktree__share-btn {
+    transition-duration: 0.01ms !important;
+  }
+  .linktree__link-share {
+    transition-duration: 0.01ms !important;
+    transform: translateY(-50%) !important;
+  }
+
+  .linktree__link-btn {
+    transition-duration: 0.01ms !important;
+    background: oklch(1 0 0 / 0.09) !important;
+    box-shadow: 0 1px 2px oklch(0 0 0 / 0.05) !important;
+    transform: none !important;
+  }
+  .linktree--light .linktree__link-btn {
+    background: oklch(1 0 0 / 0.55) !important;
+  }
+  .linktree__link-share {
+    opacity: 1 !important;
+  }
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 480px) {
+  .linktree {
+    padding: var(--space-lg);
+  }
+
+  .linktree__main {
+    padding: var(--space-2xl) var(--space-lg);
+  }
+
+  .linktree__photo-wrapper,
+  .linktree__avatar {
+    width: 90px;
+    height: 90px;
+  }
+
+  .linktree__name {
+    font-size: var(--text-2xl);
+  }
+
+  .linktree__link-btn {
+    padding: var(--space-md) var(--space-lg);
+    font-size: var(--text-xs);
+  }
+
+  .linktree__social-btn {
+    width: 42px;
+    height: 42px;
+  }
+}
