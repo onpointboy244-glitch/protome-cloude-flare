@@ -1,21 +1,75 @@
+import { useState, useEffect, useRef } from 'react'
 import './ProtofileCard.css'
 import { detectIconKey, detectPlatformKey } from './createSection/formConstants'
-import { FaGlobe, FaLinkedin, FaTwitter, FaGithub, FaInstagram, FaYoutube, FaTiktok } from 'react-icons/fa'
+import { FaGlobe, FaLinkedin, FaTwitter, FaGithub, FaInstagram, FaYoutube, FaTiktok, FaFacebook, FaSnapchat, FaDiscord, FaTwitch, FaPinterest, FaReddit, FaTelegram, FaWhatsapp } from 'react-icons/fa'
+import { FaThreads, FaBluesky } from 'react-icons/fa6'
 
-const DEFAULT_DATA = {
-  name: 'Jordan Mitchell',
-  role: 'Product Designer · Independent',
-  bio: 'Designing thoughtful digital experiences at the intersection of craft and purpose. Previously at Figma, currently building protome.',
-  photo: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=face',
-  links: [
-    { label: 'Website', url: '#' },
-    { label: 'LinkedIn', url: '#' },
-    { label: 'GitHub', url: '#' },
-  ],
-  accent: '',
-  bgColor: '',
-  font: '',
-}
+const DEMO_PROFILES = [
+  {
+    name: 'Jordan Mitchell',
+    role: 'Product Designer · Independent',
+    bio: 'Designing thoughtful digital experiences at the intersection of craft and purpose. Previously at Figma, currently building protome.',
+    photo: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=face',
+    links: [
+      { label: 'Portfolio', url: '#' },
+      { label: 'LinkedIn', url: '#' },
+      { label: 'GitHub', url: '#' },
+      { label: 'Twitter', url: '#' },
+    ],
+    accent: '#c45a3c',
+    bgColor: '',
+    font: '',
+  },
+  {
+    name: 'Alex Chen',
+    role: 'Full-Stack Developer · Open Source',
+    bio: 'Building tools for the next million developers. Core contributor to Astro and Vite. Love CLI tools, design systems, and good documentation.',
+    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face',
+    links: [
+      { label: 'Personal site', url: '#' },
+      { label: 'GitHub', url: '#' },
+      { label: 'Twitter', url: '#' },
+    ],
+    accent: '#2563eb',
+    bgColor: '',
+    font: 'sans',
+  },
+  {
+    name: 'Maya Rivera',
+    role: 'Writer · Creative Director',
+    bio: 'Words for brands that mean it. Previously copy lead at Mailchimp, now running my own studio. Newsletter hits 40k inboxes weekly.',
+    photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face',
+    links: [
+      { label: 'Newsletter', url: '#' },
+      { label: 'Twitter', url: '#' },
+      { label: 'Instagram', url: '#' },
+      { label: 'Website', url: '#' },
+    ],
+    accent: '#8b5cf6',
+    bgColor: '',
+    font: '',
+  },
+  {
+    name: 'Sam Okafor',
+    role: 'Indie Maker · No-code',
+    bio: 'Shipping SaaS products without writing a line of code. Built 3 profitable tools in 12 months. I teach no-code at buildinpublic.co.',
+    photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face',
+    links: [
+      { label: 'My tools', url: '#' },
+      { label: 'YouTube', url: '#' },
+      { label: 'Twitter', url: '#' },
+      { label: 'TikTok', url: '#' },
+      { label: 'Website', url: '#' },
+    ],
+    accent: '#059669',
+    bgColor: '',
+    font: 'sans',
+  },
+]
+
+const CYCLE_MS = 5000 // rotate every 5 seconds
+
+const DEFAULT_DATA = DEMO_PROFILES[0]
 
 const LINK_ICONS = {
   website: <FaGlobe size={14} key="website" />,
@@ -25,6 +79,16 @@ const LINK_ICONS = {
   instagram: <FaInstagram size={14} key="instagram" />,
   youtube: <FaYoutube size={14} key="youtube" />,
   tiktok: <FaTiktok size={14} key="tiktok" />,
+  facebook: <FaFacebook size={14} key="facebook" />,
+  snapchat: <FaSnapchat size={14} key="snapchat" />,
+  discord: <FaDiscord size={14} key="discord" />,
+  twitch: <FaTwitch size={14} key="twitch" />,
+  pinterest: <FaPinterest size={14} key="pinterest" />,
+  reddit: <FaReddit size={14} key="reddit" />,
+  telegram: <FaTelegram size={14} key="telegram" />,
+  whatsapp: <FaWhatsapp size={14} key="whatsapp" />,
+  threads: <FaThreads size={14} key="threads" />,
+  bluesky: <FaBluesky size={14} key="bluesky" />,
 }
 
 const LINK_LABELS = {
@@ -35,15 +99,59 @@ const LINK_LABELS = {
   instagram: 'Instagram',
   youtube: 'YouTube',
   tiktok: 'TikTok',
+  facebook: 'Facebook',
+  snapchat: 'Snapchat',
+  discord: 'Discord',
+  twitch: 'Twitch',
+  pinterest: 'Pinterest',
+  reddit: 'Reddit',
+  telegram: 'Telegram',
+  whatsapp: 'WhatsApp',
+  threads: 'Threads',
+  bluesky: 'Bluesky',
 }
 
-export default function ProtofileCard({ data = DEFAULT_DATA, compact }) {
+const SOCIAL_PLATFORMS = ['instagram', 'twitter', 'github', 'linkedin', 'youtube', 'tiktok',
+  'facebook', 'snapchat', 'discord', 'twitch', 'pinterest', 'reddit', 'telegram', 'whatsapp',
+  'threads', 'bluesky']
+
+function isSocialLink(label = '', url = '', type) {
+  if (type === 'website' || type === 'coding') return false
+  if (type === 'social') return true
+  const text = `${label} ${url}`.toLowerCase()
+  return SOCIAL_PLATFORMS.some(p => new RegExp(`\\b${p}\\b`).test(text))
+}
+
+export default function ProtofileCard({ data, compact, animateIn }) {
+  // Cycle through demo profiles when animateIn is active (Hero section)
+  const [profileIndex, setProfileIndex] = useState(0)
+  const [fading, setFading] = useState(false)
+  const fadeTimer = useRef(null)
+  const cycleTimer = useRef(null)
+
+  const source = animateIn ? DEMO_PROFILES[profileIndex] : (data || DEFAULT_DATA)
+
+  useEffect(() => {
+    if (!animateIn) return
+    cycleTimer.current = setInterval(() => {
+      setFading(true)
+      fadeTimer.current = setTimeout(() => {
+        setProfileIndex(prev => (prev + 1) % DEMO_PROFILES.length)
+        setFading(false)
+      }, 300)
+    }, CYCLE_MS)
+    return () => {
+      clearInterval(cycleTimer.current)
+      clearTimeout(fadeTimer.current)
+    }
+  }, [animateIn])
+
   const d = {
     ...DEFAULT_DATA,
-    ...data,
-    photo: data.photo_url || data.photo || '',
-    bgColor: data.bg_color || data.bgColor || '',
-    bgGradient: data.bg_gradient || data.bgGradient || '',
+    ...source,
+    photo: source.photo_url || source.photo || '',
+    bgColor: source.bg_color || source.bgColor || '',
+    bgGradient: source.bg_gradient || source.bgGradient || '',
   }
   const { links: rawLinks = {}, accent = '', bgColor = '', bgGradient = '', font = '' } = d
   const accentColor = accent || 'var(--color-primary-l)'
@@ -63,9 +171,13 @@ export default function ProtofileCard({ data = DEFAULT_DATA, compact }) {
     ? links.filter(l => l.url?.trim()).map(l => [l.label, l.url])
     : []
 
+  // Split into social circle icons and card-style links
+  const cardLinks = activeLinks.filter(([label, url]) => !isSocialLink(label, url))
+  const circleLinks = activeLinks.filter(([label, url]) => isSocialLink(label, url))
+
   return (
     <div
-      className={`protofile-card ${compact ? 'protofile-card--compact' : ''} ${isSans ? 'protofile-card--sans' : ''} ${bgGradient ? 'protofile-card--gradient' : ''}`}
+      className={`protofile-card ${compact ? 'protofile-card--compact' : ''} ${isSans ? 'protofile-card--sans' : ''} ${bgGradient ? 'protofile-card--gradient' : ''} ${fading ? 'protofile-card--fading' : ''}`}
       role="article"
       aria-label="Protofile preview"
       style={{
@@ -107,10 +219,10 @@ export default function ProtofileCard({ data = DEFAULT_DATA, compact }) {
           </div>
         )}
 
-        {/* Social Links */}
-        {activeLinks.length > 0 && (
+        {/* Social circle icons */}
+        {circleLinks.length > 0 && (
           <div className="protofile-card__links">
-            {activeLinks.map(([label, url], i) => {
+            {circleLinks.map(([label, url], i) => {
                 const iconKey = detectIconKey(label, url)
                 return (
                 <a
@@ -126,6 +238,23 @@ export default function ProtofileCard({ data = DEFAULT_DATA, compact }) {
                 </a>
               )
             })}
+          </div>
+        )}
+
+        {/* Card-style links (website, portfolio, etc.) */}
+        {cardLinks.length > 0 && (
+          <div className="protofile-card__card-links">
+            {cardLinks.map(([label, url], i) => (
+              <a
+                key={`card-${label}-${i}`}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="protofile-card__card-link"
+              >
+                <span className="protofile-card__card-link-label">{label}</span>
+              </a>
+            ))}
           </div>
         )}
 

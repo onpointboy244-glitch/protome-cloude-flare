@@ -11,7 +11,8 @@
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 8px 32px oklch(0 0 0 / 0.08);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+  transition: opacity 0.4s ease,
+              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.3s ease;
 }
 
@@ -150,10 +151,71 @@
   color: var(--card-bio, var(--color-ink-soft));
 }
 
-/* ---- Social Links ---- */
+/* ---- Card-style links (website, portfolio, etc.) ---- */
+
+.protofile-card__card-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.protofile-card__card-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--color-ink);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.protofile-card__card-link:hover {
+  background: var(--card-accent, var(--color-primary-l));
+  border-color: var(--card-accent, var(--color-primary-l));
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px oklch(0 0 0 / 0.1);
+}
+
+.protofile-card__card-link:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.protofile-card__card-link-label {
+  text-align: center;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Gradient variant for card links */
+
+.protofile-card--gradient .protofile-card__card-link {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--card-border, rgba(255, 255, 255, 0.15));
+  color: var(--card-text, #fff);
+}
+
+.protofile-card--gradient .protofile-card__card-link:hover {
+  background: var(--card-accent, var(--color-primary-l));
+  border-color: var(--card-accent, var(--color-primary-l));
+  color: #fff;
+}
+
+/* ---- Social Links (circle icons) ---- */
 
 .protofile-card__links {
   display: flex;
+  justify-content: center;
   gap: var(--space-sm);
   margin-bottom: var(--space-lg);
 }
@@ -238,6 +300,12 @@
   color: var(--card-text-muted, rgba(255, 255, 255, 0.6));
 }
 
+/* ---- Profile cycling fade ---- */
+
+.protofile-card--fading {
+  opacity: 0;
+}
+
 /* ---- Reduced motion ---- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -248,4 +316,3 @@
     transform: none !important;
   }
 }
-

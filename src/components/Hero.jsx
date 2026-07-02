@@ -26,8 +26,8 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="hero__visual hero__animate">
-          <ProtofileCard />
+        <div className="hero__visual">
+          <ProtofileCard animateIn />
         </div>
       </div>
     </section>
