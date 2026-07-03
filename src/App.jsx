@@ -20,21 +20,37 @@ const About = lazy(() => import('./components/About'))
 const Blog = lazy(() => import('./components/Blog'))
 const Contact = lazy(() => import('./components/Contact'))
 
+// Check for __INITIAL_PROFILE__ injected by the Edge Function (run at module level)
+// Caches result so it survives StrictMode double-invocation
+let _initialProfileCache = undefined
+function getInitialProfile() {
+  if (_initialProfileCache !== undefined) return _initialProfileCache
+  _initialProfileCache = null
+  try {
+    const el = document.getElementById('__INITIAL_PROFILE__')
+    if (!el) return _initialProfileCache
+    _initialProfileCache = JSON.parse(el.textContent)
+    el.remove()
+    return _initialProfileCache
+  } catch { return null }
+}
+
 export default function App() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
 
   // Determine route synchronously from URL so the first paint is correct
-  // (no skeleton flash on landing page or static pages)
+  const initialProfile = getInitialProfile()
   const [route, setRoute] = useState(() => {
     const path = window.location.pathname.replace(/\/$/, '') || '/'
     const username = path === '/' ? null : path.slice(1)
     if (!username) return 'landing'
     if (['privacy', 'terms', 'about', 'blog', 'contact'].includes(username)) return username
-    return 'loading' // profile page — needs async fetch
+    if (initialProfile) return 'profile' // pre-rendered by edge function — skip loading
+    return 'loading'
   })
 
-  const [sharedData, setSharedData] = useState(null)
+  const [sharedData, setSharedData] = useState(initialProfile || null)
   const [protofileData, setProtofileData] = useState(null)
   const { data: myProfiles = [], isLoading: profilesLoading } = useQuery({
     queryKey: ['profiles', user?.id],
@@ -46,7 +62,7 @@ export default function App() {
   const [notFoundUsername, setNotFoundUsername] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
 
-  const resolveRoute = (initialProfile = null) => {
+  const resolveRoute = (initialProfileParam = null) => {
     const path = window.location.pathname.replace(/\/$/, '') || '/'
     const username = path === '/' ? null : path.slice(1)
 
@@ -64,9 +80,9 @@ export default function App() {
     if (username === 'contact') { setRoute('contact'); return }
 
     // Profile page — show skeleton before async fetch
-    if (initialProfile) {
+    if (initialProfileParam) {
       startTransition(() => {
-        setSharedData(initialProfile)
+        setSharedData(initialProfileParam)
         setRoute('profile')
       })
       return
@@ -91,23 +107,16 @@ export default function App() {
     })
   }
 
-  // Check for __INITIAL_PROFILE__ injected by the Edge Function
-  const getInitialProfile = () => {
-    try {
-      const el = document.getElementById('__INITIAL_PROFILE__')
-      if (!el) return null
-      const data = JSON.parse(el.textContent)
-      el.remove()
-      return data
-    } catch { return null }
-  }
+  // Check for __INITIAL_PROFILE__ injected by the Edge Function — module-level getInitialProfile handles this
+  // (function lives at module scope above for first-paint optimization)
 
   useEffect(() => {
-    const initial = getInitialProfile()
-    startTransition(() => resolveRoute(initial))
+    startTransition(() => resolveRoute(initialProfile || getInitialProfile()))
     const handlePopState = () => startTransition(() => resolveRoute())
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
+  // initialProfile is module-cached, stable — skip exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Clear local state on sign out
