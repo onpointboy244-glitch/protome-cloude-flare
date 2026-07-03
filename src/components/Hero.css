@@ -91,8 +91,7 @@
 .hero__visual {
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  align-self: flex-start;
+  align-items: center;
   opacity: 0;
   animation:
     fade-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.63s forwards,
@@ -127,7 +126,6 @@
 
   .hero__visual {
     order: 0;
-    margin-bottom: var(--space-5xl);
   }
 
   .protofile-card {
