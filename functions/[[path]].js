@@ -180,6 +180,11 @@ export async function onRequest(context) {
     // ── Known static pages ───────────────────────────────────
     const staticPages = ['', '/', '/privacy', '/terms', '/about', '/blog', '/contact']
     if (staticPages.includes(path)) {
+      // Override canonical for sub-pages (index.html canonical points to /)
+      if (path && path !== '/') {
+        const pageUrl = esc(url.origin + path)
+        html = html.replace(/<link rel="canonical"[^>]*>/, `<link rel="canonical" href="${pageUrl}" />`)
+      }
       return new Response(html, {
         headers: { 'content-type': 'text/html', 'cache-control': 'public, max-age=300' },
       })
@@ -233,13 +238,39 @@ export async function onRequest(context) {
     const profileJSON = profileData
       ? JSON.stringify(profileData).replace(/<\//g, '\\u003C/')
       : 'null'
-    const profileHTML =
+    const profileScript =
       '<script id="__INITIAL_PROFILE__" type="application/json">' + profileJSON + '</script>'
+
+    // Build visible profile HTML inside #root so Googlebot sees content on first paint
+    const initials = safeName.split(' ').map(w => w.charAt(0)).join('').slice(0, 2).toUpperCase()
+    const role = profileData?.role ? esc(profileData.role) : ''
+    const bio = profileData?.bio ? esc(profileData.bio) : ''
+    const links = profileData?.links
+      ? profileData.links.filter(l => !l.isSection && l.url)
+      : []
+    const linkItems = links.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer" style="display:block;margin:8px 0;padding:14px 20px;border-radius:12px;background:rgba(255,255,255,0.09);color:#fff;text-decoration:none;text-align:center;font-family:system-ui;font-size:14px">${esc(l.label || l.url)}</a>`).join('\n        ')
+
+    const visibleCard = profileData ? `
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 20px;font-family:system-ui;background:${safeAccent};background:linear-gradient(135deg,${safeAccent}33,#fff);box-sizing:border-box">
+      <div style="width:100%;max-width:480px;background:rgba(255,255,255,0.06);border-radius:24px;padding:32px 24px;backdrop-filter:blur(12px);box-shadow:0 8px 40px rgba(0,0,0,0.08)">
+        <div style="width:80px;height:80px;border-radius:50%;background:${safeAccent};display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;font-weight:600;color:#fff">${initials}</div>
+        <h1 style="text-align:center;font-size:24px;font-weight:600;color:#1a1a1a;margin:0 0 4px;letter-spacing:-0.01em">${safeName}</h1>
+        ${role ? `<p style="text-align:center;font-size:14px;color:rgba(0,0,0,0.5);margin:0 0 24px">${role}</p>` : ''}
+        ${bio ? `<p style="text-align:center;font-size:14px;color:rgba(0,0,0,0.6);line-height:1.6;margin:0 0 24px;max-width:400px">${bio}</p>` : ''}
+        ${linkItems}
+      </div>
+      <p style="margin-top:32px;font-size:12px;color:rgba(0,0,0,0.3);text-align:center">protome</p>
+    </div>` : ''
+    // Inject visible content into #root replacing the spinner; React replaces it on mount
+    const rootHTML = profileData
+      ? visibleCard
+      : '<div class="shell-spinner" id="shell-spinner"><div class="shell-spinner__ring"></div></div>'
 
     const metaTags = [
       `<title>${safeName} — protome</title>`,
       `<meta name="description" content="${safeDesc}" />`,
       `<meta name="theme-color" content="${safeAccent}" />`,
+      `<link rel="canonical" href="${siteUrl}" />`,
       `<meta property="og:title" content="${safeName} — protome" />`,
       `<meta property="og:description" content="${safeDesc}" />`,
       `<meta property="og:type" content="profile" />`,
@@ -255,7 +286,10 @@ export async function onRequest(context) {
 
     html = html
       .replace(/<title>.*?<\/title>/, '')
-      .replace('</head>', `    ${metaTags}\n    ${profileHTML}\n  </head>`)
+      .replace(/<link rel="canonical"[^>]*>/, '')  // remove the static canonical from index.html
+      .replace('</head>', `    ${metaTags}\n    ${profileScript}\n  </head>`)
+      // Match <div id="root"> through ALL three nested </div> closings (ring, spinner, root)
+      .replace(/<div id="root">[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/, '<div id="root">\n      ' + rootHTML + '\n    </div>')
 
     return new Response(html, {
       headers: { 'content-type': 'text/html', 'cache-control': profileCacheControl },
