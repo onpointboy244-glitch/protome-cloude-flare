@@ -16,6 +16,9 @@ export default function SharedProtofile({ data }) {
   }
   const { name, role, bio, photo, photo_url, links, accent, bgColor, bgGradient, font } = d
   const accentColor = accent || 'var(--color-primary-l)'
+  // Only check raw hex accent — skip the CSS variable fallback
+  const isAccentLight = accent ? isLightColor(accent) : false
+  const accentHoverText = isAccentLight ? '#000' : '#fff'
   const isSans = font === 'sans'
   const initials = name
     ? name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
@@ -33,7 +36,7 @@ export default function SharedProtofile({ data }) {
     if (navigator.share) {
       navigator.share({ url: href }).catch(() => {})
     } else {
-      navigator.clipboard.writeText(href)
+      navigator.clipboard.writeText(href).catch(() => {})
       setCopiedLink(url)
       copiedTimeoutRef.current = setTimeout(() => setCopiedLink(null), 2000)
     }
@@ -55,6 +58,7 @@ export default function SharedProtofile({ data }) {
       className={`linktree ${isSans ? 'linktree--sans' : ''} ${bgGradient ? 'linktree--gradient' : ''} ${isLightBg ? 'linktree--light' : ''} ${isDarkBg ? 'linktree--dark' : ''}`}
       style={{
         '--accent': accentColor,
+        '--accent-hover-text': accentHoverText,
         '--bg-color': bgColor || 'var(--color-bg)',
         ...(bgGradient ? { '--bg-gradient': bgGradient } : {}),
       }}
@@ -73,7 +77,7 @@ export default function SharedProtofile({ data }) {
             <img src={photoSrc} alt={name || ''} className="linktree__photo" />
           </div>
         ) : (
-          <div className="linktree__avatar" style={{ background: `color-mix(in oklch, ${accentColor}, white 60%)`, color: accentColor }}>
+          <div className="linktree__avatar" style={{ color: accentColor }}>
             {initials}
           </div>
         )}
@@ -90,12 +94,12 @@ export default function SharedProtofile({ data }) {
         {/* Social icon row */}
         {socialLinks.length > 0 && (
           <div className="linktree__socials">
-            {socialLinks.map(link => {
+            {socialLinks.map((link, i) => {
               const icon = detectIcon(link.label, link.url) || GENERIC_ICON
               const href = link.url.startsWith('http') ? link.url : `https://${link.url}`
               return (
                 <a
-                  key={`social-${link.id || link.url}`}
+                  key={`social-${link.id || i}`}
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -113,11 +117,11 @@ export default function SharedProtofile({ data }) {
 
         {/* Non-social links: sections + buttons */}
         <div className="linktree__links">
-          {otherLinks.map((item) =>
+          {otherLinks.map((item, i) =>
             item.isSection ? (
-              <div key={`sect-${item.id || item.label}`} className="linktree__section-heading">{item.label}</div>
+              <div key={`sect-${item.id || i}`} className="linktree__section-heading">{item.label}</div>
             ) : (
-              <LinkItem key={`link-${item.id || item.url}`} item={item} copiedLink={copiedLink} onCopy={handleCopyLink} />
+              <LinkItem key={`link-${item.id || i}`} item={item} copiedLink={copiedLink} onCopy={handleCopyLink} />
             )
           )}
         </div>

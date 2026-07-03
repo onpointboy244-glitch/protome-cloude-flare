@@ -22,6 +22,7 @@ const Contact = lazy(() => import('./components/Contact'))
 
 export default function App() {
   const { user } = useAuth()
+  const queryClient = useQueryClient()
 
   // Determine route synchronously from URL so the first paint is correct
   // (no skeleton flash on landing page or static pages)
@@ -103,8 +104,8 @@ export default function App() {
 
   useEffect(() => {
     const initial = getInitialProfile()
-    resolveRoute(initial)
-    const handlePopState = () => resolveRoute()
+    startTransition(() => resolveRoute(initial))
+    const handlePopState = () => startTransition(() => resolveRoute())
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
   }, [])
@@ -112,7 +113,7 @@ export default function App() {
   // Clear local state on sign out
   useEffect(() => {
     if (!user) {
-      setProtofileData(null)
+      startTransition(() => setProtofileData(null))
     }
   }, [user])
 

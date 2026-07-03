@@ -82,7 +82,8 @@ export async function getProfile(username) {
     .eq('username', username.toLowerCase())
     .maybeSingle()
 
-  if (error || !data) return null
+  if (error) throw new Error(error.message)
+  if (!data) return null
   return data
 }
 

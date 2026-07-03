@@ -18,6 +18,16 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
+    rules: {
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+    },
+  },
+  // Toast.jsx uses useToast hook alongside ToastProvider — intentional, not a split worth making
+  {
+    files: ['src/components/Toast.jsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
   },
   // Client-side .js modules (src/)
   {

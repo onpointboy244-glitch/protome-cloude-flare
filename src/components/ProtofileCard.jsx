@@ -228,7 +228,7 @@ export default function ProtofileCard({ data, compact, animateIn }) {
             <img src={d.photo} alt="" className="protofile-card__photo" />
           </div>
         ) : (
-          <div className="protofile-card__avatar" aria-hidden="true" style={{ background: `color-mix(in oklch, ${accentColor}, white 60%)`, color: accentColor }}>
+          <div className="protofile-card__avatar" aria-hidden="true" style={{ color: accentColor }}>
             <span>{initials}</span>
           </div>
         )}

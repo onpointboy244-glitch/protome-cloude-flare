@@ -98,6 +98,7 @@
   font-size: var(--text-lg);
   color: var(--card-accent, var(--color-primary));
   margin-bottom: var(--space-lg);
+  background: #e8ddd4;
   box-shadow:
     0 0 0 3px oklch(1 0 0 / 0.6),
     0 4px 12px oklch(0 0 0 / 0.08);

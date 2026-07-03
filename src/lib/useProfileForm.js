@@ -36,7 +36,7 @@ function reducer(state, action) {
         photoRemoved: false,
         links: (action.profile.links || []).map(l => ({
           id: Math.random().toString(36).slice(2, 9),
-          label: l.label,
+          label: l.label || '',
           url: l.url || '',
           ...(l.isSection ? { isSection: true } : {}),
           ...(l.type ? { type: l.type } : {}),
@@ -127,14 +127,17 @@ export function useProfileForm() {
     if (!file.type.startsWith('image/')) return 'Please select an image file.'
 
     const reader = new FileReader()
-    reader.onload = (ev) => {
-      dispatch({ type: 'SET_PHOTO', dataUrl: ev.target?.result || '', file })
-    }
-    reader.onerror = () => {
-      console.warn('Failed to read the selected image file.')
-    }
-    reader.readAsDataURL(file)
-    return ''
+    return new Promise((resolve) => {
+      reader.onload = (ev) => {
+        dispatch({ type: 'SET_PHOTO', dataUrl: ev.target?.result || '', file })
+        resolve('')
+      }
+      reader.onerror = () => {
+        console.warn('Failed to read the selected image file.')
+        resolve('Failed to read the image file. Try another image.')
+      }
+      reader.readAsDataURL(file)
+    })
   }, [])
 
   const removePhoto = useCallback(() =>

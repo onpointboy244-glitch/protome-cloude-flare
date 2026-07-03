@@ -32,7 +32,7 @@
 .linktree__share-btn:hover {
   border-color: var(--share-accent);
   background: color-mix(in oklch, var(--share-accent), oklch(0 0 0 / 0.85) 75%);
-  color: #fff;
+  color: var(--accent-hover-text, #fff);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }

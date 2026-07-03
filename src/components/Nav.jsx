@@ -87,6 +87,7 @@ export default function Nav({ onSignIn, myProfiles = [], profilesLoading, onEdit
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' })
     } else {
+      // eslint-disable-next-line react-hooks/immutability
       window.location.hash = 'create'
     }
   }

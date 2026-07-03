@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect, useMemo, startTransition } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import { useAuth } from '../lib/useAuth'
 import { useProfileForm } from '../lib/useProfileForm'
 import { createProfile, updateProfile, deleteProfile, checkUsername, uploadPhoto, deleteProfilePhoto } from '../lib/api'
@@ -28,14 +29,77 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
   const [createdUsername, setCreatedUsername] = useState('')
   const [error, setError] = useState('')
   const [photoError, setPhotoError] = useState('')
-  const [saving, setSaving] = useState(false)
   const [usernameStatus, setUsernameStatus] = useState('idle')
   const [usernameError, setUsernameError] = useState('')
   const [editingUsername, setEditingUsername] = useState('')
   const [confirmDelete, setConfirmDelete] = useState(null)
-  const [deleting, setDeleting] = useState(false)
   const usernameTimeout = useRef(null)
   const actionsRef = useRef(null)
+
+  const profileMutation = useMutation({
+    mutationFn: async () => {
+      const username = f.username.trim().toLowerCase()
+
+      let photoUrl = ''
+      if (f.photoFile) photoUrl = await uploadPhoto(f.photoFile, username)
+      if (f.photoRemoved && !f.photoFile && editingUsername) await deleteProfilePhoto(editingUsername)
+
+      const processedLinks = f.links
+        .filter(l => l.isSection ? l.label.trim() : l.url.trim())
+        .map(l => l.isSection
+          ? { label: l.label.trim(), isSection: true }
+          : { label: l.label.trim() || 'Website', url: l.url.trim(), ...(l.type ? { type: l.type } : {}) }
+        )
+
+      const validLinks = processedLinks.filter((item, index, arr) => {
+        if (!item.isSection) return true
+        for (let i = index + 1; i < arr.length; i++) {
+          if (arr[i].isSection) break
+          return true
+        }
+        return false
+      })
+
+      const data = {
+        name: f.name.trim(), role: f.role.trim(),
+        bio: f.bio.trim(),
+        photo_url: f.photoRemoved && !f.photoFile ? '' : (photoUrl || (editingUsername ? originalPhotoUrlRef.current : '') || f.photoData || ''),
+        links: validLinks, accent: f.accent, bg_color: f.bgColor, bg_gradient: f.bgGradient, font: f.font,
+        username,
+      }
+
+      if (editingUsername) await updateProfile(editingUsername, data)
+      else await createProfile(username, data)
+      return data
+    },
+    onSuccess: (data) => {
+      setCreatedUsername(data.username)
+      setSubmitted(true)
+      onProtofileCreated(data)
+    },
+    onError: (err) => {
+      showError(err.message || 'Something went wrong. Try again.')
+    },
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: (profile) => deleteProfile(profile.username),
+    onSuccess: (_, profile) => {
+      setConfirmDelete(null)
+      onProfileDeleted?.()
+      if (editingUsername === profile.username) selectProfile(null)
+    },
+    onError: (err) => {
+      showError(err.message || 'Failed to delete profile.')
+    },
+  })
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (usernameTimeout.current) clearTimeout(usernameTimeout.current)
+    }
+  }, [])
 
   // Reset result view on sign out
   useEffect(() => {
@@ -89,11 +153,11 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
       if (!/^[a-z0-9_-]+$/i.test(value)) {
         setUsernameStatus('taken'); setUsernameError('Letters, numbers, hyphens and underscores only.'); return
       }
-      if (value.length < 2) { setUsernameError('Minimum 2 characters.'); return }
-      if (/[-_]$/.test(value)) { setUsernameStatus('idle'); setUsernameError(''); return }
+      if (value.length < 2) { setUsernameStatus('idle'); setUsernameError('Minimum 2 characters.'); return }
+      if (/[-_]$/.test(value)) { setUsernameStatus('idle'); setUsernameError('Must end with a letter or number.'); return }
     }
     if (value.length > 30) { setUsernameStatus('taken'); setUsernameError('Maximum 30 characters.'); return }
-    if (!/^[a-z0-9].*[a-z0-9]$/i.test(value)) { setUsernameError('Must start and end with a letter or number.'); return }
+    if (!/^[a-z0-9].*[a-z0-9]$/i.test(value)) { setUsernameStatus('idle'); setUsernameError('Must start and end with a letter or number.'); return }
 
     setUsernameStatus('checking'); setUsernameError('')
     if (usernameTimeout.current) clearTimeout(usernameTimeout.current)
@@ -106,51 +170,27 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
   }, [editingUsername])
 
   // --- Photo ---
-  const wrappedHandlePhoto = (e) => {
+  const wrappedHandlePhoto = async (e) => {
     setPhotoError('')
-    const err = handlePhoto(e)
+    const err = await handlePhoto(e)
     if (err) setPhotoError(err)
   }
 
   // --- Submit ---
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault(); setError(''); setUsernameError('')
     if (!user) { onSignInNeeded?.(); return }
-    if (!f.name.trim()) { showError('Please enter your name.'); return }
+    const nameTrimmed = f.name.trim()
+    if (nameTrimmed.length < 2) { showError('Please enter a name (at least 2 characters).'); return }
+    if (!/[a-zA-Z]/.test(nameTrimmed)) { showError('Name must include at least one letter.'); return }
     if (!f.username.trim()) { showError('Choose a username for your profile.'); return }
     if (usernameStatus === 'taken' && f.username.trim().toLowerCase() !== editingUsername) { showError('That username is taken. Try another.'); return }
     if (usernameStatus === 'checking') { showError('Wait for the username check to finish.'); return }
+    if (!/^[a-z0-9][a-z0-9_-]{0,28}[a-z0-9]$/i.test(f.username.trim())) { showError('Username must start and end with a letter or number (2-30 chars, letters, numbers, hyphens, underscores).'); return }
     if (f.links.some(l => !l.isSection && !l.label.trim() && l.url.trim())) { showError('Give each link a label or remove the empty ones.'); return }
+    if (f.links.some(l => !l.isSection && l.label.trim() && !l.url.trim())) { showError('Give each link a URL or remove the empty ones.'); return }
 
-    setSaving(true)
-    try {
-      let photoUrl = ''
-      if (f.photoFile) photoUrl = await uploadPhoto(f.photoFile, f.username.trim())
-      if (f.photoRemoved && !f.photoFile && editingUsername) await deleteProfilePhoto(editingUsername)
-
-      const validLinks = f.links
-        .filter(l => l.isSection ? l.label.trim() : l.url.trim())
-        .map(l => l.isSection
-          ? { label: l.label.trim(), isSection: true }
-          : { label: l.label.trim() || 'Website', url: l.url.trim(), ...(l.type ? { type: l.type } : {}) }
-        )
-
-      const username = editingUsername || f.username.trim().toLowerCase()
-
-      const data = {
-        name: f.name.trim(), role: f.role.trim(),
-        bio: f.bio.trim(),
-        photo_url: f.photoRemoved && !f.photoFile ? '' : (photoUrl || (editingUsername ? originalPhotoUrlRef.current : '') || f.photoData || ''),
-        links: validLinks, accent: f.accent, bg_color: f.bgColor, bg_gradient: f.bgGradient, font: f.font,
-        username,
-      }
-
-      const result = editingUsername ? await updateProfile(editingUsername, data) : await createProfile(username, data)
-      setCreatedUsername(result.username); setSubmitted(true)
-      onProtofileCreated(data)
-    } catch (err) {
-      showError(err.message || 'Something went wrong. Try again.')
-    } finally { setSaving(false) }
+    profileMutation.mutate()
   }
 
   const handleReset = () => {
@@ -160,14 +200,9 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
     setUsernameStatus('idle'); setUsernameError('')
   }
 
-  const handleDelete = async (profile) => {
-    setDeleting(true); setError('')
-    try {
-      await deleteProfile(profile.username); setConfirmDelete(null)
-      onProfileDeleted?.()
-      if (editingUsername === profile.username) selectProfile(null)
-    } catch (err) { showError(err.message || 'Failed to delete profile.') }
-    finally { setDeleting(false) }
+  const handleDelete = (profile) => {
+    setError('')
+    deleteMutation.mutate(profile)
   }
 
   const editingBanner = useMemo(() => editingUsername && !submitted ? (
@@ -246,7 +281,7 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
                   </div>
                   <div className="create-section__field">
                     <label htmlFor="pf-role" className="create-section__label">Role / title</label>
-                    <input id="pf-role" type="text" className="create-section__input" placeholder="e.g. Product Designer" value={f.role} onChange={e => setField('role', e.target.value)} />
+                    <input id="pf-role" type="text" className="create-section__input" placeholder="e.g. Product Designer · Independent" value={f.role} onChange={e => setField('role', e.target.value)} />
                   </div>
                 </div>
               </div>
@@ -279,9 +314,9 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
               />
 
               <div className="create-section__actions">
-                <button type="submit" className="btn btn--primary create-section__submit" disabled={saving}>
-                  {saving ? 'Saving…' : editingUsername ? 'Save changes' : 'Create your protome'}
-                  {!saving && <span aria-hidden="true">&rarr;</span>}
+                <button type="submit" className="btn btn--primary create-section__submit" disabled={profileMutation.isPending}>
+                  {profileMutation.isPending ? 'Saving…' : editingUsername ? 'Save changes' : 'Create your protome'}
+                  {!profileMutation.isPending && <span aria-hidden="true">&rarr;</span>}
                 </button>
                 {error && (
                   <p ref={actionsRef} className="create-section__actions-error">
@@ -293,7 +328,7 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
               </>
             )}
 
-            <DeleteProfileModal profile={confirmDelete} deleting={deleting} onCancel={() => setConfirmDelete(null)} onConfirm={handleDelete} />
+            <DeleteProfileModal profile={confirmDelete} deleting={deleteMutation.isPending} onCancel={() => setConfirmDelete(null)} onConfirm={handleDelete} />
           </form>
         ) : (
           <div className="create-section__auth-required">

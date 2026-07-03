@@ -30,25 +30,25 @@
 /* ---- Role ---- */
 
 .linktree__role {
+  font-family: var(--font-body);
   font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.7);
   text-align: center;
   margin-bottom: var(--space-lg);
-  font-family: var(--font-body);
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  padding: 0.4rem 1.25rem;
-  border-radius: 999px;
-  background: oklch(0 0 0 / 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  display: inline-block;
+  font-weight: 400;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  border: none;
   max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .linktree--light .linktree__role {
-  color: oklch(0.4 0.01 35 / 0.9);
-  background: oklch(0 0 0 / 0.04);
-  border: 1px solid oklch(0 0 0 / 0.06);
+  color: oklch(0.35 0.008 35 / 0.85);
+  background: none;
+  border: none;
 }
 
 /* ---- Bio ---- */
@@ -61,7 +61,7 @@
   max-width: 440px;
   width: 100%;
   margin-bottom: var(--space-xl);
-  font-weight: 400;
+  font-weight: 500;
   overflow-wrap: break-word;
   word-break: break-word;
 }
