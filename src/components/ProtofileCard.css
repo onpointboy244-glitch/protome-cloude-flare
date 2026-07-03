@@ -319,7 +319,7 @@
 .protofile-card--hero .protofile-card__body {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   min-height: calc(420px - 4px); /* minus the accent bar */
 }
 
