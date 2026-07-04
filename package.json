@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node scripts/generate-sitemap.js && vite build",
     "preview": "vite preview",
     "pages:dev": "npx wrangler pages dev dist/ -- npm run dev",
     "pages:deploy": "npx wrangler pages deploy dist/ --branch main",
