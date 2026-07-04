@@ -37,6 +37,7 @@ export default function Footer() {
         </div>
 
         <div className="footer__bottom">
+          <img src="/logo-og.png" alt="protome logo" className="footer__logo-icon" />
           <p className="footer__copyright">&copy; {year} protome. All rights reserved.</p>
         </div>
       </div>

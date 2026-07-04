@@ -185,6 +185,32 @@ export async function onRequest(context) {
         const pageUrl = esc(url.origin + path)
         html = html.replace(/<link rel="canonical"[^>]*>/, `<link rel="canonical" href="${pageUrl}" />`)
       }
+
+      // Homepage: inject OG meta tags with site logo
+      if (!path || path === '/') {
+        const siteUrl = esc(url.origin)
+        const ogImage = esc(url.origin + '/logo-og.png')
+        const metaTags = [
+          `<title>protome — beautiful profile pages</title>`,
+          `<meta name="description" content="Create beautiful profile pages with drag-and-drop. Build your protome page today." />`,
+          `<meta property="og:title" content="protome — beautiful profile pages" />`,
+          `<meta property="og:description" content="Create beautiful profile pages with drag-and-drop. Build your protome page today." />`,
+          `<meta property="og:type" content="website" />`,
+          `<meta property="og:url" content="${siteUrl}" />`,
+          `<meta property="og:image" content="${ogImage}" />`,
+          `<meta property="og:image:width" content="400" />`,
+          `<meta property="og:image:height" content="400" />`,
+          `<meta name="twitter:card" content="summary" />`,
+          `<meta name="twitter:title" content="protome — beautiful profile pages" />`,
+          `<meta name="twitter:description" content="Create beautiful profile pages with drag-and-drop. Build your protome page today." />`,
+          `<meta name="twitter:image" content="${ogImage}" />`,
+        ].filter(Boolean).join('\n    ')
+
+        html = html
+          .replace(/<title>.*?<\/title>/, '')
+          .replace('</head>', `    ${metaTags}\n  </head>`)
+      }
+
       return new Response(html, {
         headers: { 'content-type': 'text/html', 'cache-control': 'public, max-age=300' },
       })
@@ -250,13 +276,13 @@ export async function onRequest(context) {
       `<meta property="og:description" content="${safeDesc}" />`,
       `<meta property="og:type" content="profile" />`,
       `<meta property="og:url" content="${siteUrl}" />`,
-      safeImage ? `<meta property="og:image" content="${safeImage}" />` : '',
+      safeImage ? `<meta property="og:image" content="${safeImage}" />` : `<meta property="og:image" content="${esc(url.origin + '/logo-og.png')}" />`,
       `<meta property="og:image:width" content="400" />`,
       `<meta property="og:image:height" content="400" />`,
       `<meta name="twitter:card" content="summary" />`,
       `<meta name="twitter:title" content="${safeName} — protome" />`,
       `<meta name="twitter:description" content="${safeDesc}" />`,
-      safeImage ? `<meta name="twitter:image" content="${safeImage}" />` : '',
+      safeImage ? `<meta name="twitter:image" content="${safeImage}" />` : `<meta name="twitter:image" content="${esc(url.origin + '/logo-og.png')}" />`,
     ].filter(Boolean).join('\n    ')
 
     html = html
