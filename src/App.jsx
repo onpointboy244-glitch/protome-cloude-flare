@@ -37,7 +37,7 @@ function getInitialProfile() {
 }
 
 export default function App() {
-  const { user } = useAuth()
+  const { user, pendingRecovery } = useAuth()
   const queryClient = useQueryClient()
 
   // Determine route synchronously from URL so the first paint is correct
@@ -119,6 +119,13 @@ export default function App() {
   // initialProfile is module-cached, stable — skip exhaustive-deps
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Auto-open Auth modal in recovery mode when password recovery link is clicked
+  useEffect(() => {
+    if (pendingRecovery) {
+      startTransition(() => setShowAuth(true))
+    }
+  }, [pendingRecovery])
 
   // Clear local state on sign out
   useEffect(() => {

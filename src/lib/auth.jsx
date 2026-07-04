@@ -19,8 +19,11 @@ async function getSupabase() {
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [pendingRecovery, setPendingRecovery] = useState(false)
   const subscriptionRef = useRef(null)
   const addToast = useToast()
+
+  const clearRecovery = useCallback(() => setPendingRecovery(false), [])
 
   const refreshSession = useCallback(async () => {
     const sb = await getSupabase()
@@ -47,7 +50,7 @@ export function AuthProvider({ children }) {
         setUser(session?.user || null)
         // Password recovery link clicked — signal the auth modal to show set-password form
         if (event === 'PASSWORD_RECOVERY') {
-          localStorage.setItem('password_recovery', '1')
+          setPendingRecovery(true)
         }
       })
       subscriptionRef.current = subscription
@@ -110,11 +113,12 @@ export function AuthProvider({ children }) {
     const sb = await getSupabase()
     const { error } = await sb.auth.updateUser({ password: newPassword })
     if (error) throw error
+    clearRecovery()
     return true
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, setUser, signUp, signIn, signOut, resetPassword, updatePassword }}>
+    <AuthContext.Provider value={{ user, loading, setUser, signUp, signIn, signOut, resetPassword, updatePassword, pendingRecovery, clearRecovery }}>
       {children}
     </AuthContext.Provider>
   )

@@ -6,15 +6,16 @@ const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export default function Auth({ onClose }) {
-  const { signUp, signIn, resetPassword, updatePassword } = useAuth();
-  const [mode, setMode] = useState(() => {
-    // Password recovery — user clicked reset link in email, go straight to set-password form
-    if (localStorage.getItem('password_recovery')) {
-      localStorage.removeItem('password_recovery')
-      return 'recovery'
+  const { signUp, signIn, resetPassword, updatePassword, pendingRecovery, clearRecovery } = useAuth();
+  const [mode, setMode] = useState('signin') // signin | signup | forgot | reset-sent | recovery | confirmation
+
+  // Password recovery — user clicked reset link in email, go straight to set-password form
+  useEffect(() => {
+    if (pendingRecovery && mode !== 'recovery') {
+      setMode('recovery')
+      clearRecovery()
     }
-    return 'signin'
-  }); // signin | signup | forgot | reset-sent | recovery | confirmation
+  }, [pendingRecovery, mode, clearRecovery])
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
