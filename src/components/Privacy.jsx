@@ -24,18 +24,21 @@ export default function Privacy() {
         <p>Our Service may contain links to external sites that are not operated by us. If you click on a third party link, you will be directed to that third party&apos;s site. We strongly advise you to review the Privacy Policy and terms of service of every site you visit.</p>
         <p>We have no control over, and assume no responsibility for the content, privacy policies or practices of any third party sites, products or services.</p>
 
-        <h2>5. Protection of Certain Personally-Identifying Information</h2>
+        <h2>5. Profile Reporting</h2>
+        <p>Protome allows visitors to report profiles that may violate our terms. When you submit a report, we collect your IP address along with the reason and any details you provide. This information is used solely to prevent duplicate reports and to review reported profiles. IP addresses collected for this purpose are not used for any other form of tracking or identification.</p>
+
+        <h2>6. Protection of Certain Personally-Identifying Information</h2>
         <p>Protome discloses potentially personally-identifying and personally-identifying information only to those of its employees, contractors and affiliated organizations that (i) need to know that information in order to process it on Protome&apos;s behalf or to provide services available at Protome&apos;s website, and (ii) that have agreed not to disclose it to others. Protome will not rent or sell potentially personally-identifying and personally-identifying information to anyone.</p>
         <p>If you are a registered user and have supplied your email address, Protome may occasionally send you an email to tell you about new features, solicit your feedback, or just keep you up to date with what&apos;s going on with Protome and our products.</p>
 
-        <h2>6. Cookies</h2>
+        <h2>7. Cookies</h2>
         <p>Protome uses &quot;Cookies&quot; to store your session and preferences. A cookie is a string of information that a website stores on a visitor&apos;s computer, and that the visitor&apos;s browser provides to the website each time the visitor returns. Protome uses cookies to help Protome identify and track visitors and their website access preferences.</p>
         <p>Protome visitors who do not wish to have cookies placed on their computers should set their browsers to refuse cookies before using Protome&apos;s websites, with the drawback that certain features of Protome&apos;s websites may not function properly without the aid of cookies.</p>
 
-        <h2>7. Privacy Policy Changes</h2>
+        <h2>8. Privacy Policy Changes</h2>
         <p>Protome may change its Privacy Policy from time to time, and in Protome&apos;s sole discretion. Protome encourages visitors to frequently check this page for any changes to its Privacy Policy. Your continued use of this site after any change in this Privacy Policy will constitute your acceptance of such change.</p>
 
-        <h2>8. Contact</h2>
+        <h2>9. Contact</h2>
         <p>If you have any questions about our Privacy Policy, please contact us via email at report@protome.app.</p>
       </div>
     </div>

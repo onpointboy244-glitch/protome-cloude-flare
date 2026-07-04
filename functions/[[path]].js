@@ -26,10 +26,15 @@ export async function onRequest(context) {
     }
 
     // ── CORS headers ───────────────────────────────────────────
+    // Restrict to the request's origin (or the site origin) instead of wildcard
+    // so only first-party pages and known referrers can call the API.
+    const requestOrigin = request.headers.get('Origin') || url.origin
+    const allowedOrigin = requestOrigin || url.origin
     const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': allowedOrigin,
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
+      'Vary': 'Origin',
     }
 
     if (request.method === 'OPTIONS') {

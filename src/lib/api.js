@@ -20,6 +20,27 @@ async function getSupabase() {
 import { MAX_FREE_PROFILES } from '../components/createSection/formConstants'
 
 /**
+ * Strip dangerous protocols from URLs to prevent stored XSS via javascript: or data: links.
+ * Called client-side (defense in depth) — a Supabase DB trigger would be the server-side guarantee.
+ */
+function sanitizeLinks(profileData) {
+  const dangerousProtocols = ['javascript:', 'data:', 'vbscript:', 'file:']
+  const isDangerous = (url) => {
+    if (!url || typeof url !== 'string') return false
+    const lower = url.trim().toLowerCase()
+    return dangerousProtocols.some(p => lower.startsWith(p))
+  }
+  const links = Array.isArray(profileData.links) ? profileData.links : []
+  return {
+    ...profileData,
+    links: links.map(l => {
+      if (l.isSection) return l
+      return { ...l, url: isDangerous(l.url) ? '' : (l.url || '').trim() }
+    }),
+  }
+}
+
+/**
  * Create a new profile.
  * Requires the user to be authenticated.
  */
@@ -39,7 +60,7 @@ export async function createProfile(username, profileData) {
   const { error } = await sb.from('profiles').insert({
     username: username.toLowerCase(),
     owner_id: user.id,
-    ...profileData,
+    ...sanitizeLinks(profileData),
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   })
@@ -60,7 +81,7 @@ export async function updateProfile(username, profileData) {
   const { error } = await sb
     .from('profiles')
     .update({
-      ...profileData,
+      ...sanitizeLinks(profileData),
       updated_at: new Date().toISOString(),
     })
     .eq('username', username.toLowerCase())
@@ -152,6 +173,10 @@ function resizeImage(file) {
  * Returns the public URL.
  */
 export async function uploadPhoto(file, username) {
+  // Reject oversized or non-image files before processing (defense in depth)
+  const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10 MB
+  if (file.size > MAX_FILE_SIZE) throw new Error('Image must be smaller than 10 MB.')
+  if (!file.type || !file.type.startsWith('image/')) throw new Error('Only image files are allowed.')
   // Resize + compress before upload (max 400×400, WebP)
   const resized = await resizeImage(file)
   const ts = Date.now()
