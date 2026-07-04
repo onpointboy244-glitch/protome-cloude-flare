@@ -53,10 +53,14 @@ export function AuthProvider({ children }) {
     }
     init()
 
-    // Listen for auth state changes (same-tab sign in / sign out)
+    // Listen for auth state changes (same-tab sign in / sign out / password recovery)
     getSupabase().then(sb => {
-      const { data: { subscription } } = sb.auth.onAuthStateChange((_event, session) => {
+      const { data: { subscription } } = sb.auth.onAuthStateChange((event, session) => {
         setUser(session?.user || null)
+        // Password recovery link clicked — signal the auth modal to show set-password form
+        if (event === 'PASSWORD_RECOVERY') {
+          localStorage.setItem('password_recovery', '1')
+        }
       })
       subscriptionRef.current = subscription
     }).catch(() => {})
@@ -110,12 +114,19 @@ export function AuthProvider({ children }) {
   const resetPassword = async (email) => {
     const sb = await getSupabase()
     return sb.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/#auth-recovery`,
+      redirectTo: window.location.origin,
     })
   }
 
+  const updatePassword = async (newPassword) => {
+    const sb = await getSupabase()
+    const { error } = await sb.auth.updateUser({ password: newPassword })
+    if (error) throw error
+    return true
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, setUser, signUp, signIn, signOut, resetPassword }}>
+    <AuthContext.Provider value={{ user, loading, setUser, signUp, signIn, signOut, resetPassword, updatePassword }}>
       {children}
       {toast && (
         <div className="toast-container" role="status" aria-live="polite">

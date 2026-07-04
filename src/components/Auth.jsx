@@ -6,10 +6,18 @@ const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export default function Auth({ onClose }) {
-  const { signUp, signIn, resetPassword } = useAuth();
-  const [mode, setMode] = useState("signin"); // signin | signup | forgot | reset-sent | confirmation
+  const { signUp, signIn, resetPassword, updatePassword } = useAuth();
+  const [mode, setMode] = useState(() => {
+    // Password recovery — user clicked reset link in email, go straight to set-password form
+    if (localStorage.getItem('password_recovery')) {
+      localStorage.removeItem('password_recovery')
+      return 'recovery'
+    }
+    return 'signin'
+  }); // signin | signup | forgot | reset-sent | recovery | confirmation
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const modalRef = useRef(null);
@@ -102,6 +110,17 @@ export default function Auth({ onClose }) {
         const { error } = await resetPassword(email);
         if (error) throw error;
         setMode("reset-sent");
+      } else if (mode === "recovery") {
+        if (password.length < 6) {
+          setError("Password must be at least 6 characters.");
+          return
+        }
+        if (password !== confirmPassword) {
+          setError("Passwords don't match.");
+          return
+        }
+        await updatePassword(password);
+        onClose?.()
       } else {
         const { error } = await signIn(email, password);
         if (error) throw error;
@@ -328,11 +347,85 @@ export default function Auth({ onClose }) {
             Remember your password?{" "}
             <button
               className="auth-toggle-btn"
-              onClick={() => { setMode("signin"); setError(""); }}
+              onClick={() => { setMode("signin"); setError(""); setPassword(""); setConfirmPassword(""); }}
             >
               Sign in
             </button>
           </p>
+        </div>
+      </div>
+    );
+  }
+
+  // --- Set new password (after recovery link clicked) ---
+  if (mode === "recovery") {
+    return (
+      <div className="auth-overlay" onClick={onClose}>
+        <div
+          className="auth-modal"
+          ref={modalRef}
+          onClick={(e) => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Set new password"
+        >
+          <button className="auth-close" onClick={onClose} aria-label="Close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+
+          <h2 className="auth-title">Set new password</h2>
+          <p className="auth-subtitle">
+            Choose a new password for your account.
+          </p>
+
+          <form className="auth-form" onSubmit={handleSubmit}>
+            {error && (
+              <p className="auth-error" role="alert">
+                {error}
+              </p>
+            )}
+
+            <div className="auth-field">
+              <label htmlFor="auth-new-password">New password</label>
+              <input
+                id="auth-new-password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="At least 6 characters"
+                required
+                minLength={6}
+                autoComplete="new-password"
+                disabled={submitting}
+              />
+            </div>
+
+            <div className="auth-field">
+              <label htmlFor="auth-confirm-password">Confirm password</label>
+              <input
+                id="auth-confirm-password"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Type it again"
+                required
+                minLength={6}
+                autoComplete="new-password"
+                disabled={submitting}
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn--primary auth-submit"
+              disabled={submitting || !password || !confirmPassword}
+            >
+              {submitting ? "Updating…" : "Update password"}
+            </button>
+          </form>
         </div>
       </div>
     );
@@ -413,7 +506,7 @@ export default function Auth({ onClose }) {
               <button
                 type="button"
                 className="auth-forgot-link"
-                onClick={() => { setMode("forgot"); setError(""); }}
+                onClick={() => { setMode("forgot"); setError(""); setPassword(""); setConfirmPassword(""); }}
               >
                 Forgot password?
               </button>
@@ -442,6 +535,8 @@ export default function Auth({ onClose }) {
                 onClick={() => {
                   setMode("signup");
                   setError("");
+                  setPassword("");
+                  setConfirmPassword("");
                 }}
               >
                 Sign up
@@ -455,6 +550,8 @@ export default function Auth({ onClose }) {
                 onClick={() => {
                   setMode("signin");
                   setError("");
+                  setPassword("");
+                  setConfirmPassword("");
                 }}
               >
                 Sign in
