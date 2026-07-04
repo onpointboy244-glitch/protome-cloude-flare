@@ -9,6 +9,7 @@ import CTA from './components/CTA'
 import Footer from './components/Footer'
 import Auth from './components/Auth'
 import { getProfile, getMyProfiles } from './lib/api'
+import GenericLoader from './components/GenericLoader'
 
 const SharedProtofile = lazy(() => import('./components/sharedProtofile/SharedProtofile'))
 import ProfileSkeleton from './components/sharedProtofile/ProfileSkeleton'
@@ -204,19 +205,19 @@ export default function App() {
 
   // --- Static pages ---
   if (route === 'privacy') {
-    return <Suspense fallback={<ProfileSkeleton />}><Privacy /></Suspense>
+    return <Suspense fallback={<GenericLoader />}><Privacy /></Suspense>
   }
   if (route === 'terms') {
-    return <Suspense fallback={<ProfileSkeleton />}><Terms /></Suspense>
+    return <Suspense fallback={<GenericLoader />}><Terms /></Suspense>
   }
   if (route === 'about') {
-    return <Suspense fallback={<ProfileSkeleton />}><About /></Suspense>
+    return <Suspense fallback={<GenericLoader />}><About /></Suspense>
   }
   if (route === 'blog') {
-    return <Suspense fallback={<ProfileSkeleton />}><Blog /></Suspense>
+    return <Suspense fallback={<GenericLoader />}><Blog /></Suspense>
   }
   if (route === 'contact') {
-    return <Suspense fallback={<ProfileSkeleton />}><Contact /></Suspense>
+    return <Suspense fallback={<GenericLoader />}><Contact /></Suspense>
   }
 
   // --- Landing page ---

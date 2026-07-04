@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { AuthContext } from './useAuth'
-import '../components/Toast.css'
+import { useToast } from '../components/Toast'
 
 let _supabase = null
 let _supabaseLoading = null
@@ -19,20 +19,8 @@ async function getSupabase() {
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [toast, setToast] = useState(null)
-  const toastTimer = useRef(null)
   const subscriptionRef = useRef(null)
-
-  const clearToast = useCallback(() => {
-    if (toastTimer.current) clearTimeout(toastTimer.current)
-    setToast(null)
-  }, [])
-
-  const showToast = useCallback((message) => {
-    if (toastTimer.current) clearTimeout(toastTimer.current)
-    setToast({ message })
-    toastTimer.current = setTimeout(() => setToast(null), 5000)
-  }, [])
+  const addToast = useToast()
 
   const refreshSession = useCallback(async () => {
     const sb = await getSupabase()
@@ -48,7 +36,7 @@ export function AuthProvider({ children }) {
       // After session check, see if we were redirected from email confirmation
       if (localStorage.getItem('email_confirmed')) {
         localStorage.removeItem('email_confirmed')
-        showToast("Email confirmed! You're now signed in.")
+        addToast("Email confirmed! You're now signed in.", 'success')
       }
     }
     init()
@@ -76,7 +64,7 @@ export function AuthProvider({ children }) {
       if (e.key === 'email_confirmed') {
         localStorage.removeItem('email_confirmed')
         refreshSession().then(() => {
-          showToast("Email confirmed! You're now signed in.")
+          addToast("Email confirmed! You're now signed in.", 'success')
         })
       }
       if (e.key?.startsWith('sb-') || e.key === 'supabase.auth.token') {
@@ -128,23 +116,6 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider value={{ user, loading, setUser, signUp, signIn, signOut, resetPassword, updatePassword }}>
       {children}
-      {toast && (
-        <div className="toast-container" role="status" aria-live="polite">
-          <div className="toast" role="alert">
-            <span className="toast__icon">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-            </span>
-            <span className="toast__message">{toast.message}</span>
-            <button className="toast__close" onClick={clearToast} aria-label="Dismiss">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-      )}
     </AuthContext.Provider>
   )
 }

@@ -189,7 +189,7 @@ export async function onRequest(context) {
         html = html.replace(/<link rel="canonical"[^>]*>/, `<link rel="canonical" href="${pageUrl}" />`)
       }
 
-      // Homepage: inject OG meta tags with site logo
+      // Homepage: inject OG meta tags with site logo + JSON-LD structured data
       if (!path || path === '/') {
         const siteUrl = esc(url.origin)
         const ogImage = esc(url.origin + '/logo-og.webp')
@@ -208,6 +208,13 @@ export async function onRequest(context) {
           `<meta name="twitter:title" content="protome — beautiful profile pages" />`,
           `<meta name="twitter:description" content="Create beautiful profile pages with drag-and-drop. Build your protome page today." />`,
           `<meta name="twitter:image" content="${ogImage}" />`,
+          `<script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "protome",
+  "url": "${siteUrl}",
+  "description": "Create beautiful profile pages with drag-and-drop. Build your protome page today."
+}</script>`,
         ].filter(Boolean).join('\n    ')
 
         html = html
