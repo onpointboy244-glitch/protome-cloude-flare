@@ -193,6 +193,7 @@ export async function onRequest(context) {
         const metaTags = [
           `<title>protome — beautiful profile pages</title>`,
           `<meta name="description" content="Create beautiful profile pages with drag-and-drop. Build your protome page today." />`,
+          `<meta name="theme-color" content="#7c3aed" />`,
           `<meta property="og:title" content="protome — beautiful profile pages" />`,
           `<meta property="og:description" content="Create beautiful profile pages with drag-and-drop. Build your protome page today." />`,
           `<meta property="og:type" content="website" />`,
