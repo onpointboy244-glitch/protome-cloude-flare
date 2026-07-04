@@ -194,7 +194,7 @@ export async function onRequest(context) {
       // Homepage: inject OG meta tags with site logo
       if (!path || path === '/') {
         const siteUrl = esc(url.origin)
-        const ogImage = esc(url.origin + '/logo-og.png')
+        const ogImage = esc(url.origin + '/logo-og.webp')
         const metaTags = [
           `<title>protome — beautiful profile pages</title>`,
           `<meta name="description" content="Create beautiful profile pages with drag-and-drop. Build your protome page today." />`,
@@ -256,6 +256,17 @@ export async function onRequest(context) {
           : `Check out ${name}'s protome profile.`
         image = data.photo_url || null
         accent = data.accent || '#c45a3c'
+      } else {
+        // Profile not found — return 404 with noindex so Google doesn't index it.
+        // The React app will show the "not found" UI client-side from the URL.
+        const noindexHtml = html.replace(
+          '</head>',
+          '  <meta name="robots" content="noindex" />\n  <meta name="description" content="" />\n  <title>Profile not found — protome</title>\n</head>'
+        )
+        return new Response(noindexHtml, {
+          status: 404,
+          headers: { 'content-type': 'text/html', 'cache-control': 'public, max-age=300' },
+        })
       }
     } catch {
       // Supabase unavailable — serve without OG tags
@@ -282,13 +293,13 @@ export async function onRequest(context) {
       `<meta property="og:description" content="${safeDesc}" />`,
       `<meta property="og:type" content="profile" />`,
       `<meta property="og:url" content="${siteUrl}" />`,
-      safeImage ? `<meta property="og:image" content="${safeImage}" />` : `<meta property="og:image" content="${esc(url.origin + '/logo-og.png')}" />`,
+      safeImage ? `<meta property="og:image" content="${safeImage}" />` : `<meta property="og:image" content="${esc(url.origin + '/logo-og.webp')}" />`,
       `<meta property="og:image:width" content="400" />`,
       `<meta property="og:image:height" content="400" />`,
       `<meta name="twitter:card" content="summary" />`,
       `<meta name="twitter:title" content="${safeName} — protome" />`,
       `<meta name="twitter:description" content="${safeDesc}" />`,
-      safeImage ? `<meta name="twitter:image" content="${safeImage}" />` : `<meta name="twitter:image" content="${esc(url.origin + '/logo-og.png')}" />`,
+      safeImage ? `<meta name="twitter:image" content="${safeImage}" />` : `<meta name="twitter:image" content="${esc(url.origin + '/logo-og.webp')}" />`,
     ].filter(Boolean).join('\n    ')
 
     html = html
