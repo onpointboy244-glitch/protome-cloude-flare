@@ -225,7 +225,7 @@ export default function ProtofileCard({ data, compact, animateIn }) {
         {/* Avatar or Photo */}
         {d.photo ? (
           <div className="protofile-card__photo-wrapper" style={{ borderColor: accentColor }}>
-            <img src={d.photo} alt="" className="protofile-card__photo" />
+            <img src={d.photo} alt="" className="protofile-card__photo" loading="lazy" />
           </div>
         ) : (
           <div className="protofile-card__avatar" aria-hidden="true" style={{ color: accentColor }}>

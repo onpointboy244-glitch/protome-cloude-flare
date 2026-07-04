@@ -71,8 +71,6 @@ export async function onRequest(context) {
       const staticUrls = [
         { loc: `${siteUrl}/`, priority: '1.0', changefreq: 'weekly' },
         { loc: `${siteUrl}/about`, priority: '0.7', changefreq: 'monthly' },
-        { loc: `${siteUrl}/blog`, priority: '0.6', changefreq: 'weekly' },
-        { loc: `${siteUrl}/contact`, priority: '0.6', changefreq: 'monthly' },
         { loc: `${siteUrl}/privacy`, priority: '0.5', changefreq: 'monthly' },
         { loc: `${siteUrl}/terms`, priority: '0.5', changefreq: 'monthly' },
       ]

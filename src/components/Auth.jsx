@@ -6,8 +6,8 @@ const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export default function Auth({ onClose }) {
-  const { signUp, signIn } = useAuth();
-  const [mode, setMode] = useState("signin"); // signin | signup | confirmation
+  const { signUp, signIn, resetPassword } = useAuth();
+  const [mode, setMode] = useState("signin"); // signin | signup | forgot | reset-sent | confirmation
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -98,6 +98,10 @@ export default function Auth({ onClose }) {
         setMode("confirmation");
         setEmail("");
         setPassword("");
+      } else if (mode === "forgot") {
+        const { error } = await resetPassword(email);
+        if (error) throw error;
+        setMode("reset-sent");
       } else {
         const { error } = await signIn(email, password);
         if (error) throw error;
@@ -225,6 +229,115 @@ export default function Auth({ onClose }) {
     );
   }
 
+  // --- Forgot password sent ---
+  if (mode === "reset-sent") {
+    return (
+      <div className="auth-overlay" onClick={onClose}>
+        <div
+          className="auth-modal"
+          ref={modalRef}
+          onClick={(e) => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Reset link sent"
+        >
+          <button className="auth-close" onClick={onClose} aria-label="Close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+
+          <div className="auth-confirmation">
+            <div className="auth-confirmation__icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
+            </div>
+            <h2 className="auth-title">Check your email</h2>
+            <p className="auth-confirmation__text">
+              We sent a password reset link to <strong>{email}</strong>. It may take a few minutes to arrive.
+            </p>
+            <div className="auth-confirmation__actions">
+              <button className="btn btn--text" onClick={() => { setMode("signin"); setError(""); }}>
+                Back to sign in
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- Forgot password form ---
+  if (mode === "forgot") {
+    return (
+      <div className="auth-overlay" onClick={onClose}>
+        <div
+          className="auth-modal"
+          ref={modalRef}
+          onClick={(e) => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Reset password"
+        >
+          <button className="auth-close" onClick={onClose} aria-label="Close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+
+          <h2 className="auth-title">Reset your password</h2>
+          <p className="auth-subtitle">
+            Enter your email and we'll send you a reset link.
+          </p>
+
+          <form className="auth-form" onSubmit={handleSubmit}>
+            {error && (
+              <p className="auth-error" role="alert">
+                {error}
+              </p>
+            )}
+
+            <div className="auth-field">
+              <label htmlFor="auth-forgot-email">Email</label>
+              <input
+                id="auth-forgot-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                required
+                autoComplete="email"
+                disabled={submitting}
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn--primary auth-submit"
+              disabled={submitting || !email}
+            >
+              {submitting ? "Sending…" : "Send reset link"}
+            </button>
+          </form>
+
+          <p className="auth-toggle">
+            Remember your password?{" "}
+            <button
+              className="auth-toggle-btn"
+              onClick={() => { setMode("signin"); setError(""); }}
+            >
+              Sign in
+            </button>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   // --- Sign in / Sign up form ---
   return (
     <div className="auth-overlay" onClick={onClose}>
@@ -296,6 +409,15 @@ export default function Auth({ onClose }) {
               }
               disabled={submitting}
             />
+            {mode === "signin" && (
+              <button
+                type="button"
+                className="auth-forgot-link"
+                onClick={() => { setMode("forgot"); setError(""); }}
+              >
+                Forgot password?
+              </button>
+            )}
           </div>
 
           <button

@@ -107,8 +107,15 @@ export function AuthProvider({ children }) {
     return sb.auth.signOut()
   }
 
+  const resetPassword = async (email) => {
+    const sb = await getSupabase()
+    return sb.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/#auth-recovery`,
+    })
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, setUser, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, loading, setUser, signUp, signIn, signOut, resetPassword }}>
       {children}
       {toast && (
         <div className="toast-container" role="status" aria-live="polite">

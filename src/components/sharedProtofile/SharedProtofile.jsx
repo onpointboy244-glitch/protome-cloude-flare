@@ -74,7 +74,7 @@ export default function SharedProtofile({ data }) {
         {/* Photo / Avatar */}
         {hasPhoto ? (
           <div className="linktree__photo-wrapper">
-            <img src={photoSrc} alt={name || ''} className="linktree__photo" />
+            <img src={photoSrc} alt={name || ''} className="linktree__photo" loading="lazy" />
           </div>
         ) : (
           <div className="linktree__avatar" style={{ color: accentColor }}>
