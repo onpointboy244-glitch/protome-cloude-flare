@@ -2,50 +2,50 @@ import './ProfileSkeleton.css'
 
 export default function ProfileSkeleton() {
   return (
-    <div className="linktree-skeleton" style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg)', padding: 'var(--space-lg)' }}>
-      <div className="linktree-skeleton__card">
-        <div className="linktree-skeleton__accent-bar" />
+    <div className="protofile-skeleton" style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg)', padding: 'var(--space-lg)' }}>
+      <div className="protofile-skeleton__card">
+        <div className="protofile-skeleton__accent-bar" />
 
-        <div className="linktree-skeleton__main">
+        <div className="protofile-skeleton__main">
           {/* Share button placeholder */}
-          <div className="linktree-skeleton__share-placeholder" />
+          <div className="protofile-skeleton__share-placeholder" />
 
           {/* Avatar */}
-          <div className="linktree-skeleton__avatar" />
+          <div className="protofile-skeleton__avatar" />
 
           {/* Name */}
-          <div className="linktree-skeleton__name" />
+          <div className="protofile-skeleton__name" />
 
           {/* Role */}
-          <div className="linktree-skeleton__role" />
+          <div className="protofile-skeleton__role" />
 
           {/* Bio lines */}
-          <div className="linktree-skeleton__bio">
-            <div className="linktree-skeleton__bio-line" />
-            <div className="linktree-skeleton__bio-line linktree-skeleton__bio-line--short" />
+          <div className="protofile-skeleton__bio">
+            <div className="protofile-skeleton__bio-line" />
+            <div className="protofile-skeleton__bio-line protofile-skeleton__bio-line--short" />
           </div>
 
           {/* Social circles */}
-          <div className="linktree-skeleton__socials">
+          <div className="protofile-skeleton__socials">
             {[1, 2, 3, 4, 5].map(i => (
-              <div key={i} className="linktree-skeleton__social-circle" />
+              <div key={i} className="protofile-skeleton__social-circle" />
             ))}
           </div>
 
           {/* Link buttons */}
-          <div className="linktree-skeleton__links">
+          <div className="protofile-skeleton__links">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="linktree-skeleton__link-btn" />
+              <div key={i} className="protofile-skeleton__link-btn" />
             ))}
           </div>
 
           {/* Footer */}
-          <div className="linktree-skeleton__footer">
-            <div className="linktree-skeleton__brand" />
-            <div className="linktree-skeleton__footer-links">
-              <div className="linktree-skeleton__footer-text" />
-              <div className="linktree-skeleton__footer-text" />
-              <div className="linktree-skeleton__footer-text linktree-skeleton__footer-text--short" />
+          <div className="protofile-skeleton__footer">
+            <div className="protofile-skeleton__brand" />
+            <div className="protofile-skeleton__footer-links">
+              <div className="protofile-skeleton__footer-text" />
+              <div className="protofile-skeleton__footer-text" />
+              <div className="protofile-skeleton__footer-text protofile-skeleton__footer-text--short" />
             </div>
           </div>
         </div>

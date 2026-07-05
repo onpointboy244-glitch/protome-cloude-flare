@@ -63,7 +63,7 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
         bio: f.bio.trim(),
         photo_url: f.photoRemoved && !f.photoFile ? '' : (photoUrl || (editingUsername ? originalPhotoUrlRef.current : '') || f.photoData || ''),
         links: validLinks, accent: f.accent, bg_color: f.bgColor, bg_gradient: f.bgGradient, font: f.font,
-        username,
+        detect_icons: f.detectIcons, username,
       }
 
       if (editingUsername) await updateProfile(editingUsername, data)
@@ -301,6 +301,23 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
                 }}
                 onFontChange={val => setDesign({ font: val })}
               />
+
+              <div className="create-section__field-group">
+                <div className="create-section__toggle-row">
+                  <div className="create-section__toggle-info">
+                    <label className="create-section__field-label" style={{ margin: 0 }}>Detect platform icons</label>
+                    <p className="create-section__field-help" style={{ margin: 0 }}>Show platform icons (Instagram, GitHub, etc.) next to link buttons.</p>
+                  </div>
+                  <label className="toggle-switch">
+                    <input
+                      type="checkbox"
+                      checked={f.detectIcons}
+                      onChange={e => setField('detectIcons', e.target.checked)}
+                    />
+                    <span className="toggle-slider" />
+                  </label>
+                </div>
+              </div>
 
               <div className="create-section__actions">
                 <button type="submit" className="btn btn--primary create-section__submit" disabled={profileMutation.isPending}>

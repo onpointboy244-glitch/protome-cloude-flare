@@ -1,76 +1,101 @@
 /* ---- Footer ---- */
 
-.linktree__footer {
-  text-align: center;
-  margin-top: var(--space-sm);
+.protofile__footer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
-.linktree__brand {
+/* ===== Brand centered at top ===== */
+
+.protofile__footer-brand-wrap {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding-top: var(--space-lg);
+}
+
+.protofile__brand {
   display: inline-flex;
   align-items: center;
   gap: var(--space-md);
   font-family: 'Outfit', var(--font-body);
-  font-size: 0.65rem;
+  font-size: 0.85rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: rgba(255, 255, 255, 0.2);
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: color 0.25s ease;
+  flex-shrink: 0;
 }
 
-.linktree--light .linktree__brand {
-  color: oklch(0 0 0 / 0.2);
+.protofile--light .protofile__brand {
+  color: oklch(0 0 0 / 0.65);
 }
 
-.linktree__brand:hover {
-  color: rgba(255, 255, 255, 0.5);
+.protofile__brand:hover {
+  color: rgba(255, 255, 255, 1);
 }
 
-.linktree--light .linktree__brand:hover {
-  color: oklch(0 0 0 / 0.45);
+.protofile--light .protofile__brand:hover {
+  color: oklch(0 0 0 / 0.85);
 }
 
 /* Brand mark (diamond + line) */
 
-.linktree__brand-mark {
+.protofile__brand-mark {
   display: flex;
   align-items: center;
   gap: 5px;
 }
 
-.linktree__brand-diamond {
-  width: 5px;
-  height: 5px;
-  background: currentColor;
+.protofile__brand-diamond {
+  width: 6px;
+  height: 6px;
+  background: var(--accent-color, #c45a3c);
   transform: rotate(45deg);
-  opacity: 0.5;
+  border-radius: 0.5px;
+  opacity: 0.9;
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.linktree__brand-line {
+.protofile__brand:hover .protofile__brand-diamond {
+  transform: rotate(45deg) scale(1.2);
+}
+
+.protofile__brand-line {
   width: 20px;
   height: 1px;
   background: currentColor;
   opacity: 0.2;
 }
 
-/* Footer links */
+/* ===== Footer row: Privacy & Policy + Terms left, Report right ===== */
 
-.linktree__footer-links {
+.protofile__footer-row {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-lg);
-  margin-top: var(--space-lg);
-  flex-wrap: wrap;
+  width: 100%;
+  margin-top: auto;
+  padding-top: var(--space-xl);
 }
 
-.linktree__footer-link {
+.protofile__footer-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.protofile__footer-link {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 0.6rem;
-  color: rgba(255, 255, 255, 0.2);
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.4);
   text-decoration: none;
   transition: color 0.2s ease;
   font-weight: 500;
@@ -82,26 +107,26 @@
   font-family: inherit;
 }
 
-.linktree--light .linktree__footer-link {
-  color: oklch(0 0 0 / 0.18);
+.protofile--light .protofile__footer-link {
+  color: oklch(0 0 0 / 0.35);
 }
 
-.linktree__footer-link:hover {
-  color: rgba(255, 255, 255, 0.45);
+.protofile__footer-link:hover {
+  color: rgba(255, 255, 255, 0.7);
 }
 
-.linktree--light .linktree__footer-link:hover {
-  color: oklch(0 0 0 / 0.4);
+.protofile--light .protofile__footer-link:hover {
+  color: oklch(0 0 0 / 0.6);
 }
 
-.linktree__footer-link--report:hover {
+.protofile__footer-link--report:hover {
   color: #ef4444;
 }
 
-.linktree--light .linktree__footer-link--report:hover {
+.protofile--light .protofile__footer-link--report:hover {
   color: #dc2626;
 }
 
-.linktree__footer-link svg {
+.protofile__footer-link svg {
   opacity: 0.5;
 }

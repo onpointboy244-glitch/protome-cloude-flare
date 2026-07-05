@@ -2,7 +2,7 @@
    Report Modal
    ============================================ */
 
-.linktree__modal-overlay {
+.protofile__modal-overlay {
   position: fixed;
   inset: 0;
   background: oklch(0 0 0 / 0.5);
@@ -11,29 +11,29 @@
   justify-content: center;
   z-index: 500;
   padding: var(--space-lg);
-  animation: linktree-fade-in 0.2s ease;
+  animation: protofile-fade-in 0.2s ease;
 }
 
-.linktree__modal {
+.protofile__modal {
   background: var(--color-bg);
   border-radius: 16px;
   padding: var(--space-2xl);
   width: 100%;
   max-width: 400px;
   box-shadow: var(--shadow-xl);
-  animation: linktree-scale-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: protofile-scale-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   max-height: 90vh;
   overflow-y: auto;
 }
 
-.linktree__modal-header {
+.protofile__modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: var(--space-md);
 }
 
-.linktree__modal-close {
+.protofile__modal-close {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -47,17 +47,17 @@
   transition: color 0.2s ease, border-color 0.2s ease;
 }
 
-.linktree__modal-close:hover {
+.protofile__modal-close:hover {
   color: var(--color-ink);
   border-color: var(--color-ink);
 }
 
-.linktree__modal-icon {
+.protofile__modal-icon {
   text-align: center;
   margin-bottom: var(--space-xl);
 }
 
-.linktree__modal-title {
+.protofile__modal-title {
   font-family: var(--font-display);
   font-size: var(--text-xl);
   font-weight: 600;
@@ -65,25 +65,25 @@
   margin-bottom: var(--space-sm);
 }
 
-.linktree__modal-text {
+.protofile__modal-text {
   font-size: var(--text-sm);
   color: var(--color-muted);
   line-height: 1.6;
   margin-bottom: var(--space-xl);
 }
 
-.linktree__modal-text strong {
+.protofile__modal-text strong {
   color: var(--color-ink);
 }
 
-.linktree__modal-options {
+.protofile__modal-options {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
   margin-bottom: var(--space-lg);
 }
 
-.linktree__modal-option {
+.protofile__modal-option {
   display: flex;
   align-items: center;
   gap: var(--space-md);
@@ -97,17 +97,17 @@
   font-weight: 500;
 }
 
-.linktree__modal-option:hover {
+.protofile__modal-option:hover {
   border-color: var(--color-primary-l);
   background: var(--color-surface);
 }
 
-.linktree__modal-option--selected {
+.protofile__modal-option--selected {
   border-color: var(--color-primary);
   background: color-mix(in oklch, var(--color-primary-l), white 90%);
 }
 
-.linktree__modal-radio {
+.protofile__modal-radio {
   appearance: none;
   -webkit-appearance: none;
   width: 18px;
@@ -119,12 +119,12 @@
   transition: border-color 0.2s ease;
 }
 
-.linktree__modal-radio:checked {
+.protofile__modal-radio:checked {
   border-color: var(--color-primary);
   border-width: 5px;
 }
 
-.linktree__modal-textarea {
+.protofile__modal-textarea {
   width: 100%;
   padding: var(--space-md) var(--space-lg);
   border: 1px solid var(--color-border);
@@ -139,31 +139,31 @@
   line-height: 1.5;
 }
 
-.linktree__modal-textarea::placeholder {
+.protofile__modal-textarea::placeholder {
   color: var(--color-muted);
   opacity: 0.6;
 }
 
-.linktree__modal-textarea:focus {
+.protofile__modal-textarea:focus {
   border-color: var(--color-primary);
 }
 
-.linktree__modal-error {
+.protofile__modal-error {
   font-size: var(--text-xs);
   color: #ef4444;
   margin-top: var(--space-md);
 }
 
-[data-theme="dark"] .linktree__modal-option--selected {
+[data-theme="dark"] .protofile__modal-option--selected {
   background: color-mix(in oklch, var(--color-primary-l), var(--color-bg) 70%);
 }
 
-@keyframes linktree-fade-in {
+@keyframes protofile-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-@keyframes linktree-scale-in {
+@keyframes protofile-scale-in {
   from { opacity: 0; transform: scale(0.9); }
   to { opacity: 1; transform: scale(1); }
 }

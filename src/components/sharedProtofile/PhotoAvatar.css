@@ -1,6 +1,6 @@
 /* ---- Photo ---- */
 
-.linktree__photo-wrapper {
+.protofile__photo-wrapper {
   width: 112px;
   height: 112px;
   border-radius: 50%;
@@ -16,26 +16,26 @@
               box-shadow 0.35s ease;
 }
 
-.linktree--light .linktree__photo-wrapper {
+.protofile--light .protofile__photo-wrapper {
   box-shadow:
     0 0 0 5px oklch(0 0 0 / 0.04),
     0 8px 24px oklch(0 0 0 / 0.1);
 }
 
-.linktree__photo-wrapper:hover {
+.protofile__photo-wrapper:hover {
   transform: scale(1.08);
   box-shadow:
     0 0 0 5px oklch(1 0 0 / 0.12),
     0 12px 32px rgba(0, 0, 0, 0.3);
 }
 
-.linktree--light .linktree__photo-wrapper:hover {
+.protofile--light .protofile__photo-wrapper:hover {
   box-shadow:
     0 0 0 5px oklch(0 0 0 / 0.06),
     0 12px 32px oklch(0 0 0 / 0.15);
 }
 
-.linktree__photo {
+.protofile__photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -43,13 +43,13 @@
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.linktree__photo-wrapper:hover .linktree__photo {
+.protofile__photo-wrapper:hover .protofile__photo {
   transform: scale(1.08);
 }
 
 /* ---- Avatar (initials fallback) ---- */
 
-.linktree__avatar {
+.protofile__avatar {
   width: 112px;
   height: 112px;
   border-radius: 50%;
@@ -70,21 +70,21 @@
               box-shadow 0.35s ease;
 }
 
-.linktree--light .linktree__avatar {
+.protofile--light .protofile__avatar {
   background: #2a2520;
   box-shadow:
     0 0 0 5px oklch(0 0 0 / 0.04),
     0 8px 24px oklch(0 0 0 / 0.1);
 }
 
-.linktree__avatar:hover {
+.protofile__avatar:hover {
   transform: scale(1.08);
   box-shadow:
     0 0 0 5px oklch(1 0 0 / 0.12),
     0 12px 32px rgba(0, 0, 0, 0.3);
 }
 
-.linktree--light .linktree__avatar:hover {
+.protofile--light .protofile__avatar:hover {
   box-shadow:
     0 0 0 5px oklch(0 0 0 / 0.06),
     0 12px 32px oklch(0 0 0 / 0.15);

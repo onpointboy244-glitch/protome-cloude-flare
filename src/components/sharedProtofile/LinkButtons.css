@@ -1,6 +1,6 @@
 /* ---- Link Buttons ---- */
 
-.linktree__links {
+.protofile__links {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -8,7 +8,7 @@
   margin-bottom: var(--space-2xl);
 }
 
-.linktree__link-btn {
+.protofile__link-btn {
   display: flex;
   align-items: center;
   width: 100%;
@@ -30,49 +30,70 @@
   position: relative;
 }
 
-.linktree--light .linktree__link-btn {
+.protofile--light .protofile__link-btn {
   background: oklch(1 0 0 / 0.55);
   color: oklch(0.12 0.008 35.8);
   box-shadow: 0 1px 2px oklch(0 0 0 / 0.04);
 }
 
-.linktree__link-btn:hover {
+.protofile__link-btn:hover {
   background: var(--accent);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px oklch(0 0 0 / 0.2);
   color: var(--accent-hover-text, #fff);
 }
 
-.linktree--light .linktree__link-btn:hover {
+.protofile--light .protofile__link-btn:hover {
   background: color-mix(in oklch, var(--accent), oklch(0 0 0) 8%);
   color: var(--accent-hover-text, #fff);
   box-shadow: 0 8px 24px oklch(0 0 0 / 0.12);
 }
 
-.linktree__link-btn:active {
+.protofile__link-btn:active {
   transform: translateY(0) scale(0.98);
   box-shadow: 0 2px 6px oklch(0 0 0 / 0.1);
 }
 
 /* ---- Link body ---- */
 
-.linktree__link-body {
+.protofile__link-body {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+/* ---- Link icon ---- */
+
+.protofile__link-icon {
+  position: absolute;
+  left: 1rem;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  opacity: 0.55;
+  transition: opacity 0.25s ease;
+}
+
+.protofile__link-btn:hover .protofile__link-icon {
+  opacity: 0.85;
+}
+
+.protofile__link-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
 /* ---- Link row ---- */
 
-.linktree__link-row {
+.protofile__link-row {
   position: relative;
   width: 100%;
 }
 
 /* ---- Per-link share button ---- */
 
-.linktree__link-share {
+.protofile__link-share {
   position: absolute;
   right: 0.875rem;
   top: 50%;
@@ -94,32 +115,32 @@
     color 0.2s ease;
 }
 
-.linktree--light .linktree__link-share {
-  color: oklch(0.35 0.008 35 / 0.35);
+.protofile--light .protofile__link-share {
+  color: oklch(0.25 0.008 35 / 0.7);
 }
 
-.linktree__link-row:hover .linktree__link-share {
+.protofile__link-row:hover .protofile__link-share {
   opacity: 1;
 }
 
-.linktree__link-share:hover {
+.protofile__link-share:hover {
   background: oklch(1 0 0 / 0.15);
   color: var(--accent-hover-text, #fff);
 }
 
-.linktree--light .linktree__link-share:hover {
+.protofile--light .protofile__link-share:hover {
   background: oklch(0 0 0 / 0.06);
   color: var(--accent-hover-text, oklch(0.12 0.008 35.8));
 }
 
-.linktree__link-share--shared {
+.protofile__link-share--shared {
   opacity: 1 !important;
   color: #22c55e !important;
 }
 
 /* ---- Section headings ---- */
 
-.linktree__section-heading {
+.protofile__section-heading {
   width: 100%;
   text-align: center;
   font-family: var(--font-body);
@@ -131,18 +152,18 @@
   padding: var(--space-lg) 0 var(--space-sm);
 }
 
-.linktree--light .linktree__section-heading {
+.protofile--light .protofile__section-heading {
   color: oklch(0.35 0.008 35 / 0.4);
 }
 
-.linktree__section-heading:first-child {
+.protofile__section-heading:first-child {
   padding-top: 0;
 }
 
 /* ---- Link label ---- */
 
-.linktree__link-label {
-  text-align: center;
+.protofile__link-label {
+  text-align: left;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;

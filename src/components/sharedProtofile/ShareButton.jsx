@@ -34,7 +34,7 @@ export default function ShareButton({ accentColor, isLightBg }) {
 
   return (
     <button
-      className={`linktree__share-btn ${copied ? 'linktree__share-btn--copied' : ''} ${isLightBg ? 'linktree__share-btn--light' : ''}`}
+      className={`protofile__share-btn ${copied ? 'protofile__share-btn--copied' : ''} ${isLightBg ? 'protofile__share-btn--light' : ''}`}
       onClick={handleShare}
       aria-label={copied ? 'Link copied!' : 'Share profile'}
       title={copied ? 'Link copied!' : 'Share profile'}

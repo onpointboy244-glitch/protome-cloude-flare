@@ -1,6 +1,6 @@
 /* ---- Name ---- */
 
-.linktree__name {
+.protofile__name {
   font-family: var(--font-display);
   font-size: var(--text-2xl);
   font-weight: 400;
@@ -16,12 +16,12 @@
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
-.linktree--light .linktree__name {
+.protofile--light .protofile__name {
   color: oklch(0.08 0.008 35.8);
   text-shadow: none;
 }
 
-.linktree--sans .linktree__name {
+.protofile--sans .protofile__name {
   font-family: var(--font-body);
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -29,7 +29,7 @@
 
 /* ---- Role ---- */
 
-.linktree__role {
+.protofile__role {
   font-family: var(--font-body);
   font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.7);
@@ -45,7 +45,7 @@
   word-break: break-word;
 }
 
-.linktree--light .linktree__role {
+.protofile--light .protofile__role {
   color: oklch(0.35 0.008 35 / 0.85);
   background: none;
   border: none;
@@ -53,7 +53,7 @@
 
 /* ---- Bio ---- */
 
-.linktree__bio {
+.protofile__bio {
   font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.75);
   line-height: 1.75;
@@ -66,6 +66,6 @@
   word-break: break-word;
 }
 
-.linktree--light .linktree__bio {
+.protofile--light .protofile__bio {
   color: oklch(0.2 0.008 35 / 0.85);
 }

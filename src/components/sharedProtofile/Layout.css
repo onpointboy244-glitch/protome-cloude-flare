@@ -1,6 +1,6 @@
 /* ---- Full-page wrapper ---- */
 
-.linktree {
+.protofile {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -10,7 +10,7 @@
   padding: var(--space-xl);
 }
 
-.linktree--gradient {
+.protofile--gradient {
   background: var(--bg-gradient, var(--bg-color, var(--color-bg)));
   background-attachment: fixed;
   background-size: cover;
@@ -18,7 +18,7 @@
 
 /* ---- Card wrapper ---- */
 
-.linktree__card {
+.protofile__card {
   width: 100%;
   max-width: 580px;
   border-radius: 20px;
@@ -26,25 +26,25 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
 }
 
-.linktree--light .linktree__card {
+.protofile--light .protofile__card {
   box-shadow: 0 4px 24px oklch(0 0 0 / 0.08);
 }
 
 /* ---- Accent bar ---- */
 
-.linktree__accent-bar {
+.protofile__accent-bar {
   height: 4px;
   flex-shrink: 0;
 }
 
 /* ---- Main content area ---- */
 
-.linktree__main {
+.protofile__main {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--space-3xl) var(--space-2xl) var(--space-2xl);
+  padding: var(--space-3xl) var(--space-2xl) var(--space-sm);
   background: oklch(0.11 0.006 30 / 0.55);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -53,13 +53,13 @@
   position: relative;
 }
 
-.linktree--light .linktree__main {
+.protofile--light .protofile__main {
   background: oklch(1 0 0 / 0.6);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
 
-.linktree--light.linktree--gradient .linktree__main,
-.linktree--light.linktree--bgcolor .linktree__main {
+.protofile--light.protofile--gradient .protofile__main,
+.protofile--light.protofile--bgcolor .protofile__main {
   background: oklch(1 0 0 / 0.65);
 }

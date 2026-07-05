@@ -6,6 +6,7 @@ const INITIAL_STATE = {
   photoData: '', photoFile: null, photoRemoved: false,
   links: [],
   accent: '#c45a3c', bgGradient: null, bgColor: '#ffffff', font: 'serif',
+  detectIcons: true,
 }
 
 function reducer(state, action) {
@@ -45,6 +46,7 @@ function reducer(state, action) {
         bgGradient: action.profile.bg_gradient || null,
         bgColor: action.profile.bg_color || '#ffffff',
         font: action.profile.font || 'serif',
+        detectIcons: action.profile.detect_icons !== false,
       }
 
     case 'ADD_LINK':

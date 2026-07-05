@@ -1,24 +1,27 @@
 import { detectPlatformKey } from '../createSection/formConstants'
+import { detectIcon, GENERIC_ICON } from './constants.jsx'
 import './LinkButtons.css'
 
-export default function LinkItem({ item, copiedLink, onCopy }) {
+export default function LinkItem({ item, copiedLink, onCopy, showIcon = true }) {
   const href = item.url.startsWith('http') ? item.url : `https://${item.url}`
+  const icon = showIcon ? (detectIcon(item.label, item.url) || GENERIC_ICON) : null
   return (
-    <div className="linktree__link-row">
+    <div className="protofile__link-row">
       <a
         key={`link-${item.id || item.url}`}
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="linktree__link-btn"
+        className="protofile__link-btn"
         data-platform={detectPlatformKey(item.label, item.url)}
       >
-        <span className="linktree__link-body">
-          <span className="linktree__link-label">{item.label}</span>
+        <span className="protofile__link-body">
+          {icon && <span className="protofile__link-icon" aria-hidden="true">{icon}</span>}
+          <span className="protofile__link-label">{item.label}</span>
         </span>
       </a>
       <button
-        className={`linktree__link-share ${copiedLink === item.url ? 'linktree__link-share--shared' : ''}`}
+        className={`protofile__link-share ${copiedLink === item.url ? 'protofile__link-share--shared' : ''}`}
         onClick={() => onCopy(item.url)}
         aria-label={copiedLink === item.url ? 'Link shared!' : 'Share link'}
         title={copiedLink === item.url ? 'Link shared!' : 'Share link'}

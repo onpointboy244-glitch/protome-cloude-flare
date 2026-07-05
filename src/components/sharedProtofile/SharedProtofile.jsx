@@ -28,7 +28,7 @@ export default function SharedProtofile({ data }) {
     bgColor: data.bg_color || data.bgColor || '',
     bgGradient: data.bg_gradient || data.bgGradient || '',
   }
-  const { name, role, bio, photo, photo_url, links, accent, bgColor, bgGradient, font } = d
+  const { name, role, bio, photo, photo_url, links, accent, bgColor, bgGradient, font, detect_icons } = d
   const accentColor = accent || 'var(--color-primary-l)'
   // Only check raw hex accent — skip the CSS variable fallback
   const isAccentLight = accent ? isLightColor(accent) : false
@@ -69,7 +69,7 @@ export default function SharedProtofile({ data }) {
 
   return (
     <div
-      className={`linktree ${isSans ? 'linktree--sans' : ''} ${bgGradient ? 'linktree--gradient' : ''} ${isLightBg ? 'linktree--light' : ''} ${isDarkBg ? 'linktree--dark' : ''}`}
+      className={`protofile ${isSans ? 'protofile--sans' : ''} ${bgGradient ? 'protofile--gradient' : ''} ${isLightBg ? 'protofile--light' : ''} ${isDarkBg ? 'protofile--dark' : ''}`}
       style={{
         '--accent': accentColor,
         '--accent-hover-text': accentHoverText,
@@ -77,37 +77,37 @@ export default function SharedProtofile({ data }) {
         ...(bgGradient ? { '--bg-gradient': bgGradient } : {}),
       }}
     >
-      <div className="linktree__card">
-        <div className="linktree__accent-bar" style={{ background: accentColor }} />
-        <main className="linktree__main">
+      <div className="protofile__card">
+        <div className="protofile__accent-bar" style={{ background: accentColor }} />
+        <main className="protofile__main">
         {/* Share — top left */}
-        <div className="linktree__share-wrapper">
+        <div className="protofile__share-wrapper">
           <ShareButton accentColor={accentColor} isLightBg={isLightBg} />
         </div>
 
         {/* Photo / Avatar */}
         {hasPhoto ? (
-          <div className="linktree__photo-wrapper">
-            <img src={photoSrc} alt={name || ''} className="linktree__photo" loading="lazy" />
+          <div className="protofile__photo-wrapper">
+            <img src={photoSrc} alt={name || ''} className="protofile__photo" loading="lazy" />
           </div>
         ) : (
-          <div className="linktree__avatar" style={{ color: accentColor }}>
+          <div className="protofile__avatar" style={{ color: accentColor }}>
             {initials}
           </div>
         )}
 
         {/* Name */}
-        {name && <h1 className="linktree__name">{name}</h1>}
+        {name && <h1 className="protofile__name">{name}</h1>}
 
         {/* Role */}
-        {role && <p className="linktree__role">{role}</p>}
+        {role && <p className="protofile__role">{role}</p>}
 
         {/* Bio */}
-        {bio && <p className="linktree__bio">{bio}</p>}
+        {bio && <p className="protofile__bio">{bio}</p>}
 
         {/* Social icon row */}
         {socialLinks.length > 0 && (
-          <div className="linktree__socials">
+          <div className="protofile__socials">
             {socialLinks.map((link, i) => {
               const icon = detectIcon(link.label, link.url) || GENERIC_ICON
               const href = link.url.startsWith('http') ? link.url : `https://${link.url}`
@@ -117,7 +117,7 @@ export default function SharedProtofile({ data }) {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="linktree__social-btn"
+                  className="protofile__social-btn"
                   title={link.label}
                   aria-label={link.label}
                   data-platform={detectPlatformKey(link.label, link.url)}
@@ -130,29 +130,36 @@ export default function SharedProtofile({ data }) {
         )}
 
         {/* Non-social links: sections + buttons */}
-        <div className="linktree__links">
+        <div className="protofile__links">
           {otherLinks.map((item, i) =>
             item.isSection ? (
-              <div key={`sect-${item.id || i}`} className="linktree__section-heading">{item.label}</div>
+              <div key={`sect-${item.id || i}`} className="protofile__section-heading">{item.label}</div>
             ) : (
-              <LinkItem key={`link-${item.id || i}`} item={item} copiedLink={copiedLink} onCopy={handleCopyLink} />
+              <LinkItem key={`link-${item.id || i}`} item={item} copiedLink={copiedLink} onCopy={handleCopyLink} showIcon={detect_icons !== false} />
             )
           )}
         </div>
 
         {/* Footer */}
-        <div className="linktree__footer">
-          <a href="/" className="linktree__brand">
-            <span className="linktree__brand-mark">
-              <span className="linktree__brand-diamond" style={{ background: accentColor }} />
-              <span className="linktree__brand-line" />
-            </span>
-            protome
-          </a>
-          <div className="linktree__footer-links">
-            <a href="/privacy" className="linktree__footer-link">Privacy</a>
-            <a href="/terms" className="linktree__footer-link">Terms</a>
-            <button onClick={() => setReportOpen(true)} className="linktree__footer-link linktree__footer-link--report">
+        <div className="protofile__footer" style={{ '--accent-color': accentColor }}>
+          {/* Brand centered at top */}
+          <div className="protofile__footer-brand-wrap">
+            <a href="/" className="protofile__brand">
+              <span className="protofile__brand-mark">
+                <span className="protofile__brand-diamond" />
+                <span className="protofile__brand-line" />
+              </span>
+              protome
+            </a>
+          </div>
+
+          {/* Privacy & Policy + Terms — bottom left, Report — bottom right */}
+          <div className="protofile__footer-row">
+            <div className="protofile__footer-left">
+              <a href="/privacy" className="protofile__footer-link">Privacy & Policy</a>
+              <a href="/terms" className="protofile__footer-link">Terms</a>
+            </div>
+            <button onClick={() => setReportOpen(true)} className="protofile__footer-link protofile__footer-link--report">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
                 <path d="M12 2a10 10 0 1 0 10 10h0A10 10 0 0 0 12 2z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
