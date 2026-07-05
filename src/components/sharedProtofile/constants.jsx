@@ -29,10 +29,23 @@ export function detectIcon(label = '', url = '') {
   return key ? LINK_ICONS[key] || null : null
 }
 
-export function isLightColor(hex) {
-  if (!hex || hex === '#ffffff') return true
-  const c = hex.replace('#', '')
-  if (c.length < 6) return true
+export function isLightColor(color) {
+  if (!color || color === '#ffffff') return true
+
+  // Handle oklch() — parse the lightness value (0–1 scale)
+  if (color.startsWith('oklch')) {
+    const match = color.match(/oklch\(([\d.]+)/)
+    if (match) return parseFloat(match[1]) > 0.6
+    return false // can't parse — assume dark (safer for contrast)
+  }
+
+  // Handle 3-digit hex
+  let c = color.replace('#', '')
+  if (c.length === 3) {
+    c = c[0] + c[0] + c[1] + c[1] + c[2] + c[2]
+  }
+  if (c.length < 6) return false // unknown format → assume dark
+
   const r = parseInt(c.substring(0, 2), 16)
   const g = parseInt(c.substring(2, 4), 16)
   const b = parseInt(c.substring(4, 6), 16)

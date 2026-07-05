@@ -129,14 +129,36 @@ function isSocialLink(label = '', url = '', type) {
   return SOCIAL_PLATFORMS.some(p => new RegExp(`\\b${p}\\b`).test(text))
 }
 
-function isLightColor(hex) {
-  if (!hex || hex === '#ffffff') return true
-  const c = hex.replace('#', '')
-  if (c.length < 6) return true
+function isLightColor(color) {
+  if (!color || color === '#ffffff') return true
+
+  // Handle oklch() — parse the lightness value (0–1 scale)
+  if (color.startsWith('oklch')) {
+    const match = color.match(/oklch\(([\d.]+)/)
+    if (match) return parseFloat(match[1]) > 0.6
+    return false
+  }
+
+  // Handle 3-digit hex
+  let c = color.replace('#', '')
+  if (c.length === 3) {
+    c = c[0] + c[0] + c[1] + c[1] + c[2] + c[2]
+  }
+  if (c.length < 6) return false
+
   const r = parseInt(c.substring(0, 2), 16)
   const g = parseInt(c.substring(2, 4), 16)
   const b = parseInt(c.substring(4, 6), 16)
   return (r * 299 + g * 587 + b * 114) / 1000 > 128
+}
+
+function gradientIsDark(css) {
+  const hexColors = css.match(/#[a-f0-9]{3,8}/gi)
+  if (hexColors && hexColors.length > 0) {
+    const darkCount = hexColors.filter(c => !isLightColor(c)).length
+    return darkCount > hexColors.length / 2
+  }
+  return css.includes('radial')
 }
 
 export default function ProtofileCard({ data, compact, animateIn }) {
@@ -175,7 +197,7 @@ export default function ProtofileCard({ data, compact, animateIn }) {
   const isSans = font === 'sans'
   // Detect dark background for text contrast — check gradient or solid color
   const isDarkBg = bgGradient
-    ? bgGradient.includes('radial')
+    ? gradientIsDark(bgGradient)
     : !isLightColor(bgColor)
   const initials = d.name
     .split(' ')

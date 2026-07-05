@@ -27,14 +27,12 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
   // --- UI-only state ---
   const [submitted, setSubmitted] = useState(false)
   const [createdUsername, setCreatedUsername] = useState('')
-  const [error, setError] = useState('')
   const [photoError, setPhotoError] = useState('')
   const [usernameStatus, setUsernameStatus] = useState('idle')
   const [usernameError, setUsernameError] = useState('')
   const [editingUsername, setEditingUsername] = useState('')
   const [confirmDelete, setConfirmDelete] = useState(null)
   const usernameTimeout = useRef(null)
-  const actionsRef = useRef(null)
 
   const profileMutation = useMutation({
     mutationFn: async () => {
@@ -109,16 +107,8 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
     }
   }, [user])
 
-  // Scroll to actions error so the user sees it
-  useEffect(() => {
-    if (error && actionsRef.current) {
-      actionsRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }
-  }, [error])
-
-  // Fire a toast + set inline error for form-level errors
+  // Fire a toast for form-level errors
   const showError = useCallback((msg) => {
-    setError(msg)
     addToast(msg, 'error')
   }, [addToast])
 
@@ -178,7 +168,7 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
 
   // --- Submit ---
   const handleSubmit = (e) => {
-    e.preventDefault(); setError(''); setUsernameError('')
+    e.preventDefault(); setUsernameError('')
     if (!user) { onSignInNeeded?.(); return }
     const nameTrimmed = f.name.trim()
     if (nameTrimmed.length < 2) { showError('Please enter a name (at least 2 characters).'); return }
@@ -195,13 +185,12 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
 
   const handleReset = () => {
     reset()
-    setSubmitted(false); setError(''); setPhotoError(''); setCreatedUsername('')
+    setSubmitted(false); setPhotoError(''); setCreatedUsername('')
     setEditingUsername(''); originalPhotoUrlRef.current = ''
     setUsernameStatus('idle'); setUsernameError('')
   }
 
   const handleDelete = (profile) => {
-    setError('')
     deleteMutation.mutate(profile)
   }
 
@@ -318,12 +307,6 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
                   {profileMutation.isPending ? 'Saving…' : editingUsername ? 'Save changes' : 'Create your protome'}
                   {!profileMutation.isPending && <span aria-hidden="true">&rarr;</span>}
                 </button>
-                {error && (
-                  <p ref={actionsRef} className="create-section__actions-error">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    {error}
-                  </p>
-                )}
               </div>
               </>
             )}

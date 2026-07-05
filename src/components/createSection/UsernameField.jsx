@@ -53,7 +53,7 @@ export default function UsernameField({
         )}
       </div>
       {!editingUsername && usernameError && <p className="create-section__field-error">{usernameError}</p>}
-      {!editingUsername && usernameStatus === 'available' && <p className="create-section__field-success">Available! protome.io/{username}</p>}
+      {!editingUsername && usernameStatus === 'available' && <p className="create-section__field-success">Available! {window.location.origin}/{username}</p>}
     </div>
   )
 }

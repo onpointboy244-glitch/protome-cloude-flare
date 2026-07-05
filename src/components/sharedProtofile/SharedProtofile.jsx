@@ -6,6 +6,20 @@ import LinkItem from './LinkItem'
 import ReportModal from './ReportModal'
 import './SharedProtofile.css'
 
+/**
+ * Determine if a gradient is dark by extracting hex colors from the CSS string
+ * and checking their average brightness. Falls back to radial = dark for presets.
+ */
+function gradientIsDark(css) {
+  const hexColors = css.match(/#[a-f0-9]{3,8}/gi)
+  if (hexColors && hexColors.length > 0) {
+    const darkCount = hexColors.filter(c => !isLightColor(c)).length
+    return darkCount > hexColors.length / 2
+  }
+  // Fallback: radial presets are all dark, linear presets are all light
+  return css.includes('radial')
+}
+
 export default function SharedProtofile({ data }) {
   const [copiedLink, setCopiedLink] = useState(null)
   const copiedTimeoutRef = useRef(null)
@@ -49,7 +63,7 @@ export default function SharedProtofile({ data }) {
   const photoSrc = photo_url || photo
   const hasPhoto = !!photoSrc
   const isDarkBg = bgGradient
-    ? bgGradient.includes('radial')
+    ? gradientIsDark(bgGradient)
     : !isLightColor(bgColor)
   const isLightBg = isLightColor(bgColor)
 
