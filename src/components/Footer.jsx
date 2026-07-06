@@ -14,6 +14,11 @@ export default function Footer() {
           <p className="footer__tagline">
             Raw information, beautifully resolved.
           </p>
+          <div className="footer__brand-links">
+            <a href="/privacy" className="footer__link">Privacy</a>
+            <a href="/terms" className="footer__link">Terms</a>
+            <a href="/contact" className="footer__link">Report</a>
+          </div>
         </div>
 
         <div className="footer__links">
@@ -29,15 +34,9 @@ export default function Footer() {
             <a href="/blog" className="footer__link">Blog</a>
             <a href="/contact" className="footer__link">Contact</a>
           </div>
-          <div className="footer__group">
-            <h4 className="footer__group-title">Legal</h4>
-            <a href="/privacy" className="footer__link">Privacy</a>
-            <a href="/terms" className="footer__link">Terms</a>
-          </div>
         </div>
 
         <div className="footer__bottom">
-          <img src="/logo-og.webp" alt="protome logo" className="footer__logo-icon" loading="lazy" />
           <p className="footer__copyright">&copy; {year} protome. All rights reserved.</p>
         </div>
       </div>

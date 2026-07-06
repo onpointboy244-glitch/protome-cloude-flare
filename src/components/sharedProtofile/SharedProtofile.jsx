@@ -149,16 +149,19 @@ export default function SharedProtofile({ data }) {
                 <span className="protofile__brand-diamond" />
                 <span className="protofile__brand-line" />
               </span>
-              protome
+              <span className="protofile__brand-text">
+                pro<span className="protofile__brand-middle">t</span>ome
+              </span>
+              <span className="protofile__claim">claim yours</span>
             </a>
           </div>
 
-          {/* Privacy & Policy + Terms — bottom left, Report — bottom right */}
-          <div className="protofile__footer-row">
-            <div className="protofile__footer-left">
-              <a href="/privacy" className="protofile__footer-link">Privacy & Policy</a>
-              <a href="/terms" className="protofile__footer-link">Terms</a>
-            </div>
+          {/* Privacy, Terms, Report — grouped together under the brand */}
+          <div className="protofile__footer-links">
+            <a href="/privacy" className="protofile__footer-link">Privacy & Policy</a>
+            <span className="protofile__footer-dot" aria-hidden="true">·</span>
+            <a href="/terms" className="protofile__footer-link">Terms</a>
+            <span className="protofile__footer-dot" aria-hidden="true">·</span>
             <button onClick={() => setReportOpen(true)} className="protofile__footer-link protofile__footer-link--report">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
                 <path d="M12 2a10 10 0 1 0 10 10h0A10 10 0 0 0 12 2z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>

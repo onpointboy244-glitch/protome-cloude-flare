@@ -70,20 +70,16 @@
   color: var(--color-ink);
 }
 
+.footer__brand-links {
+  display: flex;
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+}
+
 .footer__bottom {
   width: 100%;
   padding-top: var(--space-3xl);
   border-top: 1px solid var(--color-border);
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.footer__logo-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  flex-shrink: 0;
 }
 
 .footer__copyright {
