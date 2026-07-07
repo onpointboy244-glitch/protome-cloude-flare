@@ -98,10 +98,17 @@ export function detectIconKey(label = '', url = '') {
 }
 
 /**
- * Detect the platform key for hover-styling (simpler check than detectIconKey).
+ * Detect the platform key for hover-styling.
+ * Label is authoritative — if it names a platform, that wins regardless of URL.
  */
 export function detectPlatformKey(label = '', url = '') {
-  const text = `${label} ${url}`.toLowerCase()
+  const lbl = label.toLowerCase()
+  // Label-only check — user's intent beats anything in the URL
+  for (const p of PLATFORM_NAMES) {
+    if (lbl.includes(p)) return p
+  }
+  // Fallback: check full text
+  const text = `${lbl} ${url}`.toLowerCase()
   for (const p of PLATFORM_NAMES) {
     if (text.includes(p)) return p
   }

@@ -10,8 +10,7 @@
 /* ===== Brand centered at top ===== */
 
 .protofile__footer-brand-wrap {
-  display: flex;
-  justify-content: center;
+  text-align: center;
   width: 100%;
   padding-top: var(--space-lg);
 }
@@ -64,26 +63,21 @@
   transition: color 0.25s ease;
 }
 
-/* "claim yours" — slides in with fade behind the energy line */
+/* "claim yours now" — slides in on hover with pulse glow */
 .protofile__claim {
   font-size: 0.6rem;
-  font-weight: 400;
-  letter-spacing: 0.12em;
-  text-transform: none;
-  opacity: 0;
-  transform: translateX(-8px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  pointer-events: none;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--accent-color, #c45a3c);
   position: absolute;
   left: calc(100% + 10px);
   top: 50%;
   transform: translateY(-50%) translateX(-8px);
   white-space: nowrap;
-}
-
-.protofile__brand {
-  position: relative;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .protofile__brand:hover .protofile__claim {
@@ -220,4 +214,19 @@
 
 .protofile--light .protofile__footer-dot {
   color: oklch(0 0 0 / 0.25);
+}
+
+/* ── Mobile: show "claim yours now" below the brand ── */
+
+@media (max-width: 640px) {
+  .protofile__claim {
+    display: block;
+    position: static;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    animation: claim-pulse 2s ease-in-out infinite;
+    margin-top: 6px;
+    line-height: 1;
+  }
 }
