@@ -8,14 +8,16 @@ const FOCUSABLE =
 export default function Auth({ onClose }) {
   const { signUp, signIn, resetPassword, updatePassword, pendingRecovery, clearRecovery } = useAuth();
   const [mode, setMode] = useState('signin') // signin | signup | forgot | reset-sent | recovery | confirmation
+  const handledRecovery = useRef(false)
 
   // Password recovery — user clicked reset link in email, go straight to set-password form
   useEffect(() => {
-    if (pendingRecovery && mode !== 'recovery') {
+    if (pendingRecovery && !handledRecovery.current) {
+      handledRecovery.current = true
       setMode('recovery')
       clearRecovery()
     }
-  }, [pendingRecovery, mode, clearRecovery])
+  }, [pendingRecovery, clearRecovery])
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");

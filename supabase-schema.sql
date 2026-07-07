@@ -6,6 +6,7 @@
 -- Drop existing tables if re-running
 drop trigger if exists profiles_updated_at on profiles;
 drop function if exists update_updated_at;
+drop table if exists reported_profiles;
 drop table if exists waitlist;
 drop table if exists profiles;
 
@@ -36,7 +37,20 @@ create table waitlist (
   created_at timestamptz default now()
 );
 
--- 3. Index for fast username lookup
+-- 3. Reported profiles table (used by the Edge Function for abuse reporting)
+create table reported_profiles (
+  id bigint generated always as identity primary key,
+  username text not null,
+  ip_address text not null,
+  reason text not null,
+  details text default null,
+  created_at timestamptz default now()
+);
+
+-- 4. Index for fast duplicate check (by IP + username)
+create index if not exists idx_reported_profiles_lookup on reported_profiles (username, ip_address);
+
+-- 5. Index for fast username lookup on profiles
 create index if not exists idx_profiles_owner on profiles (owner_id);
 
 -- 4. Enable Row Level Security
@@ -69,7 +83,18 @@ create policy "Only admins can view waitlist"
   on waitlist for select
   using (auth.role() = 'service_role');
 
--- 7. Storage bucket for photos
+-- 7. RLS Policies for reported_profiles
+alter table reported_profiles enable row level security;
+
+create policy "Anyone can report profiles"
+  on reported_profiles for insert
+  with check (true);
+
+create policy "Anyone can check existing reports"
+  on reported_profiles for select
+  using (true);
+
+-- 8. Storage bucket for photos
 insert into storage.buckets (id, name, public)
 values ('photos', 'photos', true)
 on conflict (id) do nothing;
@@ -107,7 +132,7 @@ create policy "Users can delete their own photos"
     auth.uid() = owner
   );
 
--- 8. Pricing plans table (server-controlled, not client-side)
+-- 9. Pricing plans table (server-controlled, not client-side)
 create table plans (
   id text primary key,
   name text not null,
@@ -134,7 +159,7 @@ insert into plans (id, name, price, description, features, cta, href, featured, 
   ('pro',     'Pro',     12, 'For professionals who want their story to stand out.', '{"Unlimited profiles","Everything in Starter","Custom domain","Password-protected profiles","Detailed analytics","Priority support"}',                                                                                                                               'Upgrade to Pro',          null,      false, false, 3)
 on conflict (id) do nothing;
 
--- 9. Helper: auto-update updated_at on profile change
+-- 10. Helper: auto-update updated_at on profile change
 create or replace function update_updated_at()
 returns trigger as $$
 begin

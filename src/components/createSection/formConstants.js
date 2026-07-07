@@ -1,12 +1,5 @@
 export const MAX_FREE_PROFILES = 3
 
-export const EMPTY_FORM = {
-  name: '',
-  role: '',
-  bio: '',
-  username: '',
-}
-
 export function freshLink(label = '', url = '', type) {
   const link = { id: Math.random().toString(36).slice(2, 9), label, url }
   if (type) link.type = type
@@ -77,63 +70,6 @@ export function isCoding(label = '') {
  * Detect the icon key for a link by checking its label and URL.
  * Returns a canonical key like 'twitter', 'github', 'website', or null.
  */
-export function detectIconKey(label = '', url = '') {
-  const lbl = label.toLowerCase()
-  const full = `${lbl} ${url}`.toLowerCase()
-
-  // Label-only checks — what the user chose beats anything in the URL
-  if (/\btiktok\b/.test(lbl)) return 'tiktok'
-  if (/\binstagram\b/.test(lbl)) return 'instagram'
-  if (/\byoutube\b/.test(lbl)) return 'youtube'
-  if (/\blinkedin\b/.test(lbl)) return 'linkedin'
-  if (/\btwitter\b/.test(lbl) || /\bx\b/.test(lbl)) return 'twitter'
-  if (/\bgithub\b/.test(lbl)) return 'github'
-  if (/\bfacebook\b/.test(lbl)) return 'facebook'
-  if (/\bsnapchat\b/.test(lbl)) return 'snapchat'
-  if (/\bdiscord\b/.test(lbl)) return 'discord'
-  if (/\btwitch\b/.test(lbl)) return 'twitch'
-  if (/\bpinterest\b/.test(lbl)) return 'pinterest'
-  if (/\breddit\b/.test(lbl)) return 'reddit'
-  if (/\btelegram\b/.test(lbl)) return 'telegram'
-  if (/\bwhatsapp\b/.test(lbl)) return 'whatsapp'
-  if (/\bthreads\b/.test(lbl)) return 'threads'
-  if (/\bbluesky\b/.test(lbl)) return 'bluesky'
-
-  // Fallback: check full text (label + URL) for the rest
-  if (/\blinkedin\b/.test(full)) return 'linkedin'
-  if (/\btwitter\b/.test(full) || /\bx\.com\b/.test(full) || /\/x\b/.test(full)) return 'twitter'
-  if (/\bgithub\b/.test(full)) return 'github'
-  if (/\binstagram\b/.test(full)) return 'instagram'
-  if (/\byoutube\b/.test(full)) return 'youtube'
-  if (/\btiktok\b/.test(full)) return 'tiktok'
-  if (/\bfacebook\b/.test(full) || /\bfb\.com\b/.test(full)) return 'facebook'
-  if (/\bsnapchat\b/.test(full)) return 'snapchat'
-  if (/\bdiscord\b/.test(full)) return 'discord'
-  if (/\btwitch\b/.test(full)) return 'twitch'
-  if (/\bpinterest\b/.test(full)) return 'pinterest'
-  if (/\breddit\b/.test(full)) return 'reddit'
-  if (/\btelegram\b/.test(full) || /\bt\.me\b/.test(full)) return 'telegram'
-  if (/\bwhatsapp\b/.test(full)) return 'whatsapp'
-  if (/\bthreads\b/.test(full)) return 'threads'
-  if (/\bbluesky\b/.test(full) || /\bsky\.social\b/.test(full)) return 'bluesky'
-  if (/\b(website|web|site|portfolio)\b/.test(full)) return 'website'
-  return null
-}
-
-/**
- * Detect the canonical platform key for hover styling.
- * Returns a platform name like 'instagram', 'github', or null.
- */
-export function detectPlatformKey(label = '', url = '') {
-  const text = `${label} ${url}`.toLowerCase()
-  const PLATFORMS = ['instagram', 'twitter', 'facebook', 'linkedin', 'youtube', 'tiktok', 'snapchat', 'discord', 'twitch', 'pinterest', 'reddit', 'telegram', 'whatsapp', 'threads', 'bluesky', 'github']
-  for (const p of PLATFORMS) {
-    if (text.includes(p)) return p
-  }
-  if (/\b(website|web|site|portfolio)\b/.test(text)) return 'website'
-  return null
-}
-
 export const SOCIAL_QUICK_LINKS = [
   { label: 'Instagram', key: 'instagram' },
   { label: 'Twitter / X', key: 'twitter' },

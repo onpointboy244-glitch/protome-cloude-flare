@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import './ProtofileCard.css'
-import { detectIconKey, detectPlatformKey } from './createSection/formConstants'
-import { FaGlobe, FaLinkedin, FaTwitter, FaGithub, FaInstagram, FaYoutube, FaTiktok, FaFacebook, FaSnapchat, FaDiscord, FaTwitch, FaPinterest, FaReddit, FaTelegram, FaWhatsapp } from 'react-icons/fa'
-import { FaThreads, FaBluesky } from 'react-icons/fa6'
+import { renderPlatformIcon, detectIconKey, detectPlatformKey, isLightColor, gradientIsDark, isSocialLink } from '../lib/icons.jsx'
 
 const DEMO_PROFILES = [
   {
@@ -78,25 +76,6 @@ const CYCLE_MS = 5000 // rotate every 5 seconds
 
 const DEFAULT_DATA = DEMO_PROFILES[0]
 
-const LINK_ICONS = {
-  website: <FaGlobe size={14} key="website" />,
-  linkedin: <FaLinkedin size={14} key="linkedin" />,
-  twitter: <FaTwitter size={14} key="twitter" />,
-  github: <FaGithub size={14} key="github" />,
-  instagram: <FaInstagram size={14} key="instagram" />,
-  youtube: <FaYoutube size={14} key="youtube" />,
-  tiktok: <FaTiktok size={14} key="tiktok" />,
-  facebook: <FaFacebook size={14} key="facebook" />,
-  snapchat: <FaSnapchat size={14} key="snapchat" />,
-  discord: <FaDiscord size={14} key="discord" />,
-  twitch: <FaTwitch size={14} key="twitch" />,
-  pinterest: <FaPinterest size={14} key="pinterest" />,
-  reddit: <FaReddit size={14} key="reddit" />,
-  telegram: <FaTelegram size={14} key="telegram" />,
-  whatsapp: <FaWhatsapp size={14} key="whatsapp" />,
-  threads: <FaThreads size={14} key="threads" />,
-  bluesky: <FaBluesky size={14} key="bluesky" />,
-}
 
 const LINK_LABELS = {
   website: 'Website',
@@ -117,50 +96,6 @@ const LINK_LABELS = {
   threads: 'Threads',
   bluesky: 'Bluesky',
 }
-
-const SOCIAL_PLATFORMS = ['instagram', 'twitter', 'github', 'linkedin', 'youtube', 'tiktok',
-  'facebook', 'snapchat', 'discord', 'twitch', 'pinterest', 'reddit', 'telegram', 'whatsapp',
-  'threads', 'bluesky']
-
-function isSocialLink(label = '', url = '', type) {
-  if (type === 'website' || type === 'coding') return false
-  if (type === 'social') return true
-  const text = `${label} ${url}`.toLowerCase()
-  return SOCIAL_PLATFORMS.some(p => new RegExp(`\\b${p}\\b`).test(text))
-}
-
-function isLightColor(color) {
-  if (!color || color === '#ffffff') return true
-
-  // Handle oklch() — parse the lightness value (0–1 scale)
-  if (color.startsWith('oklch')) {
-    const match = color.match(/oklch\(([\d.]+)/)
-    if (match) return parseFloat(match[1]) > 0.6
-    return false
-  }
-
-  // Handle 3-digit hex
-  let c = color.replace('#', '')
-  if (c.length === 3) {
-    c = c[0] + c[0] + c[1] + c[1] + c[2] + c[2]
-  }
-  if (c.length < 6) return false
-
-  const r = parseInt(c.substring(0, 2), 16)
-  const g = parseInt(c.substring(2, 4), 16)
-  const b = parseInt(c.substring(4, 6), 16)
-  return (r * 299 + g * 587 + b * 114) / 1000 > 128
-}
-
-function gradientIsDark(css) {
-  const hexColors = css.match(/#[a-f0-9]{3,8}/gi)
-  if (hexColors && hexColors.length > 0) {
-    const darkCount = hexColors.filter(c => !isLightColor(c)).length
-    return darkCount > hexColors.length / 2
-  }
-  return css.includes('radial')
-}
-
 export default function ProtofileCard({ data, compact, animateIn }) {
   // Cycle through demo profiles when animateIn is active (Hero section)
   const [profileIndex, setProfileIndex] = useState(0)
@@ -209,12 +144,12 @@ export default function ProtofileCard({ data, compact, animateIn }) {
   // Support both array format (Linktree) and object format (legacy)
   const links = Array.isArray(rawLinks) ? rawLinks : Object.values(rawLinks).filter(v => v)
   const activeLinks = Array.isArray(links)
-    ? links.filter(l => l.url?.trim()).map(l => [l.label, l.url])
+    ? links.filter(l => l.url?.trim()).map(l => [l.label, l.url, l.type])
     : []
 
   // Split into social circle icons and card-style links
-  const cardLinks = activeLinks.filter(([label, url]) => !isSocialLink(label, url))
-  const circleLinks = activeLinks.filter(([label, url]) => isSocialLink(label, url))
+  const cardLinks = activeLinks.filter(([label, url, type]) => !isSocialLink(label, url, type))
+  const circleLinks = activeLinks.filter(([label, url, type]) => isSocialLink(label, url, type))
 
   return (
     <div
@@ -282,7 +217,7 @@ export default function ProtofileCard({ data, compact, animateIn }) {
                   title={LINK_LABELS[label] || label}
                   data-platform={detectPlatformKey(label, url)}
                 >
-                  {LINK_ICONS[iconKey] || LINK_ICONS.website}
+                  {renderPlatformIcon(iconKey, 14)}
                 </a>
               )
             })}
@@ -312,4 +247,4 @@ export default function ProtofileCard({ data, compact, animateIn }) {
   )
 }
 
-export { DEFAULT_DATA, LINK_ICONS, LINK_LABELS }
+export { DEFAULT_DATA, LINK_LABELS }

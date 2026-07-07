@@ -172,7 +172,7 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
     if (!user) { onSignInNeeded?.(); return }
     const nameTrimmed = f.name.trim()
     if (nameTrimmed.length < 2) { showError('Please enter a name (at least 2 characters).'); return }
-    if (!/[a-zA-Z]/.test(nameTrimmed)) { showError('Name must include at least one letter.'); return }
+    // Minimum length check covers all scripts (Arabic, CJK, etc.)
     if (!f.username.trim()) { showError('Choose a username for your profile.'); return }
     if (usernameStatus === 'taken' && f.username.trim().toLowerCase() !== editingUsername) { showError('That username is taken. Try another.'); return }
     if (usernameStatus === 'checking') { showError('Wait for the username check to finish.'); return }

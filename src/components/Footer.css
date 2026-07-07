@@ -80,6 +80,15 @@
   width: 100%;
   padding-top: var(--space-3xl);
   border-top: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.footer__bottom-logo {
+  border-radius: 4px;
+  flex-shrink: 0;
+  opacity: 0.85;
 }
 
 .footer__copyright {

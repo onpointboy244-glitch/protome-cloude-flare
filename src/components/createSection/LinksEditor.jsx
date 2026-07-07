@@ -2,39 +2,10 @@ import { useCallback } from 'react'
 import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { isSocial, detectIconKey, SOCIAL_QUICK_LINKS, WEBSITE_QUICK_LINKS } from './formConstants'
-import {
-  FaGlobe, FaLinkedin, FaTwitter, FaGithub, FaInstagram, FaYoutube, FaTiktok,
-  FaFacebook, FaSnapchat, FaDiscord, FaTwitch, FaPinterest, FaReddit,
-  FaTelegram, FaWhatsapp,
-} from 'react-icons/fa'
-import { FaThreads, FaBluesky, FaLink } from 'react-icons/fa6'
+import { isSocial, SOCIAL_QUICK_LINKS, WEBSITE_QUICK_LINKS } from './formConstants'
+import { renderPlatformIcon, detectIconKey } from '../../lib/icons.jsx'
 import './LinksEditor.css'
 
-const LINK_ICONS = {
-  instagram: <FaInstagram size={16} />,
-  twitter: <FaTwitter size={16} />,
-  facebook: <FaFacebook size={16} />,
-  linkedin: <FaLinkedin size={16} />,
-  youtube: <FaYoutube size={16} />,
-  tiktok: <FaTiktok size={16} />,
-  snapchat: <FaSnapchat size={16} />,
-  discord: <FaDiscord size={16} />,
-  twitch: <FaTwitch size={16} />,
-  pinterest: <FaPinterest size={16} />,
-  reddit: <FaReddit size={16} />,
-  telegram: <FaTelegram size={16} />,
-  whatsapp: <FaWhatsapp size={16} />,
-  threads: <FaThreads size={16} />,
-  bluesky: <FaBluesky size={16} />,
-  github: <FaGithub size={16} />,
-  website: <FaGlobe size={16} />,
-  portfolio: <FaGlobe size={16} />,
-}
-
-function getIcon(key) {
-  return LINK_ICONS[key] || <FaLink size={16} />
-}
 
 
 /**
@@ -132,7 +103,7 @@ function SortableGroup({ group, onUpdateLink, onRemoveLink }) {
       )}
 
       {group.links.map(link => {
-        const icon = getIcon(detectIconKey(link.label, link.url))
+        const icon = renderPlatformIcon(detectIconKey(link.label, link.url), 16)
         return (
           <SortableLinkEntry
             key={link.id}
@@ -190,7 +161,7 @@ export default function LinksEditor({ links, onAddLink, onUpdateLink, onRemoveLi
               onClick={() => onAddLink(ql.label, 'social')}
               title={ql.label}
             >
-              {getIcon(ql.key)}
+              {renderPlatformIcon(ql.key, 16)}
             </button>
           ))}
         </div>
@@ -198,7 +169,7 @@ export default function LinksEditor({ links, onAddLink, onUpdateLink, onRemoveLi
         {regularSocial.length > 0 && (
           <div className="create-section__links-list">
             {regularSocial.map(link => (
-              <LinkEntry key={link.id} link={link} icon={getIcon(link.label.toLowerCase().replace(/ \/.*$/, '').replace(/\s+/g, ''))} onUpdate={onUpdateLink} onRemove={onRemoveLink} />
+              <LinkEntry key={link.id} link={link} icon={renderPlatformIcon(detectIconKey(link.label, link.url), 16)} onUpdate={onUpdateLink} onRemove={onRemoveLink} />
             ))}
           </div>
         )}
@@ -219,7 +190,7 @@ export default function LinksEditor({ links, onAddLink, onUpdateLink, onRemoveLi
               onClick={() => onAddLink(ql.label, 'website')}
               title={ql.label}
             >
-              {getIcon(ql.key)}
+              {renderPlatformIcon(ql.key, 16)}
             </button>
           ))}
           <button
@@ -227,7 +198,7 @@ export default function LinksEditor({ links, onAddLink, onUpdateLink, onRemoveLi
             className="create-section__quick-link-btn create-section__quick-link-btn--custom"
             onClick={() => onAddLink('', 'website')}
           >
-            <FaLink size={14} />
+            {renderPlatformIcon(null, 14)}
           </button>
         </div>
 

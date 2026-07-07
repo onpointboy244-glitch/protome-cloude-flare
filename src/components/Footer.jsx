@@ -37,6 +37,7 @@ export default function Footer() {
         </div>
 
         <div className="footer__bottom">
+          <img src="/logo-og.webp" alt="" className="footer__bottom-logo" width="24" height="24" />
           <p className="footer__copyright">&copy; {year} protome. All rights reserved.</p>
         </div>
       </div>

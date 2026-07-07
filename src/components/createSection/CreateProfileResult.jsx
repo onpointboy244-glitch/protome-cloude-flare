@@ -17,7 +17,7 @@ export default function CreateProfileResult({ createdUsername, latestProtofile, 
   const handleCopy = async () => {
     if (!url) return
     try {
-      await navigator.clipboard?.writeText(url)
+      await navigator.clipboard.writeText(url)
       setCopied(true)
       timeoutRef.current = setTimeout(() => setCopied(false), 2000)
     } catch {

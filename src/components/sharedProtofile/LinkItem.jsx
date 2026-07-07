@@ -1,5 +1,4 @@
-import { detectPlatformKey } from '../createSection/formConstants'
-import { detectIcon, GENERIC_ICON } from './constants.jsx'
+import { detectPlatformKey, detectIcon, GENERIC_ICON } from '../../lib/icons.jsx'
 import './LinkButtons.css'
 
 export default function LinkItem({ item, copiedLink, onCopy, showIcon = true }) {
