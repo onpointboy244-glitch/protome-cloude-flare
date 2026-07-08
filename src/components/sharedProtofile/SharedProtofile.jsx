@@ -182,14 +182,16 @@ export default function SharedProtofile({ data }) {
             {/* Brand centered at top */}
             <div className="protofile__footer-brand-wrap">
               <a href="/" className="protofile__brand">
-                <span className="protofile__brand-mark">
-                  <span className="protofile__brand-diamond" />
-                  <span className="protofile__brand-line" />
+                <span className="protofile__brand-top">
+                  <span className="protofile__brand-mark">
+                    <span className="protofile__brand-diamond" />
+                    <span className="protofile__brand-line" />
+                  </span>
+                  <span className="protofile__brand-text">
+                    pro<span className="protofile__brand-middle">t</span>ome
+                  </span>
                 </span>
-                <span className="protofile__brand-text">
-                  pro<span className="protofile__brand-middle">t</span>ome
-                  <span className="protofile__claim">CLAIM YOURS NOW</span>
-                </span>
+                <span className="protofile__claim">CLAIM YOURS NOW</span>
               </a>
             </div>
 

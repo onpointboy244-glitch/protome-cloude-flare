@@ -16,9 +16,10 @@
 }
 
 .protofile__brand {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: var(--space-md);
+  gap: 0;
   font-family: 'Outfit', var(--font-body);
   font-size: 0.85rem;
   font-weight: 700;
@@ -40,6 +41,14 @@
 
 .protofile--light .protofile__brand:hover {
   color: oklch(0 0 0 / 0.85);
+}
+
+/* Brand top row (desktop: same row as text so wrapping doesn't break) */
+.protofile__brand-top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  position: relative;
 }
 
 /* Brand mark (diamond + line) */
@@ -70,14 +79,14 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--accent-color, #c45a3c);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
   position: absolute;
   left: calc(100% + 10px);
   top: 50%;
   transform: translateY(-50%) translateX(-8px);
   white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .protofile__brand:hover .protofile__claim {
@@ -216,9 +225,32 @@
   color: oklch(0 0 0 / 0.25);
 }
 
-/* ── Mobile: show "claim yours now" below the brand ── */
+/* ── Mobile: diamond + line on same row as "pro t ome", claim below, no hover ── */
 
 @media (max-width: 640px) {
+  .protofile__brand {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .protofile__brand-top {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .protofile__brand-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .protofile__brand-text {
+    position: relative;
+    display: inline;
+  }
+
   .protofile__claim {
     display: block;
     position: static;
@@ -226,7 +258,47 @@
     transform: none;
     pointer-events: auto;
     animation: claim-pulse 2s ease-in-out infinite;
-    margin-top: 6px;
     line-height: 1;
+  }
+
+  /* Remove all hover effects */
+  .protofile__brand:hover {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .protofile--light .protofile__brand:hover {
+    color: oklch(0 0 0 / 0.65);
+  }
+
+  .protofile__brand:hover .protofile__brand-mark {
+    opacity: 1;
+  }
+
+  .protofile__brand:hover .protofile__brand-diamond {
+    opacity: 0.9;
+  }
+
+  .protofile__brand:hover .protofile__brand-line {
+    opacity: 0.2;
+  }
+
+  .protofile__brand:hover .protofile__brand-text::before {
+    width: 0;
+    transition: none;
+  }
+
+  .protofile__brand:hover .protofile__brand-middle {
+    color: rgba(255, 255, 255, 0.7);
+    transition: none;
+  }
+
+  .protofile--light .protofile__brand:hover .protofile__brand-middle {
+    color: oklch(0 0 0 / 0.65);
+  }
+
+  .protofile__brand:hover .protofile__claim {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
