@@ -136,13 +136,16 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose }) {
 
   const handleSocialShare = (social) => {
     const socialUrl = social.url(shareText, shareUrl)
-    if (isMobileEnv) {
-      // On mobile, navigate directly so the OS can intercept with apps
+    // Deep links open the native app directly on mobile
+    if (isMobileEnv && (socialUrl.startsWith('mailto:') || socialUrl.startsWith('fb-messenger://'))) {
       const a = document.createElement('a')
       a.href = socialUrl
       a.target = '_blank'
       a.rel = 'noopener,noreferrer'
       a.click()
+    } else if (isMobileEnv) {
+      // Web URLs open in browser so share dialogs work (Instagram, etc.)
+      window.open(socialUrl)
     } else {
       window.open(socialUrl, '_blank', 'noopener,noreferrer,width=600,height=500')
     }
