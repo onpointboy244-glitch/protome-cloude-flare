@@ -9,18 +9,18 @@
  *   - LinksEditor.jsx
  */
 import {
-  FaGlobe, FaLinkedin, FaTwitter, FaGithub, FaInstagram, FaYoutube, FaTiktok,
+  FaGlobe, FaLinkedin, FaGithub, FaInstagram, FaYoutube, FaTiktok,
   FaFacebook, FaSnapchat, FaDiscord, FaTwitch, FaPinterest, FaReddit,
   FaTelegram, FaWhatsapp,
 } from 'react-icons/fa'
-import { FaThreads, FaBluesky, FaLink } from 'react-icons/fa6'
+import { FaThreads, FaBluesky, FaLink, FaXTwitter } from 'react-icons/fa6'
 
 // ── Icon component map (render at any size) ─────────────────────
 
 export const ICON_COMPONENTS = {
   website: FaGlobe,
   linkedin: FaLinkedin,
-  twitter: FaTwitter,
+  twitter: FaXTwitter,
   github: FaGithub,
   instagram: FaInstagram,
   youtube: FaYoutube,

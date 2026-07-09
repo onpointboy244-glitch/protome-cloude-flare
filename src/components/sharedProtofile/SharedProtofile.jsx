@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState } from "react";
 import {
   detectPlatformKey,
   detectIcon,
@@ -10,11 +10,10 @@ import {
 import ShareButton from "./ShareButton";
 import LinkItem from "./LinkItem";
 import ReportModal from "./ReportModal";
+import SharePopup from "./SharePopup";
 import "./SharedProtofile.css";
 
 export default function SharedProtofile({ data }) {
-  const [copiedLink, setCopiedLink] = useState(null);
-  const copiedTimeoutRef = useRef(null);
   const d = {
     ...data,
     bgColor: data.bg_color || data.bgColor || "",
@@ -47,25 +46,10 @@ export default function SharedProtofile({ data }) {
         .toUpperCase()
     : "";
 
-  useEffect(() => {
-    return () => {
-      if (copiedTimeoutRef.current) clearTimeout(copiedTimeoutRef.current);
-    };
-  }, []);
-
-  const handleCopyLink = useCallback((url) => {
-    const href = url.startsWith("http") ? url : `https://${url}`;
-    if (copiedTimeoutRef.current) clearTimeout(copiedTimeoutRef.current);
-    if (navigator.share) {
-      navigator.share({ url: href }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(href).catch(() => {});
-      setCopiedLink(url);
-      copiedTimeoutRef.current = setTimeout(() => setCopiedLink(null), 2000);
-    }
-  }, []);
-
   const [reportOpen, setReportOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState(null);
+  const [shareLabel, setShareLabel] = useState(null);
   const linkItems = Array.isArray(links) ? links : [];
   const socialLinks = linkItems.filter(
     (l) => !l.isSection && isSocialLink(l.label, l.url, l.type),
@@ -98,7 +82,7 @@ export default function SharedProtofile({ data }) {
         <main className="protofile__main">
           {/* Share — top left */}
           <div className="protofile__share-wrapper">
-            <ShareButton accentColor={accentColor} isLightBg={isLightBg} />
+            <ShareButton accentColor={accentColor} isLightBg={isLightBg} onShare={() => setShareOpen(true)} />
           </div>
 
           {/* Photo / Avatar */}
@@ -166,9 +150,13 @@ export default function SharedProtofile({ data }) {
                 <LinkItem
                   key={`link-${item.id || i}`}
                   item={item}
-                  copiedLink={copiedLink}
-                  onCopy={handleCopyLink}
                   showIcon={detect_icons !== false}
+                  onShareLink={() => {
+                    const href = item.url.startsWith("http") ? item.url : `https://${item.url}`;
+                    setShareUrl(href);
+                    setShareLabel(item.label);
+                    setShareOpen(true);
+                  }}
                 />
               ),
             )}
@@ -237,6 +225,15 @@ export default function SharedProtofile({ data }) {
         <ReportModal
           username={data.username}
           onClose={() => setReportOpen(false)}
+        />
+      )}
+      {shareOpen && (
+        <SharePopup
+          url={shareUrl}
+          title={name}
+          linkLabel={shareLabel}
+          photo={shareLabel ? null : photoSrc}
+          onClose={() => { setShareOpen(false); setShareUrl(null); setShareLabel(null); }}
         />
       )}
     </div>

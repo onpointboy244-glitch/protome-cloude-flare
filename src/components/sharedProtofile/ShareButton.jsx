@@ -1,56 +1,19 @@
-import { useState, useRef, useEffect } from 'react'
 import './ShareButton.css'
 
-export default function ShareButton({ accentColor, isLightBg }) {
-  const [copied, setCopied] = useState(false)
-  const timeoutRef = useRef(null)
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    }
-  }, [])
-
-  const handleShare = async () => {
-    const url = window.location.href
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ url })
-        return
-      } catch {
-        // user cancelled or API unavailable — fall through to copy
-      }
-    }
-
-    try {
-      await navigator.clipboard.writeText(url)
-      setCopied(true)
-      timeoutRef.current = setTimeout(() => setCopied(false), 2000)
-    } catch {
-      // clipboard unavailable too — do nothing
-    }
-  }
-
+export default function ShareButton({ accentColor, isLightBg, onShare }) {
   return (
     <button
-      className={`protofile__share-btn ${copied ? 'protofile__share-btn--copied' : ''} ${isLightBg ? 'protofile__share-btn--light' : ''}`}
-      onClick={handleShare}
-      aria-label={copied ? 'Link copied!' : 'Share profile'}
-      title={copied ? 'Link copied!' : 'Share profile'}
+      className={`protofile__share-btn ${isLightBg ? 'protofile__share-btn--light' : ''}`}
+      onClick={onShare}
+      aria-label="Share profile"
+      title="Share profile"
       style={{ '--share-accent': accentColor }}
     >
-      {copied ? (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
-      ) : (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-          <polyline points="16 6 12 2 8 6" />
-          <line x1="12" y1="2" x2="12" y2="15" />
-        </svg>
-      )}
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+        <polyline points="16 6 12 2 8 6" />
+        <line x1="12" y1="2" x2="12" y2="15" />
+      </svg>
     </button>
   )
 }
