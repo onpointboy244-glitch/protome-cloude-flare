@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import {
   FaWhatsapp, FaTelegram, FaFacebook,
-  FaInstagram, FaSnapchat, FaLinkedin,
+  FaSnapchat, FaLinkedin,
   FaEnvelope, FaFacebookMessenger,
 } from 'react-icons/fa'
 import { FaXTwitter } from 'react-icons/fa6'
@@ -23,13 +23,6 @@ const SOCIALS = [
     color: '#1877F2',
     icon: <FaFacebook />,
     url: (text, url) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`,
-  },
-  {
-    id: 'instagram',
-    name: 'Instagram',
-    color: '#E4405F',
-    icon: <FaInstagram />,
-    url: (text, url) => `https://www.instagram.com/sharer/link/?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
   },
   {
     id: 'messenger',
@@ -144,8 +137,7 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose }) {
       a.rel = 'noopener,noreferrer'
       a.click()
     } else if (isMobileEnv) {
-      // Web URLs open in browser so share dialogs work (Instagram, etc.)
-      window.open(socialUrl)
+      window.open(socialUrl, '_blank', 'noopener,noreferrer')
     } else {
       window.open(socialUrl, '_blank', 'noopener,noreferrer,width=600,height=500')
     }
