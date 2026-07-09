@@ -130,7 +130,13 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose }) {
 
   const handleSocialShare = (social) => {
     const socialUrl = social.url(shareText, shareUrl)
-    window.open(socialUrl, '_blank', 'noopener,noreferrer,width=600,height=500')
+    // Use window.open with dimensions on desktop, plain open on mobile
+    const isMobile = window.innerWidth < 768
+    if (isMobile) {
+      window.open(socialUrl, '_blank', 'noopener,noreferrer')
+    } else {
+      window.open(socialUrl, '_blank', 'noopener,noreferrer,width=600,height=500')
+    }
   }
 
   return (
@@ -218,12 +224,17 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose }) {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>
               </svg>
-              More options
+              More
             </button>
           )}
         </div>
 
-        <div className="protofile__share-popup-brand">
+        <a
+          href="/"
+          className="protofile__share-popup-brand"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <span className="protofile__share-popup-brand-mark">
             <span className="protofile__share-popup-brand-diamond" />
             <span className="protofile__share-popup-brand-line" />
@@ -231,7 +242,7 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose }) {
           <span className="protofile__share-popup-brand-text">
             join <strong>{title || 'them'}</strong> on&nbsp;pro<span className="protofile__share-popup-brand-mid">t</span>ome
           </span>
-        </div>
+        </a>
       </div>
     </div>
   )

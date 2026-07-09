@@ -236,6 +236,8 @@
   padding-top: var(--space-lg);
   opacity: 0.7;
   transition: opacity 0.25s ease;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .protofile__share-popup-brand:hover {
