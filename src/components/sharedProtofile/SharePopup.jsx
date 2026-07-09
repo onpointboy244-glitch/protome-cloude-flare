@@ -7,6 +7,8 @@ import {
 import { FaXTwitter } from 'react-icons/fa6'
 import './SharePopup.css'
 
+const isMobileEnv = typeof window !== 'undefined' ? window.innerWidth < 768 : false
+
 const SOCIALS = [
   {
     id: 'twitter',
@@ -34,7 +36,9 @@ const SOCIALS = [
     name: 'Messenger',
     color: '#00B2FF',
     icon: <FaFacebookMessenger />,
-    url: (text, url) => `https://www.facebook.com/dialog/send?link=${encodeURIComponent(url)}&app_id=291494419107518&redirect_uri=${encodeURIComponent(url)}`,
+    url: (text, url) => isMobileEnv
+      ? `fb-messenger://share?link=${encodeURIComponent(url)}`
+      : `https://www.facebook.com/dialog/send?link=${encodeURIComponent(url)}&app_id=291494419107518&redirect_uri=${encodeURIComponent(url)}`,
   },
   {
     id: 'whatsapp',
@@ -62,7 +66,9 @@ const SOCIALS = [
     name: 'Gmail',
     color: '#EA4335',
     icon: <FaEnvelope />,
-    url: (text, url) => `https://mail.google.com/mail/?view=cm&su=${encodeURIComponent(text)}&body=${encodeURIComponent(url)}`,
+    url: (text, url) => isMobileEnv
+      ? `mailto:?subject=${encodeURIComponent(text)}&body=${encodeURIComponent(url)}`
+      : `https://mail.google.com/mail/?view=cm&su=${encodeURIComponent(text)}&body=${encodeURIComponent(url)}`,
   },
   {
     id: 'linkedin',
@@ -130,10 +136,13 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose }) {
 
   const handleSocialShare = (social) => {
     const socialUrl = social.url(shareText, shareUrl)
-    // Use window.open with dimensions on desktop, plain open on mobile
-    const isMobile = window.innerWidth < 768
-    if (isMobile) {
-      window.open(socialUrl, '_blank', 'noopener,noreferrer')
+    if (isMobileEnv) {
+      // On mobile, navigate directly so the OS can intercept with apps
+      const a = document.createElement('a')
+      a.href = socialUrl
+      a.target = '_blank'
+      a.rel = 'noopener,noreferrer'
+      a.click()
     } else {
       window.open(socialUrl, '_blank', 'noopener,noreferrer,width=600,height=500')
     }
