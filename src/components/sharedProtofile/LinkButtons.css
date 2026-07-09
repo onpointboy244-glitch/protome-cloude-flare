@@ -28,6 +28,10 @@
     transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 0.3s ease;
   position: relative;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  outline: none;
+  will-change: transform;
 }
 
 .protofile--light .protofile__link-btn {
@@ -49,6 +53,11 @@
 .protofile__link-btn:active {
   transform: translateY(0) scale(0.98);
   box-shadow: 0 2px 6px oklch(0 0 0 / 0.1);
+}
+
+.protofile__link-btn:focus,
+.protofile__link-btn:focus-visible {
+  outline: none;
 }
 
 /* ---- Link body ---- */
@@ -86,6 +95,7 @@
 .protofile__link-row {
   position: relative;
   width: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ---- Per-link share button ---- */

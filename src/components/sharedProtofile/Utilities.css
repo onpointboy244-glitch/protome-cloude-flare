@@ -64,17 +64,47 @@
   }
 }
 
-/* ---- Disable hover effects on touch devices ---- */
+/* ---- Kill all hover/active/tap effects on touch devices ---- */
 
 @media (hover: none) and (pointer: coarse) {
-  .protofile__link-btn:hover {
-    background: var(--accent) !important;
-    color: var(--accent-hover-text, #fff) !important;
+
+  .protofile__link-btn {
+    transition: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation !important;
+    -webkit-touch-callout: none !important;
+    user-select: none !important;
+    will-change: transform;
   }
 
-  .protofile--light .protofile__link-btn:hover {
+  .protofile__link-btn:hover,
+  .protofile__link-btn:active,
+  .protofile__link-btn:focus,
+  .protofile__link-btn:focus-visible,
+  .protofile__link-btn:visited {
+    background: var(--accent) !important;
+    color: var(--accent-hover-text, #fff) !important;
+    transform: none !important;
+    box-shadow: 0 1px 2px oklch(0 0 0 / 0.05) !important;
+    outline: none !important;
+  }
+
+  .protofile__link-btn:hover .protofile__link-icon {
+    opacity: 0.85 !important;
+  }
+
+  .protofile--light .protofile__link-btn,
+  .protofile--light .protofile__link-btn:hover,
+  .protofile--light .protofile__link-btn:active,
+  .protofile--light .protofile__link-btn:focus,
+  .protofile--light .protofile__link-btn:focus-visible {
     background: color-mix(in oklch, var(--accent), oklch(0 0 0) 8%) !important;
     color: var(--accent-hover-text, #fff) !important;
+    box-shadow: 0 1px 2px oklch(0 0 0 / 0.04) !important;
+  }
+
+  .protofile--light .protofile__link-btn:hover .protofile__link-icon {
+    opacity: 0.85 !important;
   }
 
   .protofile__link-share {

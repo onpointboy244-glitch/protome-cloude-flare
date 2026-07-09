@@ -45,18 +45,14 @@
   flex-direction: column;
   align-items: center;
   padding: var(--space-3xl) var(--space-2xl) var(--space-sm);
-  background: oklch(0.11 0.006 30 / 0.55);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: oklch(0.11 0.006 30 / 0.92);
   overflow-wrap: break-word;
   word-break: break-word;
   position: relative;
 }
 
 .protofile--light .protofile__main {
-  background: oklch(1 0 0 / 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: oklch(1 0 0 / 0.9);
 }
 
 .protofile--light.protofile--gradient .protofile__main,
