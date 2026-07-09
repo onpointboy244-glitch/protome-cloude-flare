@@ -38,15 +38,12 @@
 
 .protofile__link-btn:hover {
   background: var(--accent);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px oklch(0 0 0 / 0.2);
   color: var(--accent-hover-text, #fff);
 }
 
 .protofile--light .protofile__link-btn:hover {
   background: color-mix(in oklch, var(--accent), oklch(0 0 0) 8%);
   color: var(--accent-hover-text, #fff);
-  box-shadow: 0 8px 24px oklch(0 0 0 / 0.12);
 }
 
 .protofile__link-btn:active {
