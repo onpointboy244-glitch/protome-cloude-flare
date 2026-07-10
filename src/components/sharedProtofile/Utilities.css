@@ -80,8 +80,7 @@
   .protofile__link-btn:hover,
   .protofile__link-btn:active,
   .protofile__link-btn:focus,
-  .protofile__link-btn:focus-visible,
-  .protofile__link-btn:visited {
+  .protofile__link-btn:focus-visible {
     background: var(--accent) !important;
     color: var(--accent-hover-text, #fff) !important;
     transform: none !important;
