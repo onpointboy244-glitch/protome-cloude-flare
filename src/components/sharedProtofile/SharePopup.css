@@ -128,7 +128,34 @@
 }
 
 .protofile__share-popup-socials--expanded {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
   gap: var(--space-md);
+}
+
+.protofile__share-popup-socials--expanded .protofile__share-popup-social-btn {
+  width: 44px;
+  height: 44px;
+}
+
+.protofile__share-popup-socials--expanded .protofile__share-popup-more-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  font-size: 0;  /* hide text, show icon only */
+}
+
+.protofile__share-popup-socials--expanded .protofile__share-popup-more-btn svg {
+  width: 18px;
+  height: 18px;
 }
 
 .protofile__share-popup-social-btn {
@@ -197,23 +224,8 @@
 }
 
 /* ---- More options button (opens native share) ---- */
-
-.protofile__share-popup-more-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-lg);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 20px;
-  font-family: var(--font-body);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  color: var(--color-muted);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  animation: protofile-fade-in 0.2s ease;
-}
+/* Note: .protofile__share-popup-more-btn base styles are in the
+   --expanded grid section above. Hover/svg are here. */
 
 .protofile__share-popup-more-btn:hover {
   border-color: var(--color-primary-l);

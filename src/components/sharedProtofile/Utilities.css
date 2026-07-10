@@ -92,14 +92,18 @@
     opacity: 0.85 !important;
   }
 
-  .protofile--light .protofile__link-btn,
+  .protofile--light .protofile__link-btn {
+    background: oklch(1 0 0 / 0.7) !important;
+    color: oklch(0.12 0.008 35.8) !important;
+    box-shadow: 0 1px 2px oklch(0 0 0 / 0.04) !important;
+  }
+
   .protofile--light .protofile__link-btn:hover,
   .protofile--light .protofile__link-btn:active,
   .protofile--light .protofile__link-btn:focus,
   .protofile--light .protofile__link-btn:focus-visible {
     background: color-mix(in oklch, var(--accent), oklch(0 0 0) 8%) !important;
     color: var(--accent-hover-text, #fff) !important;
-    box-shadow: 0 1px 2px oklch(0 0 0 / 0.04) !important;
   }
 
   .protofile--light .protofile__link-btn:hover .protofile__link-icon {

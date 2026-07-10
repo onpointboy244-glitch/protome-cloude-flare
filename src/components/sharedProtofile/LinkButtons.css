@@ -109,7 +109,7 @@
 
 .protofile__link-share {
   position: absolute;
-  right: 0.875rem;
+  right: 0.5rem;
   top: 50%;
   transform: translateY(-50%);
   display: flex;

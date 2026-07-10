@@ -106,7 +106,6 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose }) {
 
   const shareUrl = url || window.location.href
   const isProfileShare = !linkLabel
-  const sharePreviewLabel = isProfileShare ? 'Share protome' : 'Share link'
   const shareText = title ? `Check out ${title}` : 'Check this out'
 
   const handleCopyLink = async () => {
@@ -147,7 +146,7 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose }) {
     <div className="protofile__share-popup-overlay" onClick={onClose}>
       <div ref={modalRef} className="protofile__share-popup" onClick={e => e.stopPropagation()}>
         <div className="protofile__share-popup-header">
-          <span className="protofile__share-popup-title">Share</span>
+          <span className="protofile__share-popup-title">{isProfileShare ? 'Share protome' : 'Share link'}</span>
           <button className="protofile__share-popup-close" onClick={onClose} aria-label="Close">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -167,7 +166,6 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose }) {
           )}
           <div className="protofile__share-popup-preview-info">
             <span className="protofile__share-popup-preview-url">{shareUrl}</span>
-            <span className="protofile__share-popup-preview-label">{sharePreviewLabel}</span>
           </div>
         </div>
 
@@ -219,7 +217,7 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose }) {
               </svg>
             </button>
           )}
-          {showAll && navigator.share && (
+          {showAll && isMobileEnv && (
             <button
               className="protofile__share-popup-more-btn"
               onClick={handleNativeShare}
