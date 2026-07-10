@@ -280,6 +280,9 @@ export default function LinksEditor({ links, onAddLink, onUpdateLink, onRemoveLi
 }
 
 function LinkEntry({ link, icon, onUpdate, onRemove }) {
+  const labelKey = link.url ? detectIconKey(link.label, '') : null
+  const urlKey = link.url ? detectIconKey(link.label, link.url) : null
+  const iconMismatch = urlKey && labelKey && urlKey !== labelKey
   return (
     <div className="create-section__link-entry">
       <span className="create-section__link-entry-icon">
@@ -301,6 +304,7 @@ function LinkEntry({ link, icon, onUpdate, onRemove }) {
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
+      {iconMismatch && <span className="create-section__link-hint create-section__link-hint--mismatch">URL detects <strong>{urlKey}</strong>, you chose <strong>{labelKey}</strong>. Match them or {urlKey} will show.</span>}
     </div>
   )
 }

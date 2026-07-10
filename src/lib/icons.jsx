@@ -52,67 +52,116 @@ export const GENERIC_ICON = <FaLink size={18} />
 
 /**
  * Detect the canonical icon key for a link by checking label (preferred)
- * then falling back to the full text (label + URL).
+ * then falling back to the URL hostname.
+ *
+ * Rules:
+ *   - Label: split by spaces, each word must match the platform exactly.
+ *     "github-clone" = one word ≠ github. "my github" = "github" matches.
+ *   - URL: only check the domain hostname, not the full path.
+ *     "github.com/foo" matches, "github-clone.com" does not.
  */
 export function detectIconKey(label = '', url = '') {
-  const lbl = label.toLowerCase()
-  const full = `${lbl} ${url}`.toLowerCase()
+  const words = label.toLowerCase().split(/\s+/).filter(Boolean)
+  const hostname = getHostname(url)
 
-  // Label-only checks — what the user typed beats anything in the URL
-  if (/\btiktok\b/.test(lbl)) return 'tiktok'
-  if (/\binstagram\b/.test(lbl)) return 'instagram'
-  if (/\byoutube\b/.test(lbl)) return 'youtube'
-  if (/\blinkedin\b/.test(lbl)) return 'linkedin'
-  if (/\btwitter\b/.test(lbl) || /\bx\b/.test(lbl)) return 'twitter'
-  if (/\bgithub\b/.test(lbl)) return 'github'
-  if (/\bfacebook\b/.test(lbl)) return 'facebook'
-  if (/\bsnapchat\b/.test(lbl)) return 'snapchat'
-  if (/\bdiscord\b/.test(lbl)) return 'discord'
-  if (/\btwitch\b/.test(lbl)) return 'twitch'
-  if (/\bpinterest\b/.test(lbl)) return 'pinterest'
-  if (/\breddit\b/.test(lbl)) return 'reddit'
-  if (/\btelegram\b/.test(lbl)) return 'telegram'
-  if (/\bwhatsapp\b/.test(lbl)) return 'whatsapp'
-  if (/\bthreads\b/.test(lbl)) return 'threads'
-  if (/\bbluesky\b/.test(lbl)) return 'bluesky'
+  // ── Helper: check if any label word is an exact match ──
+  const wordMatch = (word) => words.some(w => w === word)
 
-  // Fallback: check full text (label + URL)
-  if (/\blinkedin\b/.test(full)) return 'linkedin'
-  if (/\btwitter\b/.test(full) || /\bx\.com\b/.test(full) || /\/x\b/.test(full)) return 'twitter'
-  if (/\bgithub\b/.test(full)) return 'github'
-  if (/\binstagram\b/.test(full)) return 'instagram'
-  if (/\byoutube\b/.test(full)) return 'youtube'
-  if (/\btiktok\b/.test(full)) return 'tiktok'
-  if (/\bfacebook\b/.test(full) || /\bfb\.com\b/.test(full)) return 'facebook'
-  if (/\bsnapchat\b/.test(full)) return 'snapchat'
-  if (/\bdiscord\b/.test(full)) return 'discord'
-  if (/\btwitch\b/.test(full)) return 'twitch'
-  if (/\bpinterest\b/.test(full)) return 'pinterest'
-  if (/\breddit\b/.test(full)) return 'reddit'
-  if (/\btelegram\b/.test(full) || /\bt\.me\b/.test(full)) return 'telegram'
-  if (/\bwhatsapp\b/.test(full)) return 'whatsapp'
-  if (/\bthreads\b/.test(full)) return 'threads'
-  if (/\bbluesky\b/.test(full) || /\bsky\.social\b/.test(full)) return 'bluesky'
-  if (/\b(website|web|site|portfolio)\b/.test(full)) return 'website'
+  // ── Helper: check if hostname contains a domain (e.g. github.com, www.github.com) ──
+  const domainMatch = (domain) => {
+    if (!hostname) return false
+    return hostname === domain || hostname.endsWith('.' + domain) || hostname.startsWith(domain + '.')
+  }
+
+	// URL hostname check first (more reliable than label)
+  if (domainMatch('linkedin.com')) return 'linkedin'
+  if (domainMatch('twitter.com') || domainMatch('x.com')) return 'twitter'
+  if (domainMatch('github.com')) return 'github'
+  if (domainMatch('instagram.com')) return 'instagram'
+  if (domainMatch('youtube.com')) return 'youtube'
+  if (domainMatch('tiktok.com')) return 'tiktok'
+  if (domainMatch('facebook.com') || domainMatch('fb.com')) return 'facebook'
+  if (domainMatch('snapchat.com')) return 'snapchat'
+  if (domainMatch('discord.com') || domainMatch('discord.gg')) return 'discord'
+  if (domainMatch('twitch.tv')) return 'twitch'
+  if (domainMatch('pinterest.com')) return 'pinterest'
+  if (domainMatch('reddit.com')) return 'reddit'
+  if (domainMatch('t.me') || domainMatch('telegram.org')) return 'telegram'
+  if (domainMatch('whatsapp.com')) return 'whatsapp'
+  if (domainMatch('threads.net')) return 'threads'
+  if (domainMatch('bsky.app') || domainMatch('sky.social')) return 'bluesky'
+
+  // Label checks (exact word match only) — fallback if URL didn't match
+  if (wordMatch('tiktok')) return 'tiktok'
+  if (wordMatch('instagram')) return 'instagram'
+  if (wordMatch('youtube')) return 'youtube'
+  if (wordMatch('linkedin')) return 'linkedin'
+  if (wordMatch('twitter')) return 'twitter'
+  if (wordMatch('x')) return 'twitter'
+  if (wordMatch('github')) return 'github'
+  if (wordMatch('facebook')) return 'facebook'
+  if (wordMatch('snapchat')) return 'snapchat'
+  if (wordMatch('discord')) return 'discord'
+  if (wordMatch('twitch')) return 'twitch'
+  if (wordMatch('pinterest')) return 'pinterest'
+  if (wordMatch('reddit')) return 'reddit'
+  if (wordMatch('telegram')) return 'telegram'
+  if (wordMatch('whatsapp')) return 'whatsapp'
+  if (wordMatch('threads')) return 'threads'
+  if (wordMatch('bluesky')) return 'bluesky'
+
+  if (/\b(website|web|site|portfolio)\b/.test(label.toLowerCase())) return 'website'
+
   return null
+}
+
+/** Extract hostname from a URL string, or null if unparseable. */
+function getHostname(url) {
+  try {
+    const u = new URL(url.startsWith('http') ? url : 'https://' + url)
+    return u.hostname.toLowerCase()
+  } catch {
+    return null
+  }
 }
 
 /**
  * Detect the platform key for hover-styling.
  * Label is authoritative — if it names a platform, that wins regardless of URL.
+ * Uses same exact-word-matching rules as detectIconKey.
  */
 export function detectPlatformKey(label = '', url = '') {
-  const lbl = label.toLowerCase()
-  // Label-only check — user's intent beats anything in the URL
-  for (const p of PLATFORM_NAMES) {
-    if (lbl.includes(p)) return p
+  const words = label.toLowerCase().split(/\s+/).filter(Boolean)
+  const hostname = getHostname(url)
+
+  const wordMatch = (word) => words.some(w => w === word)
+  const domainMatch = (domain) => {
+    if (!hostname) return false
+    return hostname === domain || hostname.endsWith('.' + domain) || hostname.startsWith(domain + '.')
   }
-  // Fallback: check full text
-  const text = `${lbl} ${url}`.toLowerCase()
+
+  // URL hostname check first (more reliable than label)
   for (const p of PLATFORM_NAMES) {
-    if (text.includes(p)) return p
+    const domain = p === 'twitter' ? 'twitter.com' : p === 'bluesky' ? 'bsky.app' :
+      p === 'website' ? null : p + '.com'
+    if (domain && domainMatch(domain)) return p
   }
-  if (/\b(website|web|site|portfolio)\b/.test(text)) return 'website'
+  if (domainMatch('x.com')) return 'twitter'
+  if (domainMatch('t.me')) return 'telegram'
+  if (domainMatch('discord.gg')) return 'discord'
+  if (domainMatch('bsky.app')) return 'bluesky'
+  if (domainMatch('sky.social')) return 'bluesky'
+  if (domainMatch('fb.com')) return 'facebook'
+  if (domainMatch('threads.net')) return 'threads'
+  if (domainMatch('twitch.tv')) return 'twitch'
+
+  // Label check — fallback if URL didn't match
+  for (const p of PLATFORM_NAMES) {
+    if (wordMatch(p)) return p
+  }
+  if (wordMatch('x')) return 'twitter'
+
+  if (/\b(website|web|site|portfolio)\b/.test(label.toLowerCase())) return 'website'
   return null
 }
 
@@ -168,6 +217,27 @@ export function gradientIsDark(css) {
 export function isSocialLink(label = '', url = '', type) {
   if (type === 'website' || type === 'coding') return false
   if (type === 'social') return true
-  const text = `${label} ${url}`.toLowerCase()
-  return PLATFORM_NAMES.some(p => new RegExp(`\\b${p}\\b`).test(text))
+  // Same exact-word matching as detectIconKey
+  const words = label.toLowerCase().split(/\s+/).filter(Boolean)
+  const hostname = getHostname(url)
+  const wordMatch = (word) => words.some(w => w === word)
+  const domainMatch = (domain) => {
+    if (!hostname) return false
+    return hostname === domain || hostname.endsWith('.' + domain) || hostname.startsWith(domain + '.')
+  }
+  // URL hostname check first
+  for (const p of PLATFORM_NAMES) {
+    const domain = p === 'twitter' ? 'twitter.com' : p === 'bluesky' ? 'bsky.app' :
+      p === 'website' ? null : p + '.com'
+    if (domain && domainMatch(domain)) return true
+  }
+  if (domainMatch('x.com') || domainMatch('t.me') || domainMatch('discord.gg') ||
+      domainMatch('bsky.app') || domainMatch('sky.social') || domainMatch('fb.com') ||
+      domainMatch('threads.net') || domainMatch('twitch.tv')) return true
+  // Label check — fallback
+  for (const p of PLATFORM_NAMES) {
+    if (wordMatch(p)) return true
+  }
+  if (wordMatch('x')) return true
+  return false
 }
