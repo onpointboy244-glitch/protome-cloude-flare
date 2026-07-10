@@ -10,6 +10,7 @@ const DEMO_PROFILES = [
     photo: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=face',
     links: [
       { label: 'Portfolio', url: '#' },
+      { label: 'Case Studies', url: '#' },
       { label: 'LinkedIn', url: '#' },
       { label: 'GitHub', url: '#' },
       { label: 'Twitter', url: '#' },
@@ -27,6 +28,7 @@ const DEMO_PROFILES = [
     photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face',
     links: [
       { label: 'Personal site', url: '#' },
+      { label: 'Projects', url: '#' },
       { label: 'GitHub', url: '#' },
       { label: 'Twitter', url: '#' },
       { label: 'Discord', url: '#' },
@@ -43,6 +45,7 @@ const DEMO_PROFILES = [
     photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face',
     links: [
       { label: 'Newsletter', url: '#' },
+      { label: 'Latest articles', url: '#' },
       { label: 'Twitter', url: '#' },
       { label: 'Instagram', url: '#' },
       { label: 'Website', url: '#' },
@@ -59,11 +62,10 @@ const DEMO_PROFILES = [
     photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face',
     links: [
       { label: 'My tools', url: '#' },
+      { label: 'Free templates', url: '#' },
       { label: 'YouTube', url: '#' },
       { label: 'Twitter', url: '#' },
       { label: 'TikTok', url: '#' },
-      { label: 'Website', url: '#' },
-      { label: 'WhatsApp', url: '#' },
     ],
     accent: '#059669',
     bgColor: '#f7efe5',
