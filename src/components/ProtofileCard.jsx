@@ -168,15 +168,23 @@ export default function ProtofileCard({ data, compact, animateIn }) {
           '--card-text-soft': 'rgba(255, 255, 255, 0.85)',
           '--card-border': 'rgba(255, 255, 255, 0.15)',
           '--card-bio': 'rgba(255, 255, 255, 0.8)',
-          '--card-link-bg': 'rgba(255, 255, 255, 0.08)',
-        } : bgGradient ? {
+          '--card-link-bg': 'rgba(255, 255, 255, 0.12)',
+          '--card-social-bg': 'oklch(0 0 0 / 0.15)',
+          '--card-social-color': 'rgba(255, 255, 255, 0.75)',
+          '--card-social-border': 'rgba(255, 255, 255, 0.12)',
+          '--card-avatar-bg': '#e8ddd4',
+        } : {
           '--card-text': '#111',
           '--card-text-muted': '#555',
           '--card-text-soft': '#333',
           '--card-border': 'rgba(0, 0, 0, 0.1)',
           '--card-bio': '#333',
-          '--card-link-bg': 'rgba(0, 0, 0, 0.04)',
-        } : {}),
+          '--card-link-bg': bgGradient ? 'rgba(0, 0, 0, 0.04)' : 'oklch(1 0 0 / 0.7)',
+          '--card-social-bg': 'oklch(1 0 0 / 0.5)',
+          '--card-social-color': 'oklch(0.35 0.008 35 / 0.8)',
+          '--card-social-border': 'oklch(0 0 0 / 0.08)',
+          '--card-avatar-bg': '#2a2520',
+        }),
       }}
     >
       <div className="protofile-card__bar" style={{ background: accentColor }} />

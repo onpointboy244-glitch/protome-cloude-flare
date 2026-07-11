@@ -24,7 +24,7 @@
 }
 
 .protofile--light .protofile__social-btn {
-  background: oklch(1 0 0 / 0.5);
+  background: var(--color-surface);
   border-color: oklch(0 0 0 / 0.08);
   color: oklch(0.35 0.008 35 / 0.8);
 }

@@ -99,7 +99,7 @@
   font-size: var(--text-lg);
   color: var(--card-accent, var(--color-primary));
   margin: 0 auto var(--space-lg);
-  background: #e8ddd4;
+  background: var(--card-avatar-bg, #e8ddd4);
   box-shadow:
     0 0 0 3px oklch(1 0 0 / 0.6),
     0 4px 12px oklch(0 0 0 / 0.08);
@@ -168,14 +168,14 @@
   justify-content: center;
   width: 100%;
   padding: 0.75rem 1.5rem;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--card-border, var(--color-border));
   border-radius: 12px;
-  background: var(--color-bg);
+  background: var(--card-link-bg, var(--color-bg));
   text-decoration: none;
   font-family: var(--font-display);
   font-size: var(--text-sm);
   font-weight: 400;
-  color: var(--color-ink);
+  color: var(--card-text, var(--color-ink));
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -223,15 +223,17 @@
 }
 
 .protofile-card__link {
-  width: 36px;
-  height: 36px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
-  border: 1px solid var(--color-border);
+  border: 1.5px solid var(--card-social-border, var(--color-border));
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-muted);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--card-social-bg, transparent);
+  color: var(--card-social-color, var(--color-muted));
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
 }
 
 .protofile-card__link:hover {
@@ -290,15 +292,16 @@
 }
 
 .protofile-card__link svg {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
 }
 
 /* ---- Gradient variant ---- */
 
 .protofile-card--gradient .protofile-card__link {
-  border-color: var(--card-border, rgba(255, 255, 255, 0.15));
-  color: var(--card-text-muted, rgba(255, 255, 255, 0.6));
+  border-color: var(--card-social-border, rgba(255, 255, 255, 0.12));
+  background: var(--card-social-bg, oklch(0 0 0 / 0.15));
+  color: var(--card-social-color, rgba(255, 255, 255, 0.75));
 }
 
 .protofile-card--gradient .protofile-card__link:hover {

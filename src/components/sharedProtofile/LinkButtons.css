@@ -35,7 +35,7 @@
 }
 
 .protofile--light .protofile__link-btn {
-  background: oklch(1 0 0 / 0.7);
+  background: var(--color-surface);
   color: oklch(0.12 0.008 35.8);
   box-shadow: 0 1px 2px oklch(0 0 0 / 0.04);
 }
