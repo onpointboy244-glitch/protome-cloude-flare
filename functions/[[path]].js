@@ -227,6 +227,58 @@ export async function onRequest(context) {
       })
     }
 
+    // ── Link redirect: /{username}/l/{linkId} ────────────────
+    // Shares a specific link with OG tags (like Linktree) then redirects
+    const linkMatch = path.match(/^\/([^/]+)\/l\/([a-z0-9]+)$/i)
+    if (linkMatch) {
+      const linkUsername = linkMatch[1]
+      const linkId = linkMatch[2]
+
+      try {
+        const profileUrl = supabaseUrl(`profiles?username=eq.${encodeURIComponent(linkUsername.toLowerCase())}&select=*`)
+        const profileRes = await fetch(profileUrl, { headers: supabaseHeaders() })
+        const profiles = await profileRes.json()
+
+        if (profiles && profiles.length > 0) {
+          const profile = profiles[0]
+          const links = Array.isArray(profile.links) ? profile.links : []
+          const link = links.find(l => l.id === linkId && !l.isSection)
+
+          if (link && link.url) {
+            const destUrl = link.url.startsWith('http') ? link.url : `https://${link.url}`
+            const linkLabel = link.label || 'Link'
+            const profileName = profile.name || linkUsername
+            const escDest = esc(destUrl)
+            const escLabel = esc(linkLabel)
+            const escName = esc(profileName)
+
+            return new Response(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex">
+  <title>${escLabel} — ${escName} · protome</title>
+  <meta property="og:title" content="${escLabel}" />
+  <meta property="og:description" content="from ${escName}'s protome profile" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="${escDest}" />
+  <meta name="twitter:card" content="summary" />
+  <meta http-equiv="refresh" content="0;url=${escDest}">
+</head>
+<body>
+  <script>location.replace(${JSON.stringify(destUrl)})</script>
+  <p>Redirecting to <a href="${escDest}">${escLabel}</a>...</p>
+</body>
+</html>`, {
+              headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-cache' },
+            })
+          }
+        }
+      } catch {
+        // fall through — let the SPA handle it as a normal profile lookup
+      }
+    }
+
     // ── Profile page: inject OG meta tags ────────────────────
     const username = path.slice(1)
     if (!username) {

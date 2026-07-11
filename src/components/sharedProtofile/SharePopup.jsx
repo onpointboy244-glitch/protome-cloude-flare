@@ -165,6 +165,7 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose, hide
             />
           )}
           <div className="protofile__share-popup-preview-info">
+            {linkLabel && <span className="protofile__share-popup-preview-label">{linkLabel}</span>}
             <span className="protofile__share-popup-preview-url">{shareUrl}</span>
           </div>
         </div>

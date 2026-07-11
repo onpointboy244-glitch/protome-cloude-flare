@@ -152,8 +152,14 @@ export default function SharedProtofile({ data }) {
                   item={item}
                   showIcon={detect_icons !== false}
                   onShareLink={() => {
-                    const href = item.url.startsWith("http") ? item.url : `https://${item.url}`;
-                    setShareUrl(href);
+                    if (item.id) {
+                      const redirectUrl = `${window.location.origin}/${d.username}/l/${item.id}`;
+                      setShareUrl(redirectUrl);
+                    } else {
+                      // Fallback for old links without an id — share raw URL
+                      const href = item.url.startsWith("http") ? item.url : `https://${item.url}`;
+                      setShareUrl(href);
+                    }
                     setShareLabel(item.label);
                     setShareOpen(true);
                   }}
