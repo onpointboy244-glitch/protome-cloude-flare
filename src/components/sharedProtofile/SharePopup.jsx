@@ -178,7 +178,7 @@ export default function SharePopup({ url, title, linkLabel, onClose, hideBrand }
         </div>
 
         {/* Preview card — always show OG rich card for both profile & link shares */}
-        <div className={`protofile__share-popup-preview ${ogData ? 'protofile__share-popup-preview--link' : ''} ${!ogData?.image ? 'protofile__share-popup-preview--no-img' : ''}`}>
+        <div className={`protofile__share-popup-preview ${ogData ? 'protofile__share-popup-preview--link' : ''} ${!linkLabel && ogData ? 'protofile__share-popup-preview--profile' : ''} ${!ogData?.image ? 'protofile__share-popup-preview--no-img' : ''}`}>
           {ogLoading ? (
             <div className="protofile__share-popup-preview-loading" />
           ) : ogData?.image ? (

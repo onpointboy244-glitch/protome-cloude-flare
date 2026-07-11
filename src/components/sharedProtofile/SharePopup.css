@@ -111,6 +111,12 @@
   object-fit: cover;
 }
 
+/* Profile share — show full photo without cropping */
+.protofile__share-popup-preview--profile .protofile__share-popup-preview-img {
+  object-fit: contain;
+  background: oklch(0 0 0 / 0.06);
+}
+
 .protofile__share-popup-preview-info {
   display: flex;
   flex-direction: column;
