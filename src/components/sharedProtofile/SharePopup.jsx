@@ -9,6 +9,13 @@ import './SharePopup.css'
 
 const isMobileEnv = typeof window !== 'undefined' ? window.innerWidth < 768 : false
 
+function decodeEntities(str) {
+  if (!str) return str
+  const el = document.createElement('textarea')
+  el.innerHTML = str
+  return el.value
+}
+
 const SOCIALS = [
   {
     id: 'twitter',
@@ -75,26 +82,32 @@ const SOCIALS = [
 export default function SharePopup({ url, title, linkLabel, photo, onClose, hideBrand }) {
   const [copied, setCopied] = useState(false)
   const [showAll, setShowAll] = useState(false)
+  const shareUrl = url || window.location.href
+  const isProfileShare = !linkLabel
+  const decodedTitle = decodeEntities(title)
+  const shareText = decodedTitle ? `Check out ${decodedTitle} on protome` : 'Check this out'
+
+  const [ogLoading, setOgLoading] = useState(() => !isProfileShare)
   const [ogData, setOgData] = useState(null)
-  const [ogLoading, setOgLoading] = useState(true)
   const modalRef = useRef(null)
 
   const VISIBLE_COUNT = 4
   const visible = showAll ? SOCIALS : SOCIALS.slice(0, VISIBLE_COUNT)
   const hasMore = SOCIALS.length > VISIBLE_COUNT
 
-  // Fetch OG tags for the shared URL (profile or link)
+  // Fetch OG tags for link shares
   useEffect(() => {
+    if (isProfileShare) return
     const targetUrl = url || window.location.href
     fetch(`/api/og?url=${encodeURIComponent(targetUrl)}`)
       .then(r => r.json())
       .then(data => {
-        if (data && data.title) setOgData(data)
+        if (data && data.title && data.image) setOgData(data)
         else setOgData(null)
       })
       .catch(() => setOgData(null))
       .finally(() => setOgLoading(false))
-  }, [url])
+  }, [url, isProfileShare])
 
   // Focus trap + Escape key — same as before
   useEffect(() => {
@@ -118,10 +131,6 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose, hide
     document.addEventListener('keydown', handleKey)
     return () => document.removeEventListener('keydown', handleKey)
   }, [onClose])
-
-  const shareUrl = url || window.location.href
-  const isProfileShare = !linkLabel
-  const shareText = title ? `Check out ${title}` : 'Check this out'
 
   const handleCopyLink = async () => {
     try {
@@ -189,9 +198,15 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose, hide
             />
           ) : null}
           <div className="protofile__share-popup-preview-info">
-            {linkLabel && <span className="protofile__share-popup-preview-label">{linkLabel}</span>}
-            {ogData?.title && <span className="protofile__share-popup-preview-og-title">{ogData.title}</span>}
-            {ogData?.description && <span className="protofile__share-popup-preview-og-desc">{ogData.description}</span>}
+            {linkLabel ? (
+              <>
+                <span className="protofile__share-popup-preview-label">{linkLabel}</span>
+                {ogData?.title && <span className="protofile__share-popup-preview-og-title">{ogData.title}</span>}
+                {ogData?.description && <span className="protofile__share-popup-preview-og-desc">{ogData.description}</span>}
+              </>
+            ) : decodedTitle ? (
+              <span className="protofile__share-popup-preview-og-title">{decodedTitle}</span>
+            ) : null}
             <span className="protofile__share-popup-preview-url">{shareUrl}</span>
           </div>
         </div>
@@ -244,7 +259,7 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose, hide
               </svg>
             </button>
           )}
-          {showAll && isMobileEnv && (
+          {showAll && (
             <button
               className="protofile__share-popup-more-btn"
               onClick={handleNativeShare}
