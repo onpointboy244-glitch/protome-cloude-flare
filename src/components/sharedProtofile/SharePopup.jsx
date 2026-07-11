@@ -72,7 +72,7 @@ const SOCIALS = [
   },
 ]
 
-export default function SharePopup({ url, title, linkLabel, photo, onClose }) {
+export default function SharePopup({ url, title, linkLabel, photo, onClose, hideBrand }) {
   const [copied, setCopied] = useState(false)
   const [showAll, setShowAll] = useState(false)
   const modalRef = useRef(null)
@@ -231,20 +231,22 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose }) {
           )}
         </div>
 
-        <a
-          href="/"
-          className="protofile__share-popup-brand"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <span className="protofile__share-popup-brand-mark">
-            <span className="protofile__share-popup-brand-diamond" />
-            <span className="protofile__share-popup-brand-line" />
-          </span>
-          <span className="protofile__share-popup-brand-text">
-            join <strong>{title || 'them'}</strong> on&nbsp;pro<span className="protofile__share-popup-brand-mid">t</span>ome
-          </span>
-        </a>
+        {!hideBrand && (
+          <a
+            href="/"
+            className="protofile__share-popup-brand"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span className="protofile__share-popup-brand-mark">
+              <span className="protofile__share-popup-brand-diamond" />
+              <span className="protofile__share-popup-brand-line" />
+            </span>
+            <span className="protofile__share-popup-brand-text">
+              join <strong>{title || 'them'}</strong> on&nbsp;pro<span className="protofile__share-popup-brand-mid">t</span>ome
+            </span>
+          </a>
+        )}
       </div>
     </div>
   )
