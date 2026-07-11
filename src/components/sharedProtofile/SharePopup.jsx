@@ -79,7 +79,7 @@ const SOCIALS = [
   },
 ]
 
-export default function SharePopup({ url, title, linkLabel, photo, onClose, hideBrand }) {
+export default function SharePopup({ url, title, linkLabel, onClose, hideBrand }) {
   const [copied, setCopied] = useState(false)
   const [showAll, setShowAll] = useState(false)
   const shareUrl = url || window.location.href
@@ -87,7 +87,7 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose, hide
   const decodedTitle = decodeEntities(title)
   const shareText = decodedTitle ? `Check out ${decodedTitle} on protome` : 'Check this out'
 
-  const [ogLoading, setOgLoading] = useState(() => !isProfileShare)
+  const [ogLoading, setOgLoading] = useState(true)
   const [ogData, setOgData] = useState(null)
   const modalRef = useRef(null)
 
@@ -95,9 +95,8 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose, hide
   const visible = showAll ? SOCIALS : SOCIALS.slice(0, VISIBLE_COUNT)
   const hasMore = SOCIALS.length > VISIBLE_COUNT
 
-  // Fetch OG tags for link shares
+  // Fetch OG tags for the shared URL
   useEffect(() => {
-    if (isProfileShare) return
     const targetUrl = url || window.location.href
     fetch(`/api/og?url=${encodeURIComponent(targetUrl)}`)
       .then(r => r.json())
@@ -107,7 +106,7 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose, hide
       })
       .catch(() => setOgData(null))
       .finally(() => setOgLoading(false))
-  }, [url, isProfileShare])
+  }, [url])
 
   // Focus trap + Escape key — same as before
   useEffect(() => {
@@ -179,19 +178,12 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose, hide
         </div>
 
         {/* Preview card — always show OG rich card for both profile & link shares */}
-        <div className={`protofile__share-popup-preview ${ogData ? 'protofile__share-popup-preview--link' : ''} ${!ogData?.image && !photo ? 'protofile__share-popup-preview--no-img' : ''}`}>
+        <div className={`protofile__share-popup-preview ${ogData ? 'protofile__share-popup-preview--link' : ''} ${!ogData?.image ? 'protofile__share-popup-preview--no-img' : ''}`}>
           {ogLoading ? (
             <div className="protofile__share-popup-preview-loading" />
           ) : ogData?.image ? (
             <img
               src={ogData.image}
-              alt=""
-              className="protofile__share-popup-preview-img"
-              loading="lazy"
-            />
-          ) : photo ? (
-            <img
-              src={photo}
               alt=""
               className="protofile__share-popup-preview-img"
               loading="lazy"

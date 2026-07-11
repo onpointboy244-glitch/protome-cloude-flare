@@ -104,7 +104,6 @@ export default function CreateProfileResult({ createdUsername, latestProtofile, 
         <SharePopup
           url={url}
           title={latestProtofile?.name || createdUsername}
-          photo={latestProtofile?.photo_url}
           onClose={() => setShareOpen(false)}
           hideBrand
         />

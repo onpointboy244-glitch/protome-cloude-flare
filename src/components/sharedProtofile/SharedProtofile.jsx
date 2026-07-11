@@ -232,7 +232,6 @@ export default function SharedProtofile({ data }) {
           url={shareUrl}
           title={name}
           linkLabel={shareLabel}
-          photo={photoSrc}
           onClose={() => { setShareOpen(false); setShareUrl(null); setShareLabel(null); }}
         />
       )}
