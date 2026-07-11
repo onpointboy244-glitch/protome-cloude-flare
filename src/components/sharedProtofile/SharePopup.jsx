@@ -76,26 +76,25 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose, hide
   const [copied, setCopied] = useState(false)
   const [showAll, setShowAll] = useState(false)
   const [ogData, setOgData] = useState(null)
-  const [ogLoading, setOgLoading] = useState(false)
+  const [ogLoading, setOgLoading] = useState(true)
   const modalRef = useRef(null)
 
   const VISIBLE_COUNT = 4
   const visible = showAll ? SOCIALS : SOCIALS.slice(0, VISIBLE_COUNT)
   const hasMore = SOCIALS.length > VISIBLE_COUNT
 
-  // Fetch OG tags for link shares
+  // Fetch OG tags for the shared URL (profile or link)
   useEffect(() => {
-    if (!linkLabel || !url) return
-    setOgLoading(true)
-    fetch(`/api/og?url=${encodeURIComponent(url)}`)
+    const targetUrl = url || window.location.href
+    fetch(`/api/og?url=${encodeURIComponent(targetUrl)}`)
       .then(r => r.json())
       .then(data => {
-        if (data.title) setOgData(data)
+        if (data && data.title) setOgData(data)
         else setOgData(null)
       })
       .catch(() => setOgData(null))
       .finally(() => setOgLoading(false))
-  }, [linkLabel, url])
+  }, [url])
 
   // Focus trap + Escape key — same as before
   useEffect(() => {
@@ -170,7 +169,7 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose, hide
           </button>
         </div>
 
-        {/* Preview card */}
+        {/* Preview card — always show OG rich card for both profile & link shares */}
         <div className={`protofile__share-popup-preview ${ogData ? 'protofile__share-popup-preview--link' : ''} ${!ogData?.image && !photo ? 'protofile__share-popup-preview--no-img' : ''}`}>
           {ogLoading ? (
             <div className="protofile__share-popup-preview-loading" />
