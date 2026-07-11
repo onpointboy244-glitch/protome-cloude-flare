@@ -227,61 +227,55 @@ export async function onRequest(context) {
       })
     }
 
-    // ── Link redirect: /{username}/l/{linkId} ────────────────
-    // Shares a specific link with OG tags (like Linktree) then redirects
-    const linkMatch = path.match(/^\/([^/]+)\/l\/([a-z0-9]+)$/i)
-    if (linkMatch) {
-      const linkUsername = linkMatch[1]
-      const linkId = linkMatch[2]
+    // ── API: Fetch OG tags for an external URL ──────────────
+    if (path === '/api/og') {
+      const targetUrl = url.searchParams.get('url')
+      if (!targetUrl) {
+        return new Response(JSON.stringify({ error: 'Missing url param' }), {
+          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
 
       try {
-        const profileUrl = supabaseUrl(`profiles?username=eq.${encodeURIComponent(linkUsername.toLowerCase())}&select=*`)
-        const profileRes = await fetch(profileUrl, { headers: supabaseHeaders() })
-        const profiles = await profileRes.json()
+        const resp = await fetch(targetUrl, {
+          headers: { 'User-Agent': 'WhatsApp/2' }, // mimic a social crawler
+          signal: AbortSignal.timeout(5000),
+        })
+        const html = await resp.text()
 
-        if (profiles && profiles.length > 0) {
-          const profile = profiles[0]
-          const links = Array.isArray(profile.links) ? profile.links : []
-          const link = links.find(l => l.id === linkId && !l.isSection)
-
-          if (link && link.url) {
-            const destUrl = link.url.startsWith('http') ? link.url : `https://${link.url}`
-            const linkLabel = link.label || 'Link'
-            const profileName = profile.name || linkUsername
-            const profilePhoto = profile.photo_url || null
-            const escDest = esc(destUrl)
-            const escLabel = esc(linkLabel)
-            const escName = esc(profileName)
-            const escPhoto = profilePhoto ? esc(profilePhoto) : null
-            const pageUrl = esc(url.origin + '/' + linkUsername + '/l/' + linkId)
-
-            return new Response(`<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="robots" content="noindex">
-  <title>${escLabel} — ${escName} · protome</title>
-  <meta property="og:title" content="${escLabel}" />
-  <meta property="og:description" content="from ${escName}'s protome profile" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="${pageUrl}" />
-  ${escPhoto ? `<meta property="og:image" content="${escPhoto}" />` : ''}
-  <meta property="og:image:width" content="400" />
-  <meta property="og:image:height" content="400" />
-  <meta name="twitter:card" content="summary" />
-  <meta http-equiv="refresh" content="0;url=${escDest}">
-</head>
-<body>
-  <script>location.replace(${JSON.stringify(destUrl)})</script>
-  <p>Redirecting to <a href="${escDest}">${escLabel}</a>...</p>
-</body>
-</html>`, {
-              headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-cache' },
-            })
+        const getMeta = (prop) => {
+          // Try property="og:..." first, then name="twitter:..."
+          const patterns = [
+            new RegExp(`<meta[^>]+property="${prop}"[^>]+content="([^"]*)"`, 'i'),
+            new RegExp(`<meta[^>]+content="([^"]*)"[^>]+property="${prop}"`, 'i'),
+            new RegExp(`<meta[^>]+name="${prop}"[^>]+content="([^"]*)"`, 'i'),
+            new RegExp(`<meta[^>]+content="([^"]*)"[^>]+name="${prop}"`, 'i'),
+          ]
+          for (const re of patterns) {
+            const m = html.match(re)
+            if (m) return esc(m[1])
           }
+          return null
         }
+
+        const ogTitle = getMeta('og:title') || getMeta('twitter:title') || esc(targetUrl)
+        const ogDesc = getMeta('og:description') || getMeta('twitter:description') || null
+        const ogImage = getMeta('og:image') || getMeta('twitter:image') || null
+        const siteName = getMeta('og:site_name') || null
+
+        return new Response(JSON.stringify({
+          title: ogTitle,
+          description: ogDesc,
+          image: ogImage,
+          siteName,
+          url: targetUrl,
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json', 'cache-control': 'public, max-age=3600' },
+        })
       } catch {
-        // fall through — let the SPA handle it as a normal profile lookup
+        return new Response(JSON.stringify({ error: 'Failed to fetch OG data' }), {
+          status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
       }
     }
 

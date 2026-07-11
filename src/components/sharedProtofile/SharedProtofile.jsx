@@ -152,14 +152,8 @@ export default function SharedProtofile({ data }) {
                   item={item}
                   showIcon={detect_icons !== false}
                   onShareLink={() => {
-                    if (item.id) {
-                      const redirectUrl = `${window.location.origin}/${d.username}/l/${item.id}`;
-                      setShareUrl(redirectUrl);
-                    } else {
-                      // Fallback for old links without an id — share raw URL
-                      const href = item.url.startsWith("http") ? item.url : `https://${item.url}`;
-                      setShareUrl(href);
-                    }
+                    const href = item.url.startsWith("http") ? item.url : `https://${item.url}`;
+                    setShareUrl(href);
                     setShareLabel(item.label);
                     setShareOpen(true);
                   }}
@@ -238,7 +232,7 @@ export default function SharedProtofile({ data }) {
           url={shareUrl}
           title={name}
           linkLabel={shareLabel}
-          photo={shareLabel ? null : photoSrc}
+          photo={photoSrc}
           onClose={() => { setShareOpen(false); setShareUrl(null); setShareLabel(null); }}
         />
       )}

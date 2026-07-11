@@ -75,7 +75,27 @@ const SOCIALS = [
 export default function SharePopup({ url, title, linkLabel, photo, onClose, hideBrand }) {
   const [copied, setCopied] = useState(false)
   const [showAll, setShowAll] = useState(false)
+  const [ogData, setOgData] = useState(null)
+  const [ogLoading, setOgLoading] = useState(false)
   const modalRef = useRef(null)
+
+  const VISIBLE_COUNT = 4
+  const visible = showAll ? SOCIALS : SOCIALS.slice(0, VISIBLE_COUNT)
+  const hasMore = SOCIALS.length > VISIBLE_COUNT
+
+  // Fetch OG tags for link shares
+  useEffect(() => {
+    if (!linkLabel || !url) return
+    setOgLoading(true)
+    fetch(`/api/og?url=${encodeURIComponent(url)}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.title) setOgData(data)
+        else setOgData(null)
+      })
+      .catch(() => setOgData(null))
+      .finally(() => setOgLoading(false))
+  }, [linkLabel, url])
 
   const VISIBLE_COUNT = 4
   const visible = showAll ? SOCIALS : SOCIALS.slice(0, VISIBLE_COUNT)
@@ -154,18 +174,29 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose, hide
           </button>
         </div>
 
-        {/* Preview card — only show photo for profile share */}
-        <div className={`protofile__share-popup-preview ${!photo ? 'protofile__share-popup-preview--no-img' : ''}`}>
-          {photo && (
+        {/* Preview card */}
+        <div className={`protofile__share-popup-preview ${ogData ? 'protofile__share-popup-preview--link' : ''} ${!ogData?.image && !photo ? 'protofile__share-popup-preview--no-img' : ''}`}>
+          {ogLoading ? (
+            <div className="protofile__share-popup-preview-loading" />
+          ) : ogData?.image ? (
+            <img
+              src={ogData.image}
+              alt=""
+              className="protofile__share-popup-preview-img"
+              loading="lazy"
+            />
+          ) : photo ? (
             <img
               src={photo}
               alt=""
               className="protofile__share-popup-preview-img"
               loading="lazy"
             />
-          )}
+          ) : null}
           <div className="protofile__share-popup-preview-info">
             {linkLabel && <span className="protofile__share-popup-preview-label">{linkLabel}</span>}
+            {ogData?.title && <span className="protofile__share-popup-preview-og-title">{ogData.title}</span>}
+            {ogData?.description && <span className="protofile__share-popup-preview-og-desc">{ogData.description}</span>}
             <span className="protofile__share-popup-preview-url">{shareUrl}</span>
           </div>
         </div>
