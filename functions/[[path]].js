@@ -248,9 +248,12 @@ export async function onRequest(context) {
             const destUrl = link.url.startsWith('http') ? link.url : `https://${link.url}`
             const linkLabel = link.label || 'Link'
             const profileName = profile.name || linkUsername
+            const profilePhoto = profile.photo_url || null
             const escDest = esc(destUrl)
             const escLabel = esc(linkLabel)
             const escName = esc(profileName)
+            const escPhoto = profilePhoto ? esc(profilePhoto) : null
+            const pageUrl = esc(url.origin + '/' + linkUsername + '/l/' + linkId)
 
             return new Response(`<!DOCTYPE html>
 <html lang="en">
@@ -261,7 +264,10 @@ export async function onRequest(context) {
   <meta property="og:title" content="${escLabel}" />
   <meta property="og:description" content="from ${escName}'s protome profile" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="${escDest}" />
+  <meta property="og:url" content="${pageUrl}" />
+  ${escPhoto ? `<meta property="og:image" content="${escPhoto}" />` : ''}
+  <meta property="og:image:width" content="400" />
+  <meta property="og:image:height" content="400" />
   <meta name="twitter:card" content="summary" />
   <meta http-equiv="refresh" content="0;url=${escDest}">
 </head>
