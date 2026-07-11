@@ -97,10 +97,6 @@ export default function SharePopup({ url, title, linkLabel, photo, onClose, hide
       .finally(() => setOgLoading(false))
   }, [linkLabel, url])
 
-  const VISIBLE_COUNT = 4
-  const visible = showAll ? SOCIALS : SOCIALS.slice(0, VISIBLE_COUNT)
-  const hasMore = SOCIALS.length > VISIBLE_COUNT
-
   // Focus trap + Escape key — same as before
   useEffect(() => {
     const modal = modalRef.current
