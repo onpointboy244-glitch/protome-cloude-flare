@@ -12,8 +12,13 @@ const isMobileEnv = typeof window !== 'undefined' ? window.innerWidth < 768 : fa
 function decodeEntities(str) {
   if (!str) return str
   const el = document.createElement('textarea')
-  el.innerHTML = str
-  return el.value
+  let prev
+  do {
+    prev = str
+    el.innerHTML = str
+    str = el.value
+  } while (str !== prev)
+  return str
 }
 
 const SOCIALS = [
