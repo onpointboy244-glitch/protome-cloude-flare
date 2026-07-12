@@ -101,8 +101,15 @@ export default function SharePopup({ url, title, linkLabel, onClose, hideBrand }
     fetch(`/api/og?url=${encodeURIComponent(targetUrl)}`)
       .then(r => r.json())
       .then(data => {
-        if (data && data.title && data.image) setOgData(data)
-        else setOgData(null)
+        if (data && data.title) {
+          setOgData({
+            title: decodeEntities(data.title),
+            description: decodeEntities(data.description),
+            image: data.image,
+            siteName: data.siteName ? decodeEntities(data.siteName) : null,
+            url: data.url,
+          })
+        } else setOgData(null)
       })
       .catch(() => setOgData(null))
       .finally(() => setOgLoading(false))
