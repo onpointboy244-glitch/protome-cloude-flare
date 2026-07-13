@@ -36,7 +36,7 @@ export default function SharedProtofile({ data }) {
   // Only check raw hex accent — skip the CSS variable fallback
   const isAccentLight = accent ? isLightColor(accent) : false;
   const accentHoverText = isAccentLight ? "#000" : "#fff";
-  const isSans = font === "sans";
+  const fontClass = font && font !== 'serif' ? `protofile--${font}` : '';
   const initials = name
     ? name
         .split(" ")
@@ -63,10 +63,13 @@ export default function SharedProtofile({ data }) {
     ? gradientIsDark(bgGradient)
     : !isLightColor(bgColor);
   const isLightBg = isLightColor(bgColor);
+  // If accent and bg are both light or both dark, accent is invisible → use neutral contrast
+  const accentInvisible = accent && bgColor && isLightColor(accent) === isLightColor(bgColor)
+  const visibleAccent = accentInvisible ? (isLightBg ? "#000" : "#fff") : accentColor;
 
   return (
     <div
-      className={`protofile ${isSans ? "protofile--sans" : ""} ${bgGradient ? "protofile--gradient" : ""} ${isLightBg ? "protofile--light" : ""} ${isDarkBg ? "protofile--dark" : ""}`}
+      className={`protofile ${fontClass} ${bgGradient ? "protofile--gradient" : ""} ${isLightBg ? "protofile--light" : ""} ${isDarkBg ? "protofile--dark" : ""}`}
       style={{
         "--accent": accentColor,
         "--accent-hover-text": accentHoverText,
@@ -82,7 +85,7 @@ export default function SharedProtofile({ data }) {
         <main className="protofile__main">
           {/* Share — top left */}
           <div className="protofile__share-wrapper">
-            <ShareButton accentColor={accentColor} isLightBg={isLightBg} onShare={() => setShareOpen(true)} />
+            <ShareButton accentColor={visibleAccent} isLightBg={isLightBg} onShare={() => setShareOpen(true)} />
           </div>
 
           {/* Photo / Avatar */}
@@ -165,7 +168,7 @@ export default function SharedProtofile({ data }) {
           {/* Footer */}
           <div
             className="protofile__footer"
-            style={{ "--accent-color": accentColor }}
+            style={{ "--accent-color": visibleAccent }}
           >
             {/* Brand centered at top */}
             <div className="protofile__footer-brand-wrap">

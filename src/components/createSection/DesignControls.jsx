@@ -1,6 +1,15 @@
 import { GRADIENT_PRESETS } from './formConstants'
 import './DesignControls.css'
 
+const FONTS = [
+  { key: 'serif', label: 'Serif', className: 'create-section__font-sample--serif' },
+  { key: 'sans', label: 'Sans', className: 'create-section__font-sample--sans' },
+  { key: 'mono', label: 'Mono', className: 'create-section__font-sample--mono' },
+  { key: 'hand', label: 'Hand', className: 'create-section__font-sample--hand' },
+  { key: 'bold', label: 'Bold', className: 'create-section__font-sample--bold' },
+  { key: 'rounded', label: 'Rounded', className: 'create-section__font-sample--rounded' },
+]
+
 export default function DesignControls({ accent, bgGradient, font, onAccentChange, onBgChange, onFontChange }) {
   return (
     <div className="create-section__field-group">
@@ -50,22 +59,17 @@ export default function DesignControls({ accent, bgGradient, font, onAccentChang
         <div className="create-section__design-row">
           <label className="create-section__label">Font style</label>
           <div className="create-section__font-options">
-            <button
-              type="button"
-              className={`create-section__font-btn ${font === 'serif' ? 'create-section__font-btn--active' : ''}`}
-              onClick={() => onFontChange('serif')}
-            >
-              <span className="create-section__font-sample create-section__font-sample--serif">Aa</span>
-              Serif
-            </button>
-            <button
-              type="button"
-              className={`create-section__font-btn ${font === 'sans' ? 'create-section__font-btn--active' : ''}`}
-              onClick={() => onFontChange('sans')}
-            >
-              <span className="create-section__font-sample create-section__font-sample--sans">Aa</span>
-              Sans
-            </button>
+            {FONTS.map(f => (
+              <button
+                key={f.key}
+                type="button"
+                className={`create-section__font-btn ${font === f.key ? 'create-section__font-btn--active' : ''}`}
+                onClick={() => onFontChange(f.key)}
+              >
+                <span className={`create-section__font-sample ${f.className}`}>Aa</span>
+                {f.label}
+              </button>
+            ))}
           </div>
         </div>
       </div>

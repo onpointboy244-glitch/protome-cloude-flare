@@ -41,9 +41,13 @@ const SOCIAL_PLATFORMS = [
   'instagram', 'twitter', 'linkedin', 'youtube', 'tiktok',
   'facebook', 'snapchat', 'discord', 'twitch', 'pinterest',
   'reddit', 'telegram', 'whatsapp', 'threads', 'bluesky',
+  'shopify', 'spotify', 'medium', 'devto', 'codepen',
+  'behance', 'dribbble', 'patreon', 'producthunt',
+  'tumblr', 'vimeo', 'soundcloud', 'goodreads', 'bandcamp',
+  'hashnode', 'mastodon', 'github',
 ]
 
-const CODING_PLATFORMS = ['github']
+const CODING_PLATFORMS = []
 
 // Map display labels to their canonical keys for icon lookup
 const PLATFORM_ALIASES = {
@@ -86,6 +90,23 @@ export const SOCIAL_QUICK_LINKS = [
   { label: 'WhatsApp', key: 'whatsapp' },
   { label: 'Threads', key: 'threads' },
   { label: 'Bluesky', key: 'bluesky' },
+  { label: 'Shopify', key: 'shopify' },
+  { label: 'Spotify', key: 'spotify' },
+  { label: 'Medium', key: 'medium' },
+  { label: 'Dev.to', key: 'devto' },
+  { label: 'CodePen', key: 'codepen' },
+  { label: 'Behance', key: 'behance' },
+  { label: 'Dribbble', key: 'dribbble' },
+  { label: 'Patreon', key: 'patreon' },
+  { label: 'Product Hunt', key: 'producthunt' },
+  { label: 'Tumblr', key: 'tumblr' },
+  { label: 'Vimeo', key: 'vimeo' },
+  { label: 'SoundCloud', key: 'soundcloud' },
+  { label: 'Goodreads', key: 'goodreads' },
+  { label: 'Bandcamp', key: 'bandcamp' },
+  { label: 'Hashnode', key: 'hashnode' },
+  { label: 'Mastodon', key: 'mastodon' },
+  { label: 'GitHub', key: 'github' },
 ]
 
 export const CODING_QUICK_LINKS = [

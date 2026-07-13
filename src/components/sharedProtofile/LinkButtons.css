@@ -183,3 +183,40 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* ---- Font-style overrides for link buttons ---- */
+
+.protofile--mono .protofile__link-btn {
+  font-family: 'JetBrains Mono', ui-monospace, 'Fira Code', monospace;
+  font-size: var(--text-xs);
+  font-weight: 400;
+}
+
+.protofile--hand .protofile__link-btn {
+  font-family: 'Caveat', 'Patrick Hand', cursive;
+  font-size: calc(var(--text-sm) + 0.1rem);
+  font-weight: 500;
+}
+
+.protofile--bold .protofile__link-btn {
+  font-family: 'Bebas Neue', 'Anton', sans-serif;
+  font-weight: 400;
+  font-size: var(--text-sm);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.protofile--rounded .protofile__link-btn {
+  font-family: 'Fredoka', 'Nunito', system-ui, sans-serif;
+  font-weight: 400;
+}
+
+.protofile--serif .protofile__link-btn {
+  font-family: var(--font-display);
+  font-weight: 400;
+}
+
+.protofile--sans .protofile__link-btn {
+  font-family: var(--font-body);
+  font-weight: 500;
+}

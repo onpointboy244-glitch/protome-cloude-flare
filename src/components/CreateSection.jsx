@@ -11,6 +11,7 @@ import UsernameField from './createSection/UsernameField'
 import LinksEditor from './createSection/LinksEditor'
 import DesignControls from './createSection/DesignControls'
 import DeleteProfileModal from './createSection/DeleteProfileModal'
+import { detectIconKey } from '../lib/icons.jsx'
 import { useToast } from './Toast'
 import './CreateSection.css'
 
@@ -179,6 +180,17 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
     if (!/^[a-z0-9][a-z0-9_-]{0,28}[a-z0-9]$/i.test(f.username.trim())) { showError('Username must start and end with a letter or number (2-30 chars, letters, numbers, hyphens, underscores).'); return }
     if (f.links.some(l => !l.isSection && !l.label.trim() && l.url.trim())) { showError('Give each link a label or remove the empty ones.'); return }
     if (f.links.some(l => !l.isSection && l.label.trim() && !l.url.trim())) { showError('Give each link a URL or remove the empty ones.'); return }
+    // Check social links for URL-platform mismatches
+    const mismatchLink = f.links.find(l => {
+      if (l.isSection || l.type === 'website') return false
+      const labelKey = detectIconKey(l.label, '')
+      const urlKey = detectIconKey('', l.url)
+      return labelKey && labelKey !== 'website' && l.url.trim() && (!urlKey || urlKey !== labelKey)
+    })
+    if (mismatchLink) {
+      showError(`Please enter a valid ${mismatchLink.label} URL.`)
+      return
+    }
 
     profileMutation.mutate()
   }

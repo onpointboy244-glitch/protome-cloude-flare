@@ -51,10 +51,11 @@ function reducer(state, action) {
 
     case 'ADD_LINK':
     case 'ADD_LINK_TO_GROUP': {
-      const { label = '', linkType } = action
+      const { label = '', linkType, extraProps } = action
       const newLink = {
         id: Math.random().toString(36).slice(2, 9),
         label, url: '', ...(linkType ? { type: linkType } : {}),
+        ...(extraProps || {}),
       }
       const insertUngrouped = () => {
         const idx = state.links.findIndex(l => l.isSection)
@@ -156,11 +157,11 @@ export function useProfileForm() {
     dispatch({ type: 'LOAD_PROFILE', profile })
   }, [])
 
-  const addLink = useCallback((label, linkType) =>
-    dispatch({ type: 'ADD_LINK', label, linkType }), [])
+  const addLink = useCallback((label, linkType, extraProps) =>
+    dispatch({ type: 'ADD_LINK', label, linkType, extraProps }), [])
 
-  const addLinkToGroup = useCallback((sectionId, label, linkType) =>
-    dispatch({ type: 'ADD_LINK_TO_GROUP', sectionId, label, linkType }), [])
+  const addLinkToGroup = useCallback((sectionId, label, linkType, extraProps) =>
+    dispatch({ type: 'ADD_LINK_TO_GROUP', sectionId, label, linkType, extraProps }), [])
 
   const addSection = useCallback((label) =>
     dispatch({ type: 'ADD_SECTION', label }), [])

@@ -131,7 +131,7 @@ export default function ProtofileCard({ data, compact, animateIn }) {
   }
   const { links: rawLinks = {}, accent = '', bgColor = '', bgGradient = '', font = '' } = d
   const accentColor = accent || 'var(--color-primary-l)'
-  const isSans = font === 'sans'
+  const fontClass = font && font !== 'serif' ? `protofile-card--${font}` : ''
   // Detect dark background for text contrast — check gradient or solid color
   const isDarkBg = bgGradient
     ? gradientIsDark(bgGradient)
@@ -155,7 +155,7 @@ export default function ProtofileCard({ data, compact, animateIn }) {
 
   return (
     <div
-      className={`protofile-card ${compact ? 'protofile-card--compact' : ''} ${isSans ? 'protofile-card--sans' : ''} ${bgGradient ? 'protofile-card--gradient' : ''} ${fading ? 'protofile-card--fading' : ''} ${animateIn ? 'protofile-card--hero' : ''}`}
+      className={`protofile-card ${compact ? 'protofile-card--compact' : ''} ${fontClass} ${bgGradient ? 'protofile-card--gradient' : ''} ${fading ? 'protofile-card--fading' : ''} ${animateIn ? 'protofile-card--hero' : ''}`}
       role="article"
       aria-label="Protofile preview"
       style={{

@@ -11,9 +11,12 @@
 import {
   FaGlobe, FaLinkedin, FaGithub, FaInstagram, FaYoutube, FaTiktok,
   FaFacebook, FaSnapchat, FaDiscord, FaTwitch, FaPinterest, FaReddit,
-  FaTelegram, FaWhatsapp,
+  FaTelegram, FaWhatsapp, FaShopify, FaSpotify, FaMedium, FaDev,
+  FaCodepen, FaStackOverflow, FaBehance, FaDribbble, FaEtsy, FaPatreon,
+  FaPaypal, FaFigma, FaProductHunt, FaTumblr, FaVimeo, FaGoodreads,
+  FaBandcamp,
 } from 'react-icons/fa'
-import { FaThreads, FaBluesky, FaLink, FaXTwitter } from 'react-icons/fa6'
+import { FaThreads, FaBluesky, FaLink, FaXTwitter, FaSoundcloud, FaHashnode, FaMastodon } from 'react-icons/fa6'
 
 // ── Icon component map (render at any size) ─────────────────────
 
@@ -35,6 +38,27 @@ export const ICON_COMPONENTS = {
   whatsapp: FaWhatsapp,
   threads: FaThreads,
   bluesky: FaBluesky,
+  // 20 additional platform icons (shopify, spotify, medium, etc.)
+  shopify: FaShopify,
+  spotify: FaSpotify,
+  medium: FaMedium,
+  devto: FaDev,
+  codepen: FaCodepen,
+  stackoverflow: FaStackOverflow,
+  behance: FaBehance,
+  dribbble: FaDribbble,
+  etsy: FaEtsy,
+  patreon: FaPatreon,
+  paypal: FaPaypal,
+  figma: FaFigma,
+  producthunt: FaProductHunt,
+  tumblr: FaTumblr,
+  vimeo: FaVimeo,
+  soundcloud: FaSoundcloud,
+  goodreads: FaGoodreads,
+  bandcamp: FaBandcamp,
+  hashnode: FaHashnode,
+  mastodon: FaMastodon,
 }
 
 const PLATFORM_NAMES = Object.keys(ICON_COMPONENTS)
@@ -90,6 +114,27 @@ export function detectIconKey(label = '', url = '') {
   if (domainMatch('whatsapp.com')) return 'whatsapp'
   if (domainMatch('threads.net')) return 'threads'
   if (domainMatch('bsky.app') || domainMatch('sky.social')) return 'bluesky'
+  // Extended platform URL detection (shopify, spotify, medium, codepen, etc.)
+  if (domainMatch('shopify.com') || domainMatch('myshopify.com')) return 'shopify'
+  if (domainMatch('spotify.com')) return 'spotify'
+  if (domainMatch('medium.com')) return 'medium'
+  if (domainMatch('dev.to')) return 'devto'
+  if (domainMatch('codepen.io')) return 'codepen'
+  if (domainMatch('stackoverflow.com') || domainMatch('stackexchange.com')) return 'stackoverflow'
+  if (domainMatch('behance.net')) return 'behance'
+  if (domainMatch('dribbble.com')) return 'dribbble'
+  if (domainMatch('etsy.com')) return 'etsy'
+  if (domainMatch('patreon.com')) return 'patreon'
+  if (domainMatch('paypal.com') || domainMatch('paypal.me')) return 'paypal'
+  if (domainMatch('figma.com')) return 'figma'
+  if (domainMatch('producthunt.com')) return 'producthunt'
+  if (domainMatch('tumblr.com')) return 'tumblr'
+  if (domainMatch('vimeo.com')) return 'vimeo'
+  if (domainMatch('soundcloud.com')) return 'soundcloud'
+  if (domainMatch('goodreads.com')) return 'goodreads'
+  if (domainMatch('bandcamp.com')) return 'bandcamp'
+  if (domainMatch('hashnode.com')) return 'hashnode'
+  if (domainMatch('mastodon.social')) return 'mastodon'
 
   // Label checks (exact word match only) — fallback if URL didn't match
   if (wordMatch('tiktok')) return 'tiktok'
@@ -109,6 +154,26 @@ export function detectIconKey(label = '', url = '') {
   if (wordMatch('whatsapp')) return 'whatsapp'
   if (wordMatch('threads')) return 'threads'
   if (wordMatch('bluesky')) return 'bluesky'
+  if (wordMatch('shopify')) return 'shopify'
+  if (wordMatch('spotify')) return 'spotify'
+  if (wordMatch('medium')) return 'medium'
+  if (wordMatch('dev.to') || wordMatch('devto') || wordMatch('dev')) return 'devto'
+  if (wordMatch('codepen')) return 'codepen'
+  if (wordMatch('stackoverflow') || wordMatch('stack overflow') || wordMatch('stack')) return 'stackoverflow'
+  if (wordMatch('behance')) return 'behance'
+  if (wordMatch('dribbble')) return 'dribbble'
+  if (wordMatch('etsy')) return 'etsy'
+  if (wordMatch('patreon')) return 'patreon'
+  if (wordMatch('paypal')) return 'paypal'
+  if (wordMatch('figma')) return 'figma'
+  if (wordMatch('producthunt') || wordMatch('product hunt')) return 'producthunt'
+  if (wordMatch('tumblr')) return 'tumblr'
+  if (wordMatch('vimeo')) return 'vimeo'
+  if (wordMatch('soundcloud') || wordMatch('sound cloud')) return 'soundcloud'
+  if (wordMatch('goodreads')) return 'goodreads'
+  if (wordMatch('bandcamp')) return 'bandcamp'
+  if (wordMatch('hashnode')) return 'hashnode'
+  if (wordMatch('mastodon')) return 'mastodon'
 
   if (/\b(website|web|site|portfolio)\b/.test(label.toLowerCase())) return 'website'
 
@@ -154,12 +219,23 @@ export function detectPlatformKey(label = '', url = '') {
   if (domainMatch('fb.com')) return 'facebook'
   if (domainMatch('threads.net')) return 'threads'
   if (domainMatch('twitch.tv')) return 'twitch'
+  if (domainMatch('myshopify.com')) return 'shopify'
+  if (domainMatch('dev.to')) return 'devto'
+  if (domainMatch('codepen.io')) return 'codepen'
+  if (domainMatch('behance.net')) return 'behance'
+  if (domainMatch('paypal.me')) return 'paypal'
+  if (domainMatch('stackexchange.com')) return 'stackoverflow'
+  if (domainMatch('mastodon.social')) return 'mastodon'
 
   // Label check — fallback if URL didn't match
   for (const p of PLATFORM_NAMES) {
     if (wordMatch(p)) return p
   }
   if (wordMatch('x')) return 'twitter'
+  if (wordMatch('dev.to') || wordMatch('dev')) return 'devto'
+  if (wordMatch('stack overflow') || wordMatch('stack')) return 'stackoverflow'
+  if (wordMatch('product hunt')) return 'producthunt'
+  if (wordMatch('sound cloud')) return 'soundcloud'
 
   if (/\b(website|web|site|portfolio)\b/.test(label.toLowerCase())) return 'website'
   return null
@@ -214,6 +290,20 @@ export function gradientIsDark(css) {
 
 // ── Social link classification ──────────────────────────────────
 
+// Platforms that show as circle icons on the public profile.
+// Platforms not in this list show as card-style buttons.
+const SOCIAL_PLATFORM_KEYS = [
+  'website',
+  'linkedin', 'twitter', 'github',
+  'instagram', 'youtube', 'tiktok', 'facebook', 'snapchat',
+  'discord', 'twitch', 'pinterest', 'reddit', 'telegram', 'whatsapp',
+  'threads', 'bluesky',
+  'shopify', 'spotify', 'medium', 'devto', 'codepen',
+  'behance', 'dribbble', 'patreon', 'producthunt',
+  'tumblr', 'vimeo', 'soundcloud', 'goodreads', 'bandcamp',
+  'hashnode', 'mastodon',
+]
+
 export function isSocialLink(label = '', url = '', type) {
   if (type === 'website' || type === 'coding') return false
   if (type === 'social') return true
@@ -225,17 +315,20 @@ export function isSocialLink(label = '', url = '', type) {
     if (!hostname) return false
     return hostname === domain || hostname.endsWith('.' + domain) || hostname.startsWith(domain + '.')
   }
-  // URL hostname check first
-  for (const p of PLATFORM_NAMES) {
+  // URL hostname check first — only check social platforms
+  for (const p of SOCIAL_PLATFORM_KEYS) {
     const domain = p === 'twitter' ? 'twitter.com' : p === 'bluesky' ? 'bsky.app' :
       p === 'website' ? null : p + '.com'
     if (domain && domainMatch(domain)) return true
   }
   if (domainMatch('x.com') || domainMatch('t.me') || domainMatch('discord.gg') ||
       domainMatch('bsky.app') || domainMatch('sky.social') || domainMatch('fb.com') ||
-      domainMatch('threads.net') || domainMatch('twitch.tv')) return true
-  // Label check — fallback
-  for (const p of PLATFORM_NAMES) {
+      domainMatch('threads.net') || domainMatch('twitch.tv') ||
+      domainMatch('myshopify.com') || domainMatch('dev.to') ||
+      domainMatch('codepen.io') || domainMatch('behance.net') ||
+      domainMatch('mastodon.social')) return true
+  // Label check — fallback, only social platforms
+  for (const p of SOCIAL_PLATFORM_KEYS) {
     if (wordMatch(p)) return true
   }
   if (wordMatch('x')) return true

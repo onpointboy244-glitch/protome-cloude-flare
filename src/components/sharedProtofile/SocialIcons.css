@@ -102,6 +102,68 @@
 .protofile__social-btn[data-platform="bluesky"]:hover {
   background: #0085ff;
 }
+.protofile__social-btn[data-platform="shopify"]:hover {
+  background: #96bf48;
+}
+.protofile__social-btn[data-platform="spotify"]:hover {
+  background: #1db954;
+}
+.protofile__social-btn[data-platform="medium"]:hover {
+  background: #000;
+}
+.protofile__social-btn[data-platform="devto"]:hover {
+  background: #0a0a0a;
+}
+.protofile__social-btn[data-platform="codepen"]:hover {
+  background: #000;
+}
+.protofile__social-btn[data-platform="stackoverflow"]:hover {
+  background: #f48024;
+  color: #111;
+}
+.protofile__social-btn[data-platform="behance"]:hover {
+  background: #1769ff;
+}
+.protofile__social-btn[data-platform="dribbble"]:hover {
+  background: #ea4c89;
+}
+.protofile__social-btn[data-platform="etsy"]:hover {
+  background: #f45800;
+}
+.protofile__social-btn[data-platform="patreon"]:hover {
+  background: #ff424d;
+}
+.protofile__social-btn[data-platform="paypal"]:hover {
+  background: #003087;
+}
+.protofile__social-btn[data-platform="figma"]:hover {
+  background: #f24e1e;
+}
+.protofile__social-btn[data-platform="producthunt"]:hover {
+  background: #da552f;
+}
+.protofile__social-btn[data-platform="tumblr"]:hover {
+  background: #35465c;
+}
+.protofile__social-btn[data-platform="vimeo"]:hover {
+  background: #1ab7ea;
+}
+.protofile__social-btn[data-platform="soundcloud"]:hover {
+  background: #ff8800;
+  color: #111;
+}
+.protofile__social-btn[data-platform="goodreads"]:hover {
+  background: #372213;
+}
+.protofile__social-btn[data-platform="bandcamp"]:hover {
+  background: #1da0c3;
+}
+.protofile__social-btn[data-platform="hashnode"]:hover {
+  background: #2962ff;
+}
+.protofile__social-btn[data-platform="mastodon"]:hover {
+  background: #6364ff;
+}
 .protofile__social-btn[data-platform="website"]:hover {
   background: var(--accent);
   color: var(--accent-hover-text, #fff);

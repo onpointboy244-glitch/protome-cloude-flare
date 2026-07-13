@@ -6,8 +6,6 @@ import { isSocial, SOCIAL_QUICK_LINKS, WEBSITE_QUICK_LINKS } from './formConstan
 import { renderPlatformIcon, detectIconKey } from '../../lib/icons.jsx'
 import './LinksEditor.css'
 
-
-
 /**
  * Group the "other" links (non-social) into titled sections.
  * Links before the first section go into an ungrouped group.
@@ -150,7 +148,7 @@ export default function LinksEditor({ links, onAddLink, onUpdateLink, onRemoveLi
       <div className="create-section__links-subgroup">
         <span className="create-section__links-subgroup-label">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-          Social media
+          Social
         </span>
         <div className="create-section__quick-links">
           {SOCIAL_QUICK_LINKS.map(ql => (
@@ -164,22 +162,30 @@ export default function LinksEditor({ links, onAddLink, onUpdateLink, onRemoveLi
               {renderPlatformIcon(ql.key, 16)}
             </button>
           ))}
+          <button
+            type="button"
+            className="create-section__quick-link-btn create-section__quick-link-btn--custom"
+            onClick={() => onAddLink('Website', 'social', { _autoDetect: true })}
+            title="Add custom link"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          </button>
         </div>
 
         {regularSocial.length > 0 && (
           <div className="create-section__links-list">
             {regularSocial.map(link => (
-              <LinkEntry key={link.id} link={link} icon={renderPlatformIcon(detectIconKey(link.label, link.url), 16)} onUpdate={onUpdateLink} onRemove={onRemoveLink} />
+              <LinkEntry key={link.id} link={link} icon={renderPlatformIcon(detectIconKey(link.label, ''), 16)} onUpdate={onUpdateLink} onRemove={onRemoveLink} />
             ))}
           </div>
         )}
       </div>
 
-      {/* Websites + Custom — grouped under titled sections */}
+      {/* Links — grouped under titled sections */}
       <div className="create-section__links-subgroup">
         <span className="create-section__links-subgroup-label">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          Websites
+          Links
         </span>
         <div className="create-section__quick-links">
           {WEBSITE_QUICK_LINKS.map(ql => (
@@ -280,9 +286,28 @@ export default function LinksEditor({ links, onAddLink, onUpdateLink, onRemoveLi
 }
 
 function LinkEntry({ link, icon, onUpdate, onRemove }) {
-  const labelKey = link.url ? detectIconKey(link.label, '') : null
-  const urlKey = link.url ? detectIconKey(link.label, link.url) : null
-  const iconMismatch = urlKey && labelKey && urlKey !== labelKey
+  const labelKey = link.label ? detectIconKey(link.label, '') : null
+  const urlKey = link.url ? detectIconKey('', link.url) : null
+  const isWrongPlatform = labelKey && link.url.trim() && urlKey && urlKey !== labelKey
+  const isUnknownUrl = labelKey && link.url.trim() && !urlKey
+  const showError = (isWrongPlatform || isUnknownUrl) && labelKey && labelKey !== 'website'
+  const platform = labelKey || link.label
+
+  const handleUrlChange = (e) => {
+    const newUrl = e.target.value
+    onUpdate(link.id, 'url', newUrl)
+    // For custom "+" links: always re-detect and update label/icon from URL
+    if (link._autoDetect) {
+      if (!newUrl.trim()) return
+      const detected = detectIconKey('', newUrl)
+      if (detected) {
+        onUpdate(link.id, 'label', detected.charAt(0).toUpperCase() + detected.slice(1))
+      } else {
+        onUpdate(link.id, 'label', 'Website')
+      }
+    }
+  }
+
   return (
     <div className="create-section__link-entry">
       <span className="create-section__link-entry-icon">
@@ -291,10 +316,10 @@ function LinkEntry({ link, icon, onUpdate, onRemove }) {
       <span className="create-section__social-label">{link.label}</span>
       <input
         type="url"
-        className="create-section__input create-section__link-url-input"
+        className={`create-section__input create-section__link-url-input ${showError ? 'create-section__link-url-input--error' : ''}`}
         placeholder="https://"
         value={link.url}
-        onChange={e => onUpdate(link.id, 'url', e.target.value)}
+        onChange={handleUrlChange}
       />
       <button
         type="button"
@@ -304,7 +329,11 @@ function LinkEntry({ link, icon, onUpdate, onRemove }) {
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
-      {iconMismatch && <span className="create-section__link-hint create-section__link-hint--mismatch">URL detects <strong>{urlKey}</strong>, you chose <strong>{labelKey}</strong>. Match them or {urlKey} will show.</span>}
+      {showError && (
+        <span className="create-section__link-hint create-section__link-hint--mismatch">
+          Please enter a valid {platform} URL.
+        </span>
+      )}
     </div>
   )
 }

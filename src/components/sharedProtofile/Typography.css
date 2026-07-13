@@ -69,3 +69,70 @@
 .protofile--light .protofile__bio {
   color: oklch(0.2 0.008 35 / 0.85);
 }
+
+/* ---- Mono font ---- */
+
+.protofile--mono .protofile__name {
+  font-family: 'JetBrains Mono', ui-monospace, 'Fira Code', 'Cascadia Code', monospace;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.protofile--mono .protofile__role,
+.protofile--mono .protofile__bio {
+  font-family: 'JetBrains Mono', ui-monospace, 'Fira Code', 'Cascadia Code', monospace;
+  font-size: var(--text-xs);
+}
+
+.protofile--mono .protofile__bio {
+  line-height: 1.6;
+}
+
+/* ---- Rounded font ---- */
+
+.protofile--rounded .protofile__name {
+  font-family: 'Fredoka', 'Nunito', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.protofile--rounded .protofile__role,
+.protofile--rounded .protofile__bio {
+  font-family: 'Fredoka', 'Nunito', system-ui, sans-serif;
+  font-weight: 400;
+}
+
+/* ---- Handwriting font ---- */
+
+.protofile--hand .protofile__name {
+  font-family: 'Caveat', 'Patrick Hand', cursive;
+  font-weight: 600;
+  font-size: var(--text-3xl);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.protofile--hand .protofile__role,
+.protofile--hand .protofile__bio {
+  font-family: 'Caveat', 'Patrick Hand', cursive;
+  font-size: calc(var(--text-sm) + 0.15rem);
+  line-height: 1.6;
+}
+
+/* ---- Bold display font ---- */
+
+.protofile--bold .protofile__name {
+  font-family: 'Bebas Neue', 'Anton', sans-serif;
+  font-weight: 400;
+  font-size: var(--text-3xl);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1.05;
+}
+
+.protofile--bold .protofile__role,
+.protofile--bold .protofile__bio {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 400;
+}
