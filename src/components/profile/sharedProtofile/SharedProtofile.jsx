@@ -6,11 +6,12 @@ import {
   isLightColor,
   isSocialLink,
   gradientIsDark,
-} from "../../lib/icons.jsx";
+} from "../../../lib/icons.jsx";
 import ShareButton from "./ShareButton";
 import LinkItem from "./LinkItem";
 import ReportModal from "./ReportModal";
 import SharePopup from "./SharePopup";
+import GooeyBackground from "../GooeyBackground";
 import "./SharedProtofile.css";
 
 export default function SharedProtofile({ data }) {
@@ -18,6 +19,9 @@ export default function SharedProtofile({ data }) {
     ...data,
     bgColor: data.bg_color || data.bgColor || "",
     bgGradient: data.bg_gradient || data.bgGradient || "",
+    bgType: data.bg_type || "none",
+    bgSize: data.bg_size || "cover",
+    bgPos: data.bg_pos || "0 0",
   };
   const {
     name,
@@ -29,13 +33,15 @@ export default function SharedProtofile({ data }) {
     accent,
     bgColor,
     bgGradient,
+    bgType,
+    bgSize,
+    bgPos,
     font,
     detect_icons,
   } = d;
   const accentColor = accent || "var(--color-primary-l)";
   // Only check raw hex accent — skip the CSS variable fallback
   const isAccentLight = accent ? isLightColor(accent) : false;
-  const accentHoverText = isAccentLight ? "#000" : "#fff";
   const fontClass = font && font !== 'serif' ? `protofile--${font}` : '';
   const initials = name
     ? name
@@ -59,29 +65,84 @@ export default function SharedProtofile({ data }) {
   );
   const photoSrc = photo_url || photo;
   const hasPhoto = !!photoSrc;
-  const isDarkBg = bgGradient
+  // Backward compat: if bgGradient is set but bgType is 'none' (no db column yet), treat as gradient
+  const isGooey = bgGradient?.startsWith?.("__gooey__");
+  const gooeyVariant = isGooey
+    ? bgGradient === "__gooey__" ? "groovy" : (bgGradient.split("__").filter(Boolean)[1] || "groovy")
+    : undefined;
+  const wallpaperType = bgType === "none" && bgGradient && !isGooey ? "gradient" : bgType;
+  const isPattern = wallpaperType === "pattern" && !isGooey;
+  const hasWallpaper = wallpaperType !== "none" && bgGradient && !isGooey;
+  // Semi-transparent overlays use bgColor for contrast, not gradientIsDark
+  const isOverlay = bgGradient && (bgGradient.includes("rgba") || bgGradient.includes("transparent"));
+  const isDarkBg = hasWallpaper && !isOverlay
     ? gradientIsDark(bgGradient)
     : !isLightColor(bgColor);
   const isLightBg = isLightColor(bgColor);
-  // If accent and bg are both light or both dark, accent is invisible → use neutral contrast
-  const accentInvisible = accent && bgColor && isLightColor(accent) === isLightColor(bgColor)
+  // Normalize hex to 6-char for comparison
+  function hexNormalize(c) { return c.length === 4 ? '#' + c[1] + c[1] + c[2] + c[2] + c[3] + c[3] : c; }
+  // Rough luminance (0–255) for brightness checking
+  function luminance(c) {
+    const h = hexNormalize(c).replace('#', '');
+    const r = parseInt(h.slice(0,2), 16);
+    const g = parseInt(h.slice(2,4), 16);
+    const b = parseInt(h.slice(4,6), 16);
+    return 0.299 * r + 0.587 * g + 0.114 * b;
+  }
+  // Check if two colors share the same hue family by comparing RGB proportions
+  // (avoids treating red-on-blue as "invisible" even when luminance is similar)
+  function sameColorFamily(c1, c2) {
+    const h1 = hexNormalize(c1).replace('#', ''), h2 = hexNormalize(c2).replace('#', '');
+    const t1 = parseInt(h1.slice(0,2), 16) + parseInt(h1.slice(2,4), 16) + parseInt(h1.slice(4,6), 16);
+    const t2 = parseInt(h2.slice(0,2), 16) + parseInt(h2.slice(2,4), 16) + parseInt(h2.slice(4,6), 16);
+    if (!t1 || !t2) return false;
+    const rd = Math.abs(parseInt(h1.slice(0,2),16)/t1 - parseInt(h2.slice(0,2),16)/t2);
+    const gd = Math.abs(parseInt(h1.slice(2,4),16)/t1 - parseInt(h2.slice(2,4),16)/t2);
+    const bd = Math.abs(parseInt(h1.slice(4,6),16)/t1 - parseInt(h2.slice(4,6),16)/t2);
+    return Math.max(rd, gd, bd) < 0.12;
+  }
+  // Treat accent as invisible when it's the same as bg — or close in both hue and brightness
+  // (red on black is fine — different families — but two dark blues look the same)
+  const accentSame = accent && bgColor &&
+    bgColor.startsWith('#') && accent.startsWith('#') &&
+    hexNormalize(accent).toLowerCase() === hexNormalize(bgColor).toLowerCase();
+  const lumaDiff = accent && bgColor && bgColor.startsWith('#') && accent.startsWith('#')
+    ? Math.abs(luminance(accent) - luminance(bgColor))
+    : null;
+  const accentInvisible = accentSame || (
+    lumaDiff !== null && lumaDiff < 60 &&
+    bgColor.startsWith('#') && accent.startsWith('#') &&
+    sameColorFamily(accent, bgColor)
+  );
   const visibleAccent = accentInvisible ? (isLightBg ? "#000" : "#fff") : accentColor;
+  // When accent and bg are identical, hover text must oppose the neutral visibleAccent
+  const accentHoverText = accentInvisible
+    ? (visibleAccent === "#000" ? "#fff" : "#000")
+    : (isAccentLight ? "#000" : "#fff");
 
   return (
     <div
-      className={`protofile ${fontClass} ${bgGradient ? "protofile--gradient" : ""} ${isLightBg ? "protofile--light" : ""} ${isDarkBg ? "protofile--dark" : ""}`}
+      className={`protofile ${fontClass} ${isLightBg ? "protofile--light" : ""} ${isDarkBg ? "protofile--dark" : ""}`}
       style={{
-        "--accent": accentColor,
+        "--accent": accentInvisible ? visibleAccent : accentColor,
         "--accent-hover-text": accentHoverText,
         "--bg-color": bgColor || "var(--color-bg)",
-        ...(bgGradient ? { "--bg-gradient": bgGradient } : {}),
       }}
     >
-      <div className="protofile__card">
+      <div
+        className={`protofile__card ${hasWallpaper && !isGooey ? "protofile__card--wallpaper" : ""} ${isGooey ? "protofile__card--gooey" : ""}`}
+        style={{
+          ...(!isGooey && hasWallpaper ? { "--bg-gradient": bgGradient.replace(/ACCENTCLR/g, encodeURIComponent(accent || '#C5A059')) } : {}),
+          "--bg-size": isPattern ? bgSize : "cover",
+          "--bg-repeat": isPattern ? "repeat" : "no-repeat",
+          "--bg-pos": isPattern ? bgPos : "0 0",
+        }}
+      >
         <div
           className="protofile__accent-bar"
           style={{ background: accentColor }}
         />
+        {isGooey && <GooeyBackground accent={visibleAccent} variant={gooeyVariant} />}
         <main className="protofile__main">
           {/* Share — top left */}
           <div className="protofile__share-wrapper">

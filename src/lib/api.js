@@ -17,7 +17,7 @@ async function getSupabase() {
   return _supabaseLoading
 }
 
-import { MAX_FREE_PROFILES } from '../components/createSection/formConstants'
+import { MAX_FREE_PROFILES } from '../components/profile/createSection/formConstants'
 
 /**
  * Strip dangerous protocols from URLs to prevent stored XSS via javascript: or data: links.

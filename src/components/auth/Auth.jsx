@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useAuth } from "../lib/useAuth";
+import { useAuth } from "../../lib/useAuth";
 import "./Auth.css";
 
 const FOCUSABLE =

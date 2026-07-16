@@ -25,6 +25,8 @@ create table profiles (
   accent text default '#c45a3c',
   bg_color text default '#ffffff',
   bg_gradient text default null,
+  bg_type text default 'none',
+  bg_size text default 'cover',
   font text default 'serif',
   created_at timestamptz default now(),
   updated_at timestamptz default now()

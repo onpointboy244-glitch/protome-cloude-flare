@@ -1,49 +1,6 @@
 /* ============================================
-   Protofile Card — premium preview card
-   protome @ protome.pages.dev
+   CardFace — visual content inside a protofile card
    ============================================ */
-
-.protofile-card {
-  width: 100%;
-  max-width: 560px;
-  background: var(--card-bg, var(--color-bg));
-  border: 1px solid var(--color-border);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 8px 32px oklch(0 0 0 / 0.08);
-  transition: opacity 0.4s ease,
-              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.3s ease;
-}
-
-.protofile-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 48px oklch(0 0 0 / 0.12);
-}
-
-.protofile-card--gradient {
-  background: var(--card-gradient, var(--card-bg, var(--color-bg)));
-  background-size: cover;
-  border-color: var(--card-border, transparent);
-  color: var(--card-text, inherit);
-}
-
-.protofile-card--gradient .protofile-card__bar {
-  opacity: 0.85;
-}
-
-.protofile-card--compact {
-  max-width: 360px;
-  font-size: 0.9em;
-}
-
-.protofile-card--compact .protofile-card__body {
-  padding: var(--space-xl);
-}
-
-.protofile-card--compact:hover {
-  transform: translateY(-3px);
-}
 
 /* ---- Accent bar ---- */
 
@@ -57,6 +14,10 @@
 .protofile-card__body {
   padding: var(--space-2xl);
   text-align: center;
+}
+
+.protofile-card--compact .protofile-card__body {
+  padding: var(--space-xl);
 }
 
 /* ---- Photo ---- */
@@ -281,20 +242,6 @@
   white-space: nowrap;
 }
 
-/* Gradient variant for card links */
-
-.protofile-card--gradient .protofile-card__card-link {
-  background: var(--card-link-bg, rgba(255, 255, 255, 0.08));
-  border-color: var(--card-border, rgba(255, 255, 255, 0.15));
-  color: var(--card-text, #fff);
-}
-
-.protofile-card--gradient .protofile-card__card-link:hover {
-  background: var(--card-accent, var(--color-primary-l));
-  border-color: var(--card-accent, var(--color-primary-l));
-  color: #fff;
-}
-
 /* ---- Social Links (circle icons) ---- */
 
 .protofile-card__links {
@@ -378,43 +325,9 @@
   height: 20px;
 }
 
-/* ---- Gradient variant ---- */
-
-.protofile-card--gradient .protofile-card__link {
-  border-color: var(--card-social-border, rgba(255, 255, 255, 0.12));
-  background: var(--card-social-bg, oklch(0 0 0 / 0.15));
-  color: var(--card-social-color, rgba(255, 255, 255, 0.75));
-}
-
-.protofile-card--gradient .protofile-card__link:hover {
-  color: #fff;
-  border-color: transparent;
-}
-
-/* ---- Profile cycling fade ---- */
-
-.protofile-card--fading {
-  opacity: 0;
-}
-
-/* ---- Hero cycling card (fixed height, no layout jumping) ---- */
-
-.protofile-card--hero {
-  height: 560px;
-}
-
-.protofile-card--hero .protofile-card__body {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  height: calc(560px - 4px); /* minus the accent bar */
-}
-
 /* ---- Reduced motion ---- */
 
 @media (prefers-reduced-motion: reduce) {
-  .protofile-card,
-  .protofile-card--compact,
   .protofile-card__link {
     transition-duration: 0.01ms !important;
     transform: none !important;

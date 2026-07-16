@@ -1,25 +1,25 @@
 import { useState, useEffect, startTransition, lazy, Suspense } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from './lib/useAuth'
-import Nav from './components/Nav'
-import Hero from './components/Hero'
-import HowItWorks from './components/HowItWorks'
-import Features from './components/Features'
-import CTA from './components/CTA'
-import Footer from './components/Footer'
-import Auth from './components/Auth'
 import { getProfile, getMyProfiles } from './lib/api'
-import GenericLoader from './components/GenericLoader'
+import Nav from './components/layout/Nav'
+import Hero from './components/landing/Hero'
+import HowItWorks from './components/landing/HowItWorks'
+import Features from './components/landing/Features'
+import CTA from './components/landing/CTA'
+import Footer from './components/layout/Footer'
+import Auth from './components/auth/Auth'
+import GenericLoader from './components/layout/GenericLoader'
 
-const SharedProtofile = lazy(() => import('./components/sharedProtofile/SharedProtofile'))
-import ProfileSkeleton from './components/sharedProtofile/ProfileSkeleton'
-const CreateSection = lazy(() => import('./components/CreateSection'))
-const Pricing = lazy(() => import('./components/Pricing'))
-const Privacy = lazy(() => import('./components/Privacy'))
-const Terms = lazy(() => import('./components/Terms'))
-const About = lazy(() => import('./components/About'))
-const Blog = lazy(() => import('./components/Blog'))
-const Contact = lazy(() => import('./components/Contact'))
+const SharedProtofile = lazy(() => import('./components/profile/sharedProtofile/SharedProtofile'))
+import ProfileSkeleton from './components/profile/sharedProtofile/ProfileSkeleton'
+const CreateSection = lazy(() => import('./components/profile/CreateSection'))
+const Pricing = lazy(() => import('./components/landing/Pricing'))
+const Privacy = lazy(() => import('./components/legal/Privacy'))
+const Terms = lazy(() => import('./components/legal/Terms'))
+const About = lazy(() => import('./components/landing/About'))
+const Blog = lazy(() => import('./components/landing/Blog'))
+const Contact = lazy(() => import('./components/landing/Contact'))
 
 // Check for __INITIAL_PROFILE__ injected by the Edge Function (run at module level)
 // Caches result so it survives StrictMode double-invocation

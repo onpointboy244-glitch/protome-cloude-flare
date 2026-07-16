@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import ProtofileCard from '../ProtofileCard'
-import { profileUrl } from '../../lib/api'
+import { profileUrl } from '../../../lib/api'
 import SharePopup from '../sharedProtofile/SharePopup'
 import './CreateProfileResult.css'
 

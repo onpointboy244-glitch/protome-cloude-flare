@@ -1,9 +1,9 @@
 import { useState, useRef, useCallback, useEffect, useMemo, startTransition } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { useAuth } from '../lib/useAuth'
-import { useProfileForm } from '../lib/useProfileForm'
-import { createProfile, updateProfile, deleteProfile, checkUsername, uploadPhoto, deleteProfilePhoto } from '../lib/api'
-import { MAX_FREE_PROFILES } from './createSection/formConstants'
+import { useAuth } from '../../lib/useAuth'
+import { useProfileForm } from '../../lib/useProfileForm'
+import { createProfile, updateProfile, deleteProfile, checkUsername, uploadPhoto, deleteProfilePhoto } from '../../lib/api'
+import { MAX_FREE_PROFILES, WALLPAPER_STYLES } from './createSection/formConstants'
 import CreateProfileResult from './createSection/CreateProfileResult'
 import ProfileSelector from './createSection/ProfileSelector'
 import ProfilePhotoUploader from './createSection/ProfilePhotoUploader'
@@ -11,8 +11,8 @@ import UsernameField from './createSection/UsernameField'
 import LinksEditor from './createSection/LinksEditor'
 import DesignControls from './createSection/DesignControls'
 import DeleteProfileModal from './createSection/DeleteProfileModal'
-import { detectIconKey } from '../lib/icons.jsx'
-import { useToast } from './Toast'
+import { detectIconKey } from '../../lib/icons.jsx'
+import { useToast } from '../layout/Toast'
 import './CreateSection.css'
 
 export default function CreateSection({ onProtofileCreated, onProfileDeleted, latestProtofile, onSignInNeeded, myProfiles = [], profilesLoading, editTarget, onEditConsumed }) {
@@ -63,7 +63,7 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
         name: f.name.trim(), role: f.role.trim(),
         bio: f.bio.trim(),
         photo_url: f.photoRemoved && !f.photoFile ? '' : (photoUrl || (editingUsername ? originalPhotoUrlRef.current : '') || f.photoData || ''),
-        links: validLinks, accent: f.accent, bg_color: f.bgColor, bg_gradient: f.bgGradient, font: f.font,
+        links: validLinks, accent: f.accent, bg_color: f.bgColor, bg_gradient: f.bgGradient, bg_type: f.bgType, bg_size: f.bgSize, font: f.font,
         detect_icons: f.detectIcons, username,
       }
 
@@ -304,12 +304,31 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
 
               <DesignControls
                 accent={f.accent}
+                bgColor={f.bgColor}
+                bgType={f.bgType}
                 bgGradient={f.bgGradient}
+                bgSize={f.bgSize}
                 font={f.font}
                 onAccentChange={val => setDesign({ accent: val })}
+                onBgColorChange={val => setDesign({ bgColor: val })}
+                onBgTypeChange={type => {
+                  if (type === 'none') {
+                    setDesign({ bgType: 'none', bgGradient: null, bgSize: 'cover' })
+                  } else {
+                    const first = WALLPAPER_STYLES[type]?.[0]
+                    setDesign({
+                      bgType: type,
+                      bgGradient: first?.css || null,
+                      bgSize: first?.bgSize || 'cover',
+                    })
+                  }
+                }}
                 onBgChange={g => {
-                  if (g.id === 'none') setDesign({ bgGradient: null, bgColor: '#ffffff' })
-                  else setDesign({ bgGradient: g.css, bgColor: g.bg })
+                  setDesign({
+                    bgGradient: g.css,
+                    bgSize: g.bgSize || 'cover',
+                    bgPos: g.bgPos || null,
+                  })
                 }}
                 onFontChange={val => setDesign({ font: val })}
               />

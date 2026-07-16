@@ -5,7 +5,7 @@ const INITIAL_STATE = {
   name: '', role: '', bio: '', username: '',
   photoData: '', photoFile: null, photoRemoved: false,
   links: [],
-  accent: '#c45a3c', bgGradient: null, bgColor: '#ffffff', font: 'serif',
+  accent: '#c45a3c', bgGradient: null, bgColor: '#000000', bgType: 'none', bgSize: 'cover', font: 'serif',
   detectIcons: true,
 }
 
@@ -44,7 +44,9 @@ function reducer(state, action) {
         })),
         accent: action.profile.accent || '#c45a3c',
         bgGradient: action.profile.bg_gradient || null,
-        bgColor: action.profile.bg_color || '#ffffff',
+        bgColor: action.profile.bg_color || '#000000',
+        bgType: action.profile.bg_type || 'none',
+        bgSize: action.profile.bg_size || 'cover',
         font: action.profile.font || 'serif',
         detectIcons: action.profile.detect_icons !== false,
       }

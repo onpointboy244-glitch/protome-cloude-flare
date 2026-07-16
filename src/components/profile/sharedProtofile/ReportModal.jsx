@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { reportProfile } from '../../lib/api'
+import { reportProfile } from '../../../lib/api'
 import './ReportModal.css'
 
 const REPORT_REASONS = [

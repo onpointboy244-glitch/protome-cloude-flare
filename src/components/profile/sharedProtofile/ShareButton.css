@@ -18,7 +18,7 @@
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: oklch(0 0 0 / 0.18);
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.8);
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -26,20 +26,20 @@
 .protofile__share-btn--light {
   background: oklch(0 0 0 / 0.04);
   border-color: oklch(0 0 0 / 0.08);
-  color: oklch(0.35 0.008 35 / 0.5);
+  color: rgba(0, 0, 0, 0.75);
 }
 
 .protofile__share-btn:hover {
   border-color: var(--share-accent);
-  background: color-mix(in oklch, var(--share-accent) 80%, transparent);
-  color: var(--accent-hover-text, #fff);
+  background: color-mix(in oklch, var(--share-hover-bg, var(--share-accent)) 80%, transparent);
+  color: var(--share-hover-icon, var(--accent-hover-text, #fff));
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .protofile__share-btn--light:hover {
-  background: color-mix(in oklch, var(--share-accent), #fff 88%);
-  color: var(--share-accent);
+  background: color-mix(in oklch, var(--share-hover-bg, var(--share-accent)), #fff 70%);
+  color: var(--share-hover-icon, var(--share-accent));
   border-color: var(--share-accent);
   box-shadow: 0 4px 12px oklch(0 0 0 / 0.06);
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { AuthContext } from './useAuth'
-import { useToast } from '../components/Toast'
+import { useToast } from '../components/layout/Toast'
 
 let _supabase = null
 let _supabaseLoading = null

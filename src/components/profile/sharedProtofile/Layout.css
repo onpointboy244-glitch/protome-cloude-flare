@@ -10,12 +10,6 @@
   padding: var(--space-xl);
 }
 
-.protofile--gradient {
-  background: var(--bg-gradient, var(--bg-color, var(--color-bg)));
-  background-attachment: fixed;
-  background-size: cover;
-}
-
 /* ---- Card wrapper ---- */
 
 .protofile__card {
@@ -23,6 +17,20 @@
   max-width: 580px;
   border-radius: 20px;
   overflow: hidden;
+  position: relative;
+  background: var(--bg-color, var(--color-bg));
+}
+
+.protofile__card--gooey {
+  background: var(--bg-color, var(--color-bg));
+}
+
+.protofile__card--wallpaper {
+  background-color: var(--bg-color, var(--color-bg));
+  background-image: var(--bg-gradient, none);
+  background-size: var(--bg-size, cover);
+  background-repeat: var(--bg-repeat, no-repeat);
+  background-position: var(--bg-pos, 0 0);
 }
 
 /* ---- Accent bar ---- */
@@ -43,7 +51,7 @@
   background: linear-gradient(
     180deg,
     color-mix(in oklch, var(--accent) 18%, var(--bg-color)) 0%,
-    var(--bg-color) 30%
+    transparent 30%
   );
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
   border-radius: 0 0 20px 20px;
@@ -56,15 +64,14 @@
   background: linear-gradient(
     180deg,
     color-mix(in oklch, var(--accent) 10%, var(--bg-color)) 0%,
-    var(--bg-color) 25%
+    transparent 25%
   );
 }
 
-.protofile--light.protofile--gradient .protofile__main,
 .protofile--light.protofile--bgcolor .protofile__main {
   background: linear-gradient(
     180deg,
     color-mix(in oklch, var(--accent) 10%, var(--bg-color)) 0%,
-    var(--bg-color) 25%
+    transparent 25%
   );
 }

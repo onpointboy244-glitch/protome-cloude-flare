@@ -3,7 +3,7 @@ import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSe
 import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { isSocial, SOCIAL_QUICK_LINKS, WEBSITE_QUICK_LINKS } from './formConstants'
-import { renderPlatformIcon, detectIconKey } from '../../lib/icons.jsx'
+import { renderPlatformIcon, detectIconKey } from '../../../lib/icons.jsx'
 import './LinksEditor.css'
 
 /**

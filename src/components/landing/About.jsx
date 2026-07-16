@@ -1,4 +1,4 @@
-import './LegalPages.css'
+import '../legal/LegalPages.css'
 
 export default function About() {
   return (

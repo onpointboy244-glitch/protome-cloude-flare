@@ -1,4 +1,4 @@
-import ProtofileCard from './ProtofileCard'
+import ProtofileCard from '../profile/ProtofileCard'
 import './Hero.css'
 
 export default function Hero() {

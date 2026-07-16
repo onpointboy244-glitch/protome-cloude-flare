@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { joinWaitlist } from '../lib/api'
+import { joinWaitlist } from '../../lib/api'
 import './CTA.css'
 
 export default function CTA() {

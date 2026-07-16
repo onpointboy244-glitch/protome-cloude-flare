@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { getPlans } from '../lib/api'
+import { getPlans } from '../../lib/api'
 import './Pricing.css'
 
 export default function Pricing() {

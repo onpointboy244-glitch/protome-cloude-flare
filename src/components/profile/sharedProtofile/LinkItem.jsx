@@ -1,4 +1,4 @@
-import { detectPlatformKey, detectIcon, GENERIC_ICON } from '../../lib/icons.jsx'
+import { detectPlatformKey, detectIcon, GENERIC_ICON } from '../../../lib/icons.jsx'
 import './LinkButtons.css'
 
 export default function LinkItem({ item, onShareLink, showIcon = true }) {
