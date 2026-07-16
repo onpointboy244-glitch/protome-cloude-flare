@@ -20,7 +20,8 @@ export async function onRequest(context) {
       path.startsWith('/assets/') ||
       path === '/favicon.svg' ||
       path === '/robots.txt' ||
-      /\.(js|css|svg|png|jpg|jpeg|gif|ico|woff2?|ttf|eot|webp|avif)$/i.test(path)
+      path === '/sitemap.xml' ||
+      /\.(js|css|svg|png|jpg|jpeg|gif|ico|woff2?|ttf|eot|webp|avif|xml)$/i.test(path)
     if (isStaticAsset) {
       return env.ASSETS.fetch(request)
     }
@@ -61,58 +62,6 @@ export async function onRequest(context) {
       assetUrl.pathname = '/index.html'
       const resp = await env.ASSETS.fetch(assetUrl)
       return resp.text()
-    }
-
-    // ── Dynamic Sitemap: includes all public profiles ──────────
-    if (path === '/sitemap.xml') {
-      const siteUrl = url.origin
-
-      // Static pages
-      const staticUrls = [
-        { loc: `${siteUrl}/`, priority: '1.0', changefreq: 'weekly' },
-        { loc: `${siteUrl}/about`, priority: '0.7', changefreq: 'monthly' },
-        { loc: `${siteUrl}/privacy`, priority: '0.5', changefreq: 'monthly' },
-        { loc: `${siteUrl}/terms`, priority: '0.5', changefreq: 'monthly' },
-      ]
-
-      // Fetch all public profiles from Supabase
-      let profileUrls = []
-      try {
-        const profilesUrl = supabaseUrl('profiles?select=username,updated_at&order=updated_at.desc')
-        const res = await fetch(profilesUrl, { headers: supabaseHeaders() })
-        const profiles = await res.json()
-        if (Array.isArray(profiles)) {
-          profileUrls = profiles.map(p => ({
-            loc: `${siteUrl}/${encodeURIComponent(p.username)}`,
-            lastmod: p.updated_at ? p.updated_at.split('T')[0] : undefined,
-            priority: '0.5',
-            changefreq: 'weekly',
-          }))
-        }
-      } catch {
-        // Supabase unavailable — serve sitemap with just static pages
-      }
-
-      const allUrls = [...staticUrls, ...profileUrls]
-
-      let xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
-      xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-      for (const u of allUrls) {
-        xml += '  <url>\n'
-        xml += `    <loc>${esc(u.loc)}</loc>\n`
-        if (u.lastmod) xml += `    <lastmod>${esc(u.lastmod)}</lastmod>\n`
-        xml += `    <changefreq>${u.changefreq}</changefreq>\n`
-        xml += `    <priority>${u.priority}</priority>\n`
-        xml += '  </url>\n'
-      }
-      xml += '</urlset>'
-
-      return new Response(xml, {
-        headers: {
-          'content-type': 'application/xml; charset=utf-8',
-          'cache-control': 'public, max-age=3600',
-        },
-      })
     }
 
     // ── API: Report ──────────────────────────────────────────
