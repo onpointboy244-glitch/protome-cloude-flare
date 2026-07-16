@@ -20,8 +20,7 @@ export async function onRequest(context) {
       path.startsWith('/assets/') ||
       path === '/favicon.svg' ||
       path === '/robots.txt' ||
-      path === '/sitemap.xml' ||
-      /\.(js|css|svg|png|jpg|jpeg|gif|ico|woff2?|ttf|eot|webp|avif|xml)$/i.test(path)
+      /\.(js|css|svg|png|jpg|jpeg|gif|ico|woff2?|ttf|eot|webp|avif)$/i.test(path)
     if (isStaticAsset) {
       return env.ASSETS.fetch(request)
     }
@@ -56,12 +55,84 @@ export async function onRequest(context) {
       }
     }
 
+    // ── GET a static asset from Pages (text) ───────────────────
+    async function fetchAssetText(assetPath) {
+      const assetUrl = new URL(url)
+      assetUrl.pathname = assetPath
+      const resp = await env.ASSETS.fetch(assetUrl)
+      if (!resp.ok) return null
+      return resp.text()
+    }
+
     // ── GET index.html from Pages assets ──────────────────────
     async function getIndexHtml() {
-      const assetUrl = new URL(url)
-      assetUrl.pathname = '/index.html'
-      const resp = await env.ASSETS.fetch(assetUrl)
-      return resp.text()
+      return fetchAssetText('/index.html')
+    }
+
+    // ── Hybrid sitemap: static base + fresh profiles ──────────
+    // GSC gets a reliable response (static fallback if Supabase fails).
+    // New user profiles are included because we always fetch fresh data.
+    if (path === '/sitemap.xml') {
+      const siteUrl = url.origin
+      const staticPages = [
+        { loc: `${siteUrl}/`, priority: '1.0', changefreq: 'weekly' },
+        { loc: `${siteUrl}/about`, priority: '0.7', changefreq: 'monthly' },
+        { loc: `${siteUrl}/privacy`, priority: '0.5', changefreq: 'monthly' },
+        { loc: `${siteUrl}/terms`, priority: '0.5', changefreq: 'monthly' },
+      ]
+
+      let allUrls = [...staticPages]
+      let hasProfiles = false
+
+      try {
+        const profilesUrl = supabaseUrl('profiles?select=username,updated_at&order=updated_at.desc')
+        const res = await fetch(profilesUrl, { headers: supabaseHeaders() })
+        const profiles = await res.json()
+        if (Array.isArray(profiles) && profiles.length > 0) {
+          const profileUrls = profiles.map(p => ({
+            loc: `${siteUrl}/${encodeURIComponent(p.username)}`,
+            lastmod: p.updated_at ? p.updated_at.split('T')[0] : undefined,
+            priority: '0.5',
+            changefreq: 'weekly',
+          }))
+          allUrls = [...staticPages, ...profileUrls]
+          hasProfiles = true
+        }
+      } catch {
+        // Supabase unavailable — try to serve the static sitemap from the build
+      }
+
+      if (!hasProfiles) {
+        // Fallback: serve the static sitemap generated at build time
+        const staticSitemap = await fetchAssetText('/sitemap.xml')
+        if (staticSitemap) {
+          return new Response(staticSitemap, {
+            headers: {
+              'content-type': 'application/xml; charset=utf-8',
+              'cache-control': 'public, max-age=3600',
+            },
+          })
+        }
+      }
+
+      let xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+      xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+      for (const u of allUrls) {
+        xml += '  <url>\n'
+        xml += `    <loc>${esc(u.loc)}</loc>\n`
+        if (u.lastmod) xml += `    <lastmod>${esc(u.lastmod)}</lastmod>\n`
+        xml += `    <changefreq>${u.changefreq}</changefreq>\n`
+        xml += `    <priority>${u.priority}</priority>\n`
+        xml += '  </url>\n'
+      }
+      xml += '</urlset>'
+
+      return new Response(xml, {
+        headers: {
+          'content-type': 'application/xml; charset=utf-8',
+          'cache-control': 'public, max-age=3600',
+        },
+      })
     }
 
     // ── API: Report ──────────────────────────────────────────
@@ -371,7 +442,7 @@ export async function onRequest(context) {
       headers: { 'content-type': 'text/html', 'cache-control': profileCacheControl },
     })
 
-  } catch (err) {
+  } catch {
     // Global catch — prevent Error 1101, return the SPA as fallback
     return new Response('Internal error', {
       status: 500,

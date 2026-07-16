@@ -35,6 +35,19 @@ export default defineConfig([
     extends: [js.configs.recommended],
     languageOptions: { globals: globals.browser },
   },
+  // Cloudflare Pages Functions (Workers — service-worker globals, no Node.js)
+  {
+    files: ['functions/**/*.js'],
+    extends: [js.configs.recommended],
+    languageOptions: {
+      globals: {
+        'Request': false, 'Response': false, 'fetch': false,
+        'URL': false, 'Headers': false,
+        'AbortSignal': false,
+      },
+      parserOptions: { sourceType: 'module', ecmaVersion: 'latest' },
+    },
+  },
   // Server / API / build scripts (Node.js globals, no JSX)
   {
     files: ['api/**/*.js', 'server/**/*.js', 'scripts/**/*.js'],
