@@ -318,6 +318,22 @@ export async function onRequest(context) {
     <script>(function(){var e=document.getElementById('ssr-profile');if(e)e.style.setProperty('display','none','important')})()</script>`
     }
 
+    const jsonld = profileData ? {
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      'name': name,
+      'description': description,
+      'url': url.origin + '/' + username,
+      ...(profileData.role && { 'jobTitle': profileData.role }),
+      ...(profileData.photo_url && { 'image': profileData.photo_url }),
+      ...(profileData.links && Array.isArray(profileData.links)
+        ? { 'sameAs': profileData.links.filter(l => l && l.url).map(l => l.url) }
+        : {}),
+    } : null
+    const jsonldScript = jsonld
+      ? '<script type="application/ld+json">' + JSON.stringify(jsonld).replace(/<\//g, '\\u003C/') + '</script>\n    '
+      : ''
+
     const profileJSON = profileData
       ? JSON.stringify(profileData).replace(/<\//g, '\\u003C/')
       : 'null'
@@ -345,7 +361,9 @@ export async function onRequest(context) {
     html = html
       .replace(/<title>.*?<\/title>/, '')
       .replace(/<link rel="canonical"[^>]*>/, '')  // remove the static canonical from index.html
-      .replace('</head>', `    ${metaTags}\n    ${profileScript}\n  </head>`)
+      .replace(/<meta[^>]*(name="description"|property="og:description")[^>]*>/gi, '')  // remove old site description
+      .replace(/<meta[^>]*name="theme-color"[^>]*>/gi, '')  // remove old theme-color
+      .replace('</head>', `    ${metaTags}\n    ${jsonldScript}    ${profileScript}\n  </head>`)
       // Inject SSR visible HTML inside #root, before the spinner div
       .replace('<div class="shell-spinner" id="shell-spinner">', ssrHtml + '\n      <div class="shell-spinner" id="shell-spinner">')
 
