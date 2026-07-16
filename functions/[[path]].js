@@ -284,6 +284,40 @@ export async function onRequest(context) {
     const siteUrl = esc(url.origin + '/' + username)
     const safeAccent = esc(accent)
 
+    // ── Build visible SSR profile HTML for Googlebot ─────────
+    // Googlebot sees this in the raw HTML. It's hidden immediately
+    // by an inline script so users never see a flicker.
+    let ssrHtml = ''
+    if (profileData) {
+      const initials = safeName.split(' ').map(w => w.charAt(0)).join('').slice(0, 2).toUpperCase()
+      const role = profileData?.role ? esc(profileData.role) : ''
+      const bio = profileData?.bio ? esc(profileData.bio) : ''
+      const links = profileData?.links
+        ? profileData.links.filter(l => !l.isSection && l.url)
+        : []
+
+      const linkItems = links.map(l =>
+        `<a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer" style="display:block;margin:10px 0;padding:14px 20px;border-radius:12px;background:rgba(255,255,255,0.09);color:#fff;text-decoration:none;text-align:center;font-family:system-ui;font-size:14px;font-weight:500">${esc(l.label || l.url)}</a>`
+      ).join('\n        ')
+
+      const photoHtml = safeImage
+        ? `<img src="${safeImage}" alt="${safeName}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 16px;display:block" />`
+        : `<div style="width:80px;height:80px;border-radius:50%;background:${safeAccent};display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;font-weight:600;color:#fff">${initials}</div>`
+
+      ssrHtml = `
+    <div id="ssr-profile" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 20px;font-family:system-ui,-apple-system,sans-serif;background:${safeAccent};background:linear-gradient(135deg,${safeAccent}33,#fff);box-sizing:border-box">
+      <div style="width:100%;max-width:480px;background:rgba(255,255,255,0.06);border-radius:24px;padding:32px 24px;backdrop-filter:blur(12px);box-shadow:0 8px 40px rgba(0,0,0,0.08)">
+        ${photoHtml}
+        <h1 style="text-align:center;font-size:24px;font-weight:600;color:#1a1a1a;margin:0 0 4px;letter-spacing:-0.01em">${safeName}</h1>
+        ${role ? `<p style="text-align:center;font-size:14px;color:rgba(0,0,0,0.5);margin:0 0 24px">${role}</p>` : ''}
+        ${bio ? `<p style="text-align:center;font-size:14px;color:rgba(0,0,0,0.6);line-height:1.6;margin:0 0 24px;max-width:400px">${bio}</p>` : ''}
+        ${linkItems}
+      </div>
+      <p style="margin-top:32px;font-size:12px;color:rgba(0,0,0,0.3);text-align:center">protome</p>
+    </div>
+    <script>(function(){var e=document.getElementById('ssr-profile');if(e)e.style.setProperty('display','none','important')})()</script>`
+    }
+
     const profileJSON = profileData
       ? JSON.stringify(profileData).replace(/<\//g, '\\u003C/')
       : 'null'
@@ -312,6 +346,8 @@ export async function onRequest(context) {
       .replace(/<title>.*?<\/title>/, '')
       .replace(/<link rel="canonical"[^>]*>/, '')  // remove the static canonical from index.html
       .replace('</head>', `    ${metaTags}\n    ${profileScript}\n  </head>`)
+      // Inject SSR visible HTML inside #root, before the spinner div
+      .replace('<div class="shell-spinner" id="shell-spinner">', ssrHtml + '\n      <div class="shell-spinner" id="shell-spinner">')
 
     return new Response(html, {
       headers: { 'content-type': 'text/html', 'cache-control': profileCacheControl },
