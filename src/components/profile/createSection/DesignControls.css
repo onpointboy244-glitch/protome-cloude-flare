@@ -321,6 +321,15 @@
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .create-section__bg-type-options {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .create-section__gradient-picker {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* ---- Wallpaper Type Buttons ---- */
