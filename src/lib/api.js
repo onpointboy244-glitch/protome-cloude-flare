@@ -20,6 +20,71 @@ async function getSupabase() {
 import { MAX_FREE_PROFILES } from '../components/profile/createSection/formConstants'
 
 /**
+ * Maps flat form/Db field names → path inside structured `design` JSONB.
+ * All design settings are stored in the `design` JSONB column.
+ * Add new entries here when adding design options — no schema migration needed.
+ *
+ * Design structure:
+ *   colors:    { accent, bg_color }
+ *   background:{ bg_gradient, bg_type, bg_size }
+ *   font:      string
+ *   button:    { style, corner }
+ */
+const DESIGN_MAP = [
+  { flat: 'accent',         dest: ['colors', 'accent'] },
+  { flat: 'bg_color',       dest: ['colors', 'bg_color'] },
+  { flat: 'bg_gradient',    dest: ['background', 'bg_gradient'] },
+  { flat: 'bg_type',        dest: ['background', 'bg_type'] },
+  { flat: 'bg_size',        dest: ['background', 'bg_size'] },
+  { flat: 'font',           dest: ['font'] },
+  { flat: 'button_style',   dest: ['button', 'style'] },
+  { flat: 'button_corner',  dest: ['button', 'corner'] },
+]
+
+/**
+ * Normalize a profile object: merge structured `design` JSONB back into
+ * top-level flat fields so all existing code (profile.accent, etc.) works unchanged.
+ */
+function normalizeProfile(profile) {
+  if (!profile || !profile.design || typeof profile.design !== 'object') return profile
+  const result = { ...profile }
+  for (const { flat, dest } of DESIGN_MAP) {
+    let val = profile.design
+    for (const key of dest) {
+      if (val && typeof val === 'object') val = val[key]
+      else { val = undefined; break }
+    }
+    if (val !== undefined) result[flat] = val
+  }
+  return result
+}
+
+/**
+ * Extract design fields from flat form data and build structured `design` JSONB.
+ * Strips the individual columns — only the `design` JSONB is saved to the DB.
+ */
+function attachDesign(profileData) {
+  // Strip flat design fields so only non-design data ends up in ...rest
+  const flatKeys = DESIGN_MAP.map(d => d.flat)
+  const rest = {}
+  for (const key of Object.keys(profileData)) {
+    if (!flatKeys.includes(key)) rest[key] = profileData[key]
+  }
+  const design = {}
+  for (const { flat, dest } of DESIGN_MAP) {
+    if (flat in profileData) {
+      let obj = design
+      for (let i = 0; i < dest.length - 1; i++) {
+        if (!obj[dest[i]] || typeof obj[dest[i]] !== 'object') obj[dest[i]] = {}
+        obj = obj[dest[i]]
+      }
+      obj[dest[dest.length - 1]] = profileData[flat]
+    }
+  }
+  return { ...rest, design }
+}
+
+/**
  * Strip dangerous protocols from URLs to prevent stored XSS via javascript: or data: links.
  * Called client-side (defense in depth) — a Supabase DB trigger would be the server-side guarantee.
  */
@@ -60,7 +125,7 @@ export async function createProfile(username, profileData) {
   const { error } = await sb.from('profiles').insert({
     username: username.toLowerCase(),
     owner_id: user.id,
-    ...sanitizeLinks(profileData),
+    ...attachDesign(sanitizeLinks(profileData)),
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   })
@@ -81,7 +146,7 @@ export async function updateProfile(username, profileData) {
   const { error } = await sb
     .from('profiles')
     .update({
-      ...sanitizeLinks(profileData),
+      ...attachDesign(sanitizeLinks(profileData)),
       updated_at: new Date().toISOString(),
     })
     .eq('username', username.toLowerCase())
@@ -105,7 +170,7 @@ export async function getProfile(username) {
 
   if (error) throw new Error(error.message)
   if (!data) return null
-  return data
+  return normalizeProfile(data)
 }
 
 /**
@@ -269,12 +334,9 @@ export async function getMyProfiles() {
     .eq('owner_id', user.id)
     .order('updated_at', { ascending: false })
 
-  return data || []
+  return (data || []).map(normalizeProfile)
 }
 
-/**
- * Fetch pricing plans from the database (server-controlled).
- */
 /**
  * Report a profile for review.
  * Sends to the server which checks by IP address.

@@ -16,10 +16,7 @@ create table profiles (
   owner_id uuid not null,
   name text not null,
   role text default 'Independent creator',
-  email text default '',
-  location text default '',
   bio text default '',
-  tags text[] default array['Creator'],
   photo_url text default '',
   links jsonb default '[]'::jsonb,
   accent text default '#c45a3c',
@@ -30,6 +27,7 @@ create table profiles (
   font text default 'serif',
   button_style text default 'solid',
   button_corner text default 'rounded',
+  design jsonb default '{}'::jsonb,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
