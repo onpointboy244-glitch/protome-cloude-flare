@@ -147,7 +147,7 @@ export default function SharedProtofile({ data }) {
           style={{ background: accentColor }}
         />
         {isGooey && <GooeyBackground accent={visibleAccent} variant={gooeyVariant} />}
-        <main className="protofile__main">
+        <main className={`protofile__main${isGooey ? ' protofile__main--gooey' : ''}`}>
           {/* Share — top left */}
           <div className="protofile__share-wrapper">
             <ShareButton accentColor={visibleAccent} isLightBg={isLightBg} onShare={() => setShareOpen(true)} />

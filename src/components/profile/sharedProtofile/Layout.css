@@ -75,3 +75,8 @@
     transparent 25%
   );
 }
+
+/* Gooey backgrounds: no accent gradient overlay on main content */
+.protofile__main--gooey {
+  background: none !important;
+}

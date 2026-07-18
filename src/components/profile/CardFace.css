@@ -3,12 +3,72 @@
    SharedProtofile classes, sized for preview
    ============================================ */
 
-/* ---- Compact sizing ---- */
+/* ---- Default card sizing (smaller than real profile page) ---- */
+
+.protofile-card .protofile__photo-wrapper,
+.protofile-card .protofile__avatar {
+  width: 72px;
+  height: 72px;
+}
+
+.protofile-card .protofile__photo-wrapper {
+  border-width: 2px;
+}
+
+.protofile-card .protofile__avatar {
+  font-size: var(--text-2xl);
+}
+
+.protofile-card .protofile__name {
+  font-size: var(--text-xl);
+  margin-bottom: var(--space-xs);
+}
+
+.protofile-card .protofile__role {
+  font-size: var(--text-xs);
+  margin-bottom: var(--space-md);
+}
+
+.protofile-card .protofile__bio {
+  font-size: var(--text-xs);
+  margin-bottom: var(--space-lg);
+}
+
+.protofile-card .protofile__main {
+  padding: var(--space-2xl) var(--space-2xl) var(--space-sm);
+}
+
+/* ---- Set --color-surface for the card context so social buttons use the right bg ---- */
+
+.protofile-card.protofile--light,
+.protofile-card .protofile--light {
+  --color-surface: oklch(0.965 0.005 35);
+}
+
+.protofile-card .protofile__socials {
+  margin-bottom: var(--space-xl);
+}
+
+.protofile-card .protofile__link-btn {
+  padding: var(--space-sm) var(--space-lg);
+  justify-content: center;
+}
+
+.protofile-card .protofile__links {
+  margin-bottom: 0;
+  gap: var(--space-sm);
+}
+
+/* ---- Compact sizing (even smaller) ---- */
 
 .protofile-card--compact .protofile__photo-wrapper,
 .protofile-card--compact .protofile__avatar {
   width: 56px;
   height: 56px;
+}
+
+.protofile-card--compact .protofile__avatar {
+  font-size: var(--text-xl);
 }
 
 .protofile-card--compact .protofile__name {
@@ -27,18 +87,6 @@
   padding: var(--space-xl) var(--space-lg) var(--space-xs);
 }
 
-/* ---- Smaller social icons in compact ---- */
-
-.protofile-card--compact .protofile__social-btn {
-  width: 36px;
-  height: 36px;
-}
-
-.protofile-card--compact .protofile__social-btn svg {
-  width: 16px;
-  height: 16px;
-}
-
 /* ---- Smaller link buttons in compact ---- */
 
 .protofile-card--compact .protofile__link-btn {
@@ -50,18 +98,6 @@
 .protofile-card .protofile__photo-wrapper:hover,
 .protofile-card .protofile__avatar:hover {
   transform: none;
-}
-
-/* ---- Centered link button labels (no icons in card preview) ---- */
-
-.protofile-card .protofile__link-btn {
-  justify-content: center;
-}
-
-/* ---- No footer-margin gap on links (card has no footer) ---- */
-
-.protofile-card .protofile__links {
-  margin-bottom: 0;
 }
 
 /* ---- Reduced motion ---- */

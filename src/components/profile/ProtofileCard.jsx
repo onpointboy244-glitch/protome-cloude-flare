@@ -41,12 +41,18 @@ export default function ProtofileCard({ data, compact, animateIn }) {
             const pBgColor = p.bg_color || p.bgColor || ''
             const pLight = isLightColor(pBgColor)
             const pFontClass = p.font && p.font !== 'serif' ? `protofile--${p.font}` : ''
+            const pBgGradient = p.bg_gradient || p.bgGradient || ''
+            const pIsGooey = pBgGradient?.startsWith?.('__gooey__')
+            const pGooeyVariant = pIsGooey
+              ? pBgGradient === '__gooey__' ? 'groovy' : (pBgGradient.split('__').filter(Boolean)[1] || 'groovy')
+              : undefined
             return (
               <div key={i} className="protofile-card__tower-item">
                 <div
                   className={`protofile-card__tower-face ${pLight ? 'protofile--light' : 'protofile--dark'} ${pFontClass}`}
-                  style={cardStyles(p)}
+                  style={{ ...cardStyles(p), ...(pIsGooey ? { position: 'relative' } : {}) }}
                 >
+                  {pIsGooey && <GooeyBackground accent={p.accent || '#C5A059'} variant={pGooeyVariant} />}
                   <CardFace profile={p} animateIn />
                 </div>
               </div>
