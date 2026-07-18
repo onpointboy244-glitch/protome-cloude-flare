@@ -1,7 +1,7 @@
 import { useState, useEffect, startTransition, lazy, Suspense } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from './lib/useAuth'
-import { getProfile, getMyProfiles } from './lib/api'
+import { getProfile, getMyProfiles, normalizeProfile } from './lib/api'
 import Nav from './components/layout/Nav'
 import Hero from './components/landing/Hero'
 import HowItWorks from './components/landing/HowItWorks'
@@ -51,7 +51,7 @@ export default function App() {
     return 'loading'
   })
 
-  const [sharedData, setSharedData] = useState(initialProfile || null)
+  const [sharedData, setSharedData] = useState(initialProfile ? normalizeProfile(initialProfile) : null)
   const [protofileData, setProtofileData] = useState(null)
   const { data: myProfiles = [], isLoading: profilesLoading } = useQuery({
     queryKey: ['profiles', user?.id],
@@ -83,7 +83,7 @@ export default function App() {
     // Profile page — show skeleton before async fetch
     if (initialProfileParam) {
       startTransition(() => {
-        setSharedData(initialProfileParam)
+        setSharedData(normalizeProfile(initialProfileParam))
         setRoute('profile')
       })
       return

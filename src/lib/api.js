@@ -45,7 +45,7 @@ const DESIGN_MAP = [
  * Normalize a profile object: merge structured `design` JSONB back into
  * top-level flat fields so all existing code (profile.accent, etc.) works unchanged.
  */
-function normalizeProfile(profile) {
+export function normalizeProfile(profile) {
   if (!profile || !profile.design || typeof profile.design !== 'object') return profile
   const result = { ...profile }
   for (const { flat, dest } of DESIGN_MAP) {

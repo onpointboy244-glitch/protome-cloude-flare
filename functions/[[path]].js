@@ -323,7 +323,30 @@ export async function onRequest(context) {
       const profiles = await profileRes.json()
 
       if (profiles && profiles.length > 0) {
-        const data = profiles[0]
+        const data = { ...profiles[0] }
+        // Normalize design JSONB — flatten nested values into top-level fields
+        // so the client sees the user's actual values, not DB column defaults.
+        // Maps: accent → design.colors.accent, bg_color → design.colors.bg_color, etc.
+        if (data.design && typeof data.design === 'object') {
+          const DESIGN_MAP_EDGE = [
+            ['accent',         ['colors', 'accent']],
+            ['bg_color',       ['colors', 'bg_color']],
+            ['bg_gradient',    ['background', 'bg_gradient']],
+            ['bg_type',        ['background', 'bg_type']],
+            ['bg_size',        ['background', 'bg_size']],
+            ['font',           ['font']],
+            ['button_style',   ['button', 'style']],
+            ['button_corner',  ['button', 'corner']],
+          ]
+          for (const [flat, dest] of DESIGN_MAP_EDGE) {
+            let val = data.design
+            for (const key of dest) {
+              if (val && typeof val === 'object') val = val[key]
+              else { val = undefined; break }
+            }
+            if (val !== undefined) data[flat] = val
+          }
+        }
         profileData = data
         name = data.name || username
         description = data.bio
