@@ -22,6 +22,8 @@ export default function SharedProtofile({ data }) {
     bgType: data.bg_type || "none",
     bgSize: data.bg_size || "cover",
     bgPos: data.bg_pos || "0 0",
+    buttonStyle: data.button_style || 'solid',
+    buttonCorner: data.button_corner || 'rounded',
   };
   const {
     name,
@@ -37,6 +39,8 @@ export default function SharedProtofile({ data }) {
     bgSize,
     bgPos,
     font,
+    buttonStyle,
+    buttonCorner,
     detect_icons,
   } = d;
   const accentColor = accent || "var(--color-primary-l)";
@@ -214,6 +218,8 @@ export default function SharedProtofile({ data }) {
                 <LinkItem
                   key={`link-${item.id || i}`}
                   item={item}
+                  buttonStyle={buttonStyle}
+                  buttonCorner={buttonCorner}
                   showIcon={detect_icons !== false}
                   onShareLink={() => {
                     const href = item.url.startsWith("http") ? item.url : `https://${item.url}`;

@@ -28,6 +28,8 @@ create table profiles (
   bg_type text default 'none',
   bg_size text default 'cover',
   font text default 'serif',
+  button_style text default 'solid',
+  button_corner text default 'rounded',
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );

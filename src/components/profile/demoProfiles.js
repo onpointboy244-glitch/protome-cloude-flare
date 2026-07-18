@@ -16,6 +16,8 @@ const DEMO_PROFILES = [
     bgColor: '#1c1a19',
     bgGradient: 'radial-gradient(ellipse at 50% 0%, #2d2a27 0%, #1a1817 100%)',
     font: '',
+    button_style: 'solid',
+    button_corner: 'pill',
   },
   {
     name: 'Alex Chen',
@@ -33,6 +35,8 @@ const DEMO_PROFILES = [
     bgColor: '#e8eff5',
     bgGradient: 'linear-gradient(145deg, #f0f5fa 0%, #e0e8f2 50%, #f0f5fa 100%)',
     font: 'mono',
+    button_style: 'glass',
+    button_corner: 'rounded',
   },
   {
     name: 'Maya Rivera',
@@ -50,6 +54,8 @@ const DEMO_PROFILES = [
     bgColor: '#221515',
     bgGradient: 'radial-gradient(ellipse at 50% 0%, #3d2323 0%, #1f1212 100%)',
     font: 'hand',
+    button_style: 'outline',
+    button_corner: 'square',
   },
   {
     name: 'Sam Okafor',
@@ -67,6 +73,8 @@ const DEMO_PROFILES = [
     bgColor: '#f7efe5',
     bgGradient: 'linear-gradient(145deg, #fefaf5 0%, #f5ede3 50%, #fefaf5 100%)',
     font: 'bold',
+    button_style: 'solid',
+    button_corner: 'rounded',
   },
 ]
 

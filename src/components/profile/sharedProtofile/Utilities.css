@@ -20,12 +20,19 @@
 
   .protofile__link-btn {
     transition-duration: 0.01ms !important;
-    background: rgba(255, 255, 255, 0.12) !important;
-    box-shadow: 0 1px 2px oklch(0 0 0 / 0.05) !important;
+    background: rgba(255, 255, 255, 0.07) !important;
+    border: none !important;
+    box-shadow:
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.12),
+      0 1px 2px oklch(0 0 0 / 0.05) !important;
     transform: none !important;
   }
   .protofile--light .protofile__link-btn {
-    background: oklch(1 0 0 / 0.7) !important;
+    background: rgba(255, 255, 255, 0.5) !important;
+    border: none !important;
+    box-shadow:
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.8),
+      0 1px 2px oklch(0 0 0 / 0.04) !important;
   }
   .protofile__link-share {
     opacity: 1 !important;
@@ -75,16 +82,27 @@
     -webkit-touch-callout: none !important;
     user-select: none !important;
     will-change: transform;
+
+    /* Glass defaults on touch (match LinkButtons.css) */
+    background: rgba(255, 255, 255, 0.07) !important;
+    border: none !important;
+    color: rgba(255, 255, 255, 0.92) !important;
+    box-shadow:
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.12),
+      0 1px 2px oklch(0 0 0 / 0.05) !important;
   }
 
+  /* Glass: stay glassy on touch — just slightly brighter */
   .protofile__link-btn:hover,
   .protofile__link-btn:active,
   .protofile__link-btn:focus,
   .protofile__link-btn:focus-visible {
-    background: var(--accent) !important;
-    color: var(--accent-hover-text, #fff) !important;
+    background: rgba(255, 255, 255, 0.14) !important;
+    color: #fff !important;
     transform: none !important;
-    box-shadow: 0 1px 2px oklch(0 0 0 / 0.05) !important;
+    box-shadow:
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.25),
+      0 1px 2px oklch(0 0 0 / 0.05) !important;
     outline: none !important;
   }
 
@@ -93,17 +111,23 @@
   }
 
   .protofile--light .protofile__link-btn {
-    background: oklch(1 0 0 / 0.7) !important;
-    color: oklch(0.12 0.008 35.8) !important;
-    box-shadow: 0 1px 2px oklch(0 0 0 / 0.04) !important;
+    background: rgba(255, 255, 255, 0.5) !important;
+    border: none !important;
+    color: oklch(0.15 0.008 35.8) !important;
+    box-shadow:
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.8),
+      0 1px 2px oklch(0 0 0 / 0.04) !important;
   }
 
   .protofile--light .protofile__link-btn:hover,
   .protofile--light .protofile__link-btn:active,
   .protofile--light .protofile__link-btn:focus,
   .protofile--light .protofile__link-btn:focus-visible {
-    background: color-mix(in oklch, var(--accent), oklch(0 0 0) 8%) !important;
-    color: var(--accent-hover-text, #fff) !important;
+    background: rgba(255, 255, 255, 0.7) !important;
+    color: oklch(0.12 0.008 35.8) !important;
+    box-shadow:
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.9),
+      0 1px 2px oklch(0 0 0 / 0.04) !important;
   }
 
   .protofile--light .protofile__link-btn:hover .protofile__link-icon {
@@ -116,5 +140,33 @@
 
   .protofile__social-btn:hover {
     background: oklch(1 0 0 / 0.1);
+  }
+
+  /* Solid: accent fill on touch (overrides glass defaults above) */
+  .protofile__link-btn--solid:hover,
+  .protofile__link-btn--solid:active,
+  .protofile__link-btn--solid:focus,
+  .protofile__link-btn--solid:focus-visible {
+    background: var(--accent) !important;
+    color: var(--accent-hover-text, #fff) !important;
+  }
+
+  /* Outline: stay outline on touch — just brighter border */
+  .protofile__link-btn--outline:hover,
+  .protofile__link-btn--outline:active,
+  .protofile__link-btn--outline:focus,
+  .protofile__link-btn--outline:focus-visible {
+    background: transparent !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    color: #fff !important;
+  }
+
+  .protofile--light .protofile__link-btn--outline:hover,
+  .protofile--light .protofile__link-btn--outline:active,
+  .protofile--light .protofile__link-btn--outline:focus,
+  .protofile--light .protofile__link-btn--outline:focus-visible {
+    background: transparent !important;
+    border-color: rgba(0, 0, 0, 0.35) !important;
+    color: oklch(0.12 0.008 35.8) !important;
   }
 }

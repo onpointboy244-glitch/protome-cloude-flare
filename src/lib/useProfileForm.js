@@ -6,6 +6,8 @@ const INITIAL_STATE = {
   photoData: '', photoFile: null, photoRemoved: false,
   links: [],
   accent: '#c45a3c', bgGradient: null, bgColor: '#000000', bgType: 'none', bgSize: 'cover', font: 'serif',
+  buttonStyle: 'solid',
+  buttonCorner: 'rounded',
   detectIcons: true,
 }
 
@@ -48,6 +50,8 @@ function reducer(state, action) {
         bgType: action.profile.bg_type || 'none',
         bgSize: action.profile.bg_size || 'cover',
         font: action.profile.font || 'serif',
+        buttonStyle: action.profile.button_style || 'solid',
+        buttonCorner: action.profile.button_corner || 'rounded',
         detectIcons: action.profile.detect_icons !== false,
       }
 

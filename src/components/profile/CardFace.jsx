@@ -1,6 +1,12 @@
 import './CardFace.css'
 import { renderPlatformIcon, detectIconKey, detectPlatformKey, isLightColor, gradientIsDark, isSocialLink } from '../../lib/icons.jsx'
 import { DEFAULT_DATA, LINK_LABELS } from './demoProfiles.js'
+import './sharedProtofile/Typography.css'
+import './sharedProtofile/PhotoAvatar.css'
+import './sharedProtofile/SocialIcons.css'
+import './sharedProtofile/Layout.css'
+import './sharedProtofile/LinkButtons.css'
+import './sharedProtofile/Utilities.css'
 
 /* ---------- Styles factory ---------- */
 
@@ -69,9 +75,10 @@ export default function CardFace({ profile, animateIn }) {
     bgColor: profile.bg_color || profile.bgColor || '',
     bgGradient: profile.bg_gradient || profile.bgGradient || '',
   }
-  const { links: rawLinks = {}, accent = '', font = '' } = d
+  const { links: rawLinks = {}, accent = '', font = '', button_style = 'solid', button_corner = 'rounded' } = d
   const accentColor = accent || 'var(--color-primary-l)'
-  const fontClass = font && font !== 'serif' ? `protofile-card--${font}` : ''
+  const btnStyleClass = `protofile__link-btn--${button_style}`
+  const cornerClass = `protofile__link-btn--${button_corner}`
   const initials = d.name
     .split(' ')
     .map(w => w[0])
@@ -86,31 +93,27 @@ export default function CardFace({ profile, animateIn }) {
 
   return (
     <>
-      <div className="protofile-card__bar" style={{ background: accentColor }} />
-      <div className={`protofile-card__body ${fontClass}`}>
+      <div className="protofile__accent-bar" style={{ background: accentColor }} />
+      <main className="protofile__main">
         {d.photo ? (
-          <div className="protofile-card__photo-wrapper" style={{ borderColor: accentColor }}>
-            <img src={d.photo} alt="" className="protofile-card__photo" loading="lazy" />
+          <div className="protofile__photo-wrapper" style={{ borderColor: accentColor }}>
+            <img src={d.photo} alt="" className="protofile__photo" loading="lazy" />
           </div>
         ) : (
-          <div className="protofile-card__avatar" aria-hidden="true" style={{ color: accentColor }}>
-            <span>{initials}</span>
+          <div className="protofile__avatar" aria-hidden="true" style={{ color: accentColor }}>
+            {initials}
           </div>
         )}
 
-        <div className="protofile-card__header">
-          <h2 className="protofile-card__name">{d.name}</h2>
-          <p className="protofile-card__role">{d.role}</p>
-        </div>
+        <h1 className="protofile__name">{d.name}</h1>
+        <p className="protofile__role">{d.role}</p>
 
         {d.bio && (
-          <div className="protofile-card__bio">
-            <p>{d.bio}</p>
-          </div>
+          <p className="protofile__bio">{d.bio}</p>
         )}
 
         {circleLinks.length > 0 && (
-          <div className="protofile-card__links">
+          <div className="protofile__socials">
             {circleLinks.map(([label, url], i) => {
               const iconKey = detectIconKey(label, url)
               return (
@@ -119,7 +122,7 @@ export default function CardFace({ profile, animateIn }) {
                   href={url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="protofile-card__link"
+                  className="protofile__social-btn"
                   onClick={animateIn ? e => e.preventDefault() : null}
                   title={LINK_LABELS[label] || label}
                   data-platform={detectPlatformKey(label, url)}
@@ -132,22 +135,22 @@ export default function CardFace({ profile, animateIn }) {
         )}
 
         {cardLinks.length > 0 && (
-          <div className="protofile-card__card-links">
+          <div className="protofile__links">
             {cardLinks.map(([label, url], i) => (
               <a
                 key={`card-${label}-${i}`}
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="protofile-card__card-link"
+                className={`protofile__link-btn ${btnStyleClass} ${cornerClass}`.trim()}
                 onClick={animateIn ? e => e.preventDefault() : null}
               >
-                <span className="protofile-card__card-link-label">{label}</span>
+                <span className="protofile__link-label">{label}</span>
               </a>
             ))}
           </div>
         )}
-      </div>
+      </main>
     </>
   )
 }

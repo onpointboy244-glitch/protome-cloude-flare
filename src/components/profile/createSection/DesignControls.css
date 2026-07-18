@@ -316,6 +316,70 @@
 
 }
 
+/* ---- Button style pill previews ---- */
+
+.create-section__btn-preview {
+  display: inline-block;
+  width: 28px;
+  height: 14px;
+  border-radius: 7px;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.create-section__btn-preview--solid {
+  background: oklch(0.25 0.008 35 / 0.7);
+  border: none;
+  box-shadow: 0 1px 1px oklch(0 0 0 / 0.08);
+}
+
+.create-section__bg-type-btn--active .create-section__btn-preview--solid {
+  background: var(--color-primary-l);
+}
+
+.create-section__btn-preview--glass {
+  background: oklch(0.25 0.008 35 / 0.08);
+  border: none;
+  box-shadow: 0 1px 1px oklch(0 0 0 / 0.04);
+}
+
+.create-section__btn-preview--outline {
+  background: transparent;
+  border: 1.5px solid oklch(0.25 0.008 35 / 0.25);
+  box-shadow: none;
+}
+
+.create-section__bg-type-btn--active .create-section__btn-preview--outline {
+  border-color: var(--color-primary-l);
+}
+
+/* ---- Button corner pill previews ---- */
+
+.create-section__corner-preview {
+  display: inline-block;
+  width: 28px;
+  height: 14px;
+  flex-shrink: 0;
+  background: oklch(0.25 0.008 35 / 0.7);
+  transition: all 0.2s ease;
+}
+
+.create-section__corner-preview--square {
+  border-radius: 0px;
+}
+
+.create-section__corner-preview--rounded {
+  border-radius: 4px;
+}
+
+.create-section__corner-preview--pill {
+  border-radius: 7px;
+}
+
+.create-section__bg-type-btn--active .create-section__corner-preview {
+  background: var(--color-primary-l);
+}
+
 @media (max-width: 640px) {
   .create-section__design-row {
     flex-direction: column;
@@ -340,6 +404,9 @@
 }
 
 .create-section__bg-type-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
   padding: var(--space-sm) var(--space-lg);
   border: 1px solid var(--color-border);
   border-radius: 8px;

@@ -1,9 +1,11 @@
 import { detectPlatformKey, detectIcon, GENERIC_ICON } from '../../../lib/icons.jsx'
 import './LinkButtons.css'
 
-export default function LinkItem({ item, onShareLink, showIcon = true }) {
+export default function LinkItem({ item, onShareLink, showIcon = true, buttonStyle = 'solid', buttonCorner = 'rounded' }) {
   const href = item.url.startsWith('http') ? item.url : `https://${item.url}`
   const icon = showIcon ? (detectIcon(item.label, item.url) || GENERIC_ICON) : null
+  const styleClass = buttonStyle !== 'glass' ? `protofile__link-btn--${buttonStyle}` : ''
+  const cornerClass = `protofile__link-btn--${buttonCorner}`
   return (
     <div className="protofile__link-row">
       <a
@@ -11,7 +13,7 @@ export default function LinkItem({ item, onShareLink, showIcon = true }) {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="protofile__link-btn"
+        className={`protofile__link-btn ${styleClass} ${cornerClass}`.trim()}
         data-platform={detectPlatformKey(item.label, item.url)}
       >
         <span className="protofile__link-body">

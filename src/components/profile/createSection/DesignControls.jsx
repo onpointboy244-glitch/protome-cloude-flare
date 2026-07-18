@@ -10,6 +10,18 @@ const FONTS = [
   { key: 'rounded', label: 'Rounded', className: 'create-section__font-sample--rounded' },
 ]
 
+const BUTTON_STYLES = [
+  { key: 'solid', label: 'Solid', description: 'White on dark, black on light' },
+  { key: 'glass', label: 'Glass', description: 'Semi-transparent, subtle look' },
+  { key: 'outline', label: 'Outline', description: 'Transparent with border' },
+]
+
+const BUTTON_CORNERS = [
+  { key: 'square', label: 'Square', description: 'Minimal rounding' },
+  { key: 'rounded', label: 'Rounded', description: 'Standard rounded corners' },
+  { key: 'pill', label: 'Pill', description: 'Fully rounded capsule shape' },
+]
+
 function swatchStyle(preset, type, accent, bgColor) {
   const base = bgColor || '#000000'
   if (type === 'pattern') {
@@ -35,7 +47,7 @@ function swatchStyle(preset, type, accent, bgColor) {
   return { backgroundColor: base }
 }
 
-export default function DesignControls({ accent, bgColor, bgType, bgGradient, bgSize, font, onAccentChange, onBgColorChange, onBgTypeChange, onBgChange, onFontChange }) {
+export default function DesignControls({ accent, bgColor, bgType, bgGradient, bgSize, font, buttonStyle, buttonCorner, onAccentChange, onBgColorChange, onBgTypeChange, onBgChange, onFontChange, onButtonStyleChange, onButtonCornerChange }) {
   const presets = WALLPAPER_STYLES[bgType] || WALLPAPER_STYLES.none
 
   const isActive = (preset) => {
@@ -152,6 +164,42 @@ export default function DesignControls({ accent, bgColor, bgType, bgGradient, bg
               >
                 <span className={`create-section__font-sample ${f.className}`}>Aa</span>
                 {f.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="create-section__design-row">
+          <label className="create-section__label">Button style</label>
+          <div className="create-section__bg-type-options">
+            {BUTTON_STYLES.map(s => (
+              <button
+                key={s.key}
+                type="button"
+                className={`create-section__bg-type-btn ${buttonStyle === s.key ? 'create-section__bg-type-btn--active' : ''}`}
+                onClick={() => onButtonStyleChange(s.key)}
+                title={s.description}
+              >
+                <span className={`create-section__btn-preview create-section__btn-preview--${s.key}`} />
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="create-section__design-row">
+          <label className="create-section__label">Button corners</label>
+          <div className="create-section__bg-type-options">
+            {BUTTON_CORNERS.map(c => (
+              <button
+                key={c.key}
+                type="button"
+                className={`create-section__bg-type-btn ${buttonCorner === c.key ? 'create-section__bg-type-btn--active' : ''}`}
+                onClick={() => onButtonCornerChange(c.key)}
+                title={c.description}
+              >
+                <span className={`create-section__corner-preview create-section__corner-preview--${c.key}`} />
+                {c.label}
               </button>
             ))}
           </div>

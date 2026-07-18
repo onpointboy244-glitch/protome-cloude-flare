@@ -63,7 +63,7 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
         name: f.name.trim(), role: f.role.trim(),
         bio: f.bio.trim(),
         photo_url: f.photoRemoved && !f.photoFile ? '' : (photoUrl || (editingUsername ? originalPhotoUrlRef.current : '') || f.photoData || ''),
-        links: validLinks, accent: f.accent, bg_color: f.bgColor, bg_gradient: f.bgGradient, bg_type: f.bgType, bg_size: f.bgSize, font: f.font,
+        links: validLinks, accent: f.accent, bg_color: f.bgColor, bg_gradient: f.bgGradient, bg_type: f.bgType, bg_size: f.bgSize, font: f.font, button_style: f.buttonStyle, button_corner: f.buttonCorner,
         detect_icons: f.detectIcons, username,
       }
 
@@ -309,6 +309,8 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
                 bgGradient={f.bgGradient}
                 bgSize={f.bgSize}
                 font={f.font}
+                buttonStyle={f.buttonStyle}
+                buttonCorner={f.buttonCorner}
                 onAccentChange={val => setDesign({ accent: val })}
                 onBgColorChange={val => setDesign({ bgColor: val })}
                 onBgTypeChange={type => {
@@ -331,6 +333,8 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
                   })
                 }}
                 onFontChange={val => setDesign({ font: val })}
+                onButtonStyleChange={val => setDesign({ buttonStyle: val })}
+                onButtonCornerChange={val => setDesign({ buttonCorner: val })}
               />
 
               <div className="create-section__field-group">

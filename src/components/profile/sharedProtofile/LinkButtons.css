@@ -13,47 +13,64 @@
   align-items: center;
   width: 100%;
   padding: 0.875rem 2.75rem;
-  border: none;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.12);
   text-decoration: none;
   font-family: var(--font-display);
   font-size: var(--text-sm);
   font-weight: 300;
   letter-spacing: 0.01em;
-  color: #fff;
-  box-shadow: 0 1px 2px oklch(0 0 0 / 0.05);
-  transition:
-    background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.3s ease;
   position: relative;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   outline: none;
   will-change: transform;
+
+  /* ── Glass defaults ── */
+  background: rgba(255, 255, 255, 0.07);
+  border: none;
+  color: rgba(255, 255, 255, 0.92);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.12),
+    0 1px 2px oklch(0 0 0 / 0.05);
+  backdrop-filter: none;
+
+  transition:
+    background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s ease,
+    color 0.3s ease;
 }
 
 .protofile--light .protofile__link-btn {
-  background: var(--color-surface);
-  color: oklch(0.12 0.008 35.8);
-  box-shadow: 0 1px 2px oklch(0 0 0 / 0.04);
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+  color: oklch(0.15 0.008 35.8);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.8),
+    0 1px 2px oklch(0 0 0 / 0.04);
 }
 
-/* Desktop hover: accent fill + lift */
+/* Desktop hover:
+   - Glass (default): stay glassy, just brighter + lift
+   - Solid / Outline: accent fill (defined below) */
 @media (hover: hover) and (pointer: fine) {
   .protofile__link-btn:hover {
-    background: var(--accent);
-    color: var(--accent-hover-text, #fff);
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px oklch(0 0 0 / 0.15);
+    box-shadow:
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.25),
+      0 8px 20px oklch(0 0 0 / 0.15);
   }
 
   .protofile--light .protofile__link-btn:hover {
-    background: color-mix(in oklch, var(--accent), oklch(0 0 0) 8%);
-    color: var(--accent-hover-text, #fff);
+    background: rgba(255, 255, 255, 0.7);
+    color: oklch(0.12 0.008 35.8);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px oklch(0 0 0 / 0.1);
+    box-shadow:
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.9),
+      0 8px 20px oklch(0 0 0 / 0.1);
   }
 }
 
@@ -152,6 +169,42 @@
   color: #22c55e !important;
 }
 
+/* ---- Solid button: share icon needs dark color to contrast with white button bg ---- */
+
+/* Default row hover (button still white) — dark dots on white */
+.protofile__link-btn--solid + .protofile__link-share {
+  color: rgba(0, 0, 0, 0.35);
+}
+.protofile__link-btn--solid + .protofile__link-share:hover {
+  background: rgba(0, 0, 0, 0.12);
+  color: rgba(0, 0, 0, 0.65);
+}
+
+/* Button hover (accent fill) — switch to accent-hover-text for contrast */
+.protofile__link-btn--solid:hover + .protofile__link-share {
+  color: var(--accent-hover-text, #fff);
+}
+.protofile__link-btn--solid:hover + .protofile__link-share:hover {
+  background: oklch(1 0 0 / 0.15);
+  color: var(--accent-hover-text, #fff);
+}
+
+.protofile--light .protofile__link-btn--solid + .protofile__link-share {
+  color: rgba(255, 255, 255, 0.45);
+}
+.protofile--light .protofile__link-btn--solid + .protofile__link-share:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.protofile--light .protofile__link-btn--solid:hover + .protofile__link-share {
+  color: var(--accent-hover-text, #000);
+}
+.protofile--light .protofile__link-btn--solid:hover + .protofile__link-share:hover {
+  background: oklch(0 0 0 / 0.12);
+  color: var(--accent-hover-text, #000);
+}
+
 /* ---- Section headings ---- */
 
 .protofile__section-heading {
@@ -219,4 +272,139 @@
 .protofile--sans .protofile__link-btn {
   font-family: var(--font-body);
   font-weight: 500;
+}
+
+/* ---- Font-style overrides for section headings ---- */
+
+.protofile--mono .protofile__section-heading {
+  font-family: 'JetBrains Mono', ui-monospace, 'Fira Code', monospace;
+}
+
+.protofile--hand .protofile__section-heading {
+  font-family: 'Caveat', 'Patrick Hand', cursive;
+  text-transform: none;
+  letter-spacing: 0.04em;
+}
+
+.protofile--bold .protofile__section-heading {
+  font-family: 'Bebas Neue', 'Anton', sans-serif;
+  letter-spacing: 0.06em;
+}
+
+.protofile--rounded .protofile__section-heading {
+  font-family: 'Fredoka', 'Nunito', system-ui, sans-serif;
+}
+
+.protofile--serif .protofile__section-heading {
+  font-family: var(--font-display);
+  letter-spacing: 0.08em;
+}
+
+/* ================================================================
+   Button corner variants: Square / Rounded (default) / Pill
+   ================================================================ */
+
+.protofile__link-btn--square {
+  border-radius: 0px !important;
+}
+
+.protofile__link-btn--rounded {
+  border-radius: 12px !important;
+}
+
+.protofile__link-btn--pill {
+  border-radius: 999px !important;
+}
+
+/* ================================================================
+   Button style variants: Solid / Glass (default) / Outline
+   ================================================================ */
+
+/* ---- Solid: white on dark, dark on light ---- */
+
+.protofile__link-btn--solid {
+  background: #fff;
+  color: #1a1a1a;
+  border: none;
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.08);
+}
+
+.protofile--light .protofile__link-btn--solid {
+  background: #1a1a1a;
+  color: #fff;
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.15);
+}
+
+/* On hover, accent fill takes over */
+.protofile__link-btn--solid:hover {
+  background: var(--accent) !important;
+  color: var(--accent-hover-text, #fff) !important;
+  box-shadow: 0 8px 20px oklch(0 0 0 / 0.15) !important;
+  border-color: var(--accent) !important;
+}
+
+.protofile--light .protofile__link-btn--solid:hover {
+  box-shadow: 0 8px 20px oklch(0 0 0 / 0.1) !important;
+}
+
+/* ---- Outline: transparent with border ---- */
+
+.protofile__link-btn--outline {
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.28);
+  color: #fff;
+  box-shadow: none;
+}
+
+.protofile--light .protofile__link-btn--outline {
+  background: transparent;
+  border: 1.5px solid rgba(0, 0, 0, 0.18);
+  color: oklch(0.12 0.008 35.8);
+  box-shadow: none;
+}
+
+/* On hover: stay outline — just brighter border, lift comes from default */
+.protofile__link-btn--outline:hover {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  color: #fff !important;
+}
+
+.protofile--light .protofile__link-btn--outline:hover {
+  background: transparent !important;
+  border-color: rgba(0, 0, 0, 0.35) !important;
+  color: oklch(0.12 0.008 35.8) !important;
+}
+
+/* ===== Reduced motion overrides for solid & outline ===== */
+/* Higher specificity beats Utilities.css's !important defaults */
+@media (prefers-reduced-motion: reduce) {
+  .protofile__link-btn.protofile__link-btn--solid {
+    background: #fff !important;
+    color: #1a1a1a !important;
+    border: none !important;
+  }
+  .protofile--light .protofile__link-btn.protofile__link-btn--solid {
+    background: #1a1a1a !important;
+    color: #fff !important;
+    border: none !important;
+  }
+
+  .protofile__link-btn.protofile__link-btn--outline {
+    background: transparent !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.28) !important;
+    color: #fff !important;
+    box-shadow: none !important;
+  }
+  .protofile--light .protofile__link-btn.protofile__link-btn--outline {
+    background: transparent !important;
+    border: 1.5px solid rgba(0, 0, 0, 0.18) !important;
+    color: oklch(0.12 0.008 35.8) !important;
+    box-shadow: none !important;
+  }
+
+  /* Corner variants override in reduced motion */
+  .protofile__link-btn.protofile__link-btn--square { border-radius: 0px !important; }
+  .protofile__link-btn.protofile__link-btn--rounded { border-radius: 12px !important; }
+  .protofile__link-btn.protofile__link-btn--pill { border-radius: 999px !important; }
 }

@@ -65,7 +65,7 @@
   color: var(--card-text, inherit);
 }
 
-.protofile-card__tower-face .protofile-card__bar {
+.protofile-card__tower-face .protofile__accent-bar {
   opacity: 0.85;
 }
 
@@ -90,7 +90,7 @@
   overflow: hidden;
 }
 
-.protofile-card--hero .protofile-card__body {
+.protofile-card--hero .protofile__main {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
