@@ -113,8 +113,26 @@ function reducer(state, action) {
     case 'MOVE_LINK': {
       if (action.activeId === action.overId) return state
       const oldIdx = state.links.findIndex(l => l.id === action.activeId)
+      if (oldIdx === -1) return state
+
+      // Drop into end of a section (from empty-section droppable zone)
+      if (action.zoneInfo?.type === 'sectionend') {
+        const sectionIdx = state.links.findIndex(l => l.id === action.zoneInfo.sectionId)
+        if (sectionIdx === -1) return state
+        let insertAt = sectionIdx + 1
+        for (let i = sectionIdx + 1; i < state.links.length; i++) {
+          if (state.links[i].isSection) break
+          insertAt = i + 1
+        }
+        const links = [...state.links]
+        const [moved] = links.splice(oldIdx, 1)
+        const adjusted = oldIdx < insertAt ? insertAt - 1 : insertAt
+        links.splice(adjusted, 0, moved)
+        return { ...state, links }
+      }
+
       const newIdx = state.links.findIndex(l => l.id === action.overId)
-      if (oldIdx === -1 || newIdx === -1) return state
+      if (newIdx === -1) return state
       return { ...state, links: arrayMove(state.links, oldIdx, newIdx) }
     }
 
@@ -178,8 +196,8 @@ export function useProfileForm() {
   const removeLink = useCallback((id) =>
     dispatch({ type: 'REMOVE_LINK', id }), [])
 
-  const moveLink = useCallback((activeId, overId) =>
-    dispatch({ type: 'MOVE_LINK', activeId, overId }), [])
+  const moveLink = useCallback((activeId, overId, zoneInfo) =>
+    dispatch({ type: 'MOVE_LINK', activeId, overId, zoneInfo }), [])
 
   return {
     state,

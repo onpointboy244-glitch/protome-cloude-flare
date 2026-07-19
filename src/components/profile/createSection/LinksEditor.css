@@ -409,6 +409,17 @@
   font-style: italic;
   text-align: center;
   padding: var(--space-sm) 0;
+  transition: background 0.2s ease;
+}
+
+.create-section__link-group-empty--over {
+  outline: 2px dashed var(--color-primary-l);
+  outline-offset: -2px;
+  border-radius: 8px;
+  background: color-mix(in oklch, var(--color-primary-l), transparent 85%);
+  opacity: 1;
+  color: var(--color-primary);
+  padding: var(--space-lg);
 }
 
 .create-section__add-link-btn {

@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors, useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { isSocial, SOCIAL_QUICK_LINKS, WEBSITE_QUICK_LINKS } from './formConstants'
@@ -91,14 +91,26 @@ function SortableLinkEntry({ link, icon, onUpdate, onRemove }) {
   )
 }
 
+function EmptySectionDropZone({ sectionId }) {
+  const { setNodeRef, isOver } = useDroppable({ id: `empty-section-${sectionId}` })
+  return (
+    <div
+      ref={setNodeRef}
+      className={`create-section__link-group-empty ${isOver ? 'create-section__link-group-empty--over' : ''}`}
+    >
+      Drop a link here
+    </div>
+  )
+}
+
 function SortableGroup({ group, onUpdateLink, onRemoveLink }) {
   const linkIds = group.links.map(l => l.id)
 
   return (
     <SortableContext items={linkIds} strategy={verticalListSortingStrategy}>
-      {group.links.length === 0 && group.section && (
-        <p className="create-section__link-group-empty">Add links to this section using the buttons below.</p>
-      )}
+      {group.links.length === 0 && group.section ? (
+        <EmptySectionDropZone sectionId={group.section.id} />
+      ) : null}
 
       {group.links.map(link => {
         const icon = renderPlatformIcon(detectIconKey(link.label, link.url), 16)
@@ -136,6 +148,14 @@ export default function LinksEditor({ links, onAddLink, onUpdateLink, onRemoveLi
   const handleDragEnd = useCallback((event) => {
     const { active, over } = event
     if (!active || !over || active.id === over.id) return
+
+    // Dropped on an empty section zone
+    if (typeof over.id === 'string' && over.id.startsWith('empty-section-')) {
+      const sectionId = over.id.replace('empty-section-', '')
+      onMoveLink?.(active.id, sectionId, { type: 'sectionend', sectionId })
+      return
+    }
+
     onMoveLink?.(active.id, over.id)
   }, [onMoveLink])
 

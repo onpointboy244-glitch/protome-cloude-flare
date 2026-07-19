@@ -75,6 +75,24 @@
 
 @media (hover: none) and (pointer: coarse) {
 
+  /* Kill tap highlight on ALL interactive elements in the card */
+  .protofile a,
+  .protofile button,
+  .protofile__photo-wrapper,
+  .protofile__avatar,
+  .protofile__social-btn,
+  .protofile__share-btn,
+  .protofile__link-share,
+  .protofile__footer-link,
+  .protofile__brand {
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  /* Don't pause tower animation on touch — hover sticks on mobile */
+  .protofile-card__tower--animated:hover {
+    animation-play-state: running !important;
+  }
+
   .protofile__link-btn {
     transition: none !important;
     -webkit-tap-highlight-color: transparent !important;
@@ -140,6 +158,33 @@
 
   .protofile__social-btn:hover {
     background: oklch(1 0 0 / 0.1);
+  }
+
+  /* ── Solid: solid white on touch default (override glass !important above) ── */
+  .protofile__link-btn--solid {
+    background: #fff !important;
+    color: #1a1a1a !important;
+    border: none !important;
+    box-shadow: 0 1px 2px oklch(0 0 0 / 0.08) !important;
+  }
+  .protofile--light .protofile__link-btn--solid {
+    background: #1a1a1a !important;
+    color: #fff !important;
+    box-shadow: 0 1px 2px oklch(0 0 0 / 0.15) !important;
+  }
+
+  /* ── Outline: transparent + border on touch default ── */
+  .protofile__link-btn--outline {
+    background: transparent !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.28) !important;
+    color: #fff !important;
+    box-shadow: none !important;
+  }
+  .protofile--light .protofile__link-btn--outline {
+    background: transparent !important;
+    border: 1.5px solid rgba(0, 0, 0, 0.18) !important;
+    color: oklch(0.12 0.008 35.8) !important;
+    box-shadow: none !important;
   }
 
   /* Solid: accent fill on touch (overrides glass defaults above) */

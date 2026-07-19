@@ -265,6 +265,20 @@
   to { transform: rotate(360deg); }
 }
 
+/* ---- Kill tap highlight on mobile touch for all editor interactive elements ---- */
+
+@media (hover: none) and (pointer: coarse) {
+  .create-section button,
+  .create-section input,
+  .create-section textarea,
+  .create-section select,
+  .create-section a,
+  .create-section label {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+  }
+}
+
 /* ---- Dark mode overrides ---- */
 
 [data-theme="dark"] .create-section__editing-banner {
