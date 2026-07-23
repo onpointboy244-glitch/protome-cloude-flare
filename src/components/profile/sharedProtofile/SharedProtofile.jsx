@@ -139,6 +139,8 @@ export default function SharedProtofile({ data }) {
         "--accent-hover-text": accentHoverText,
         "--bg-color": bgColor || "var(--color-bg)",
         "--card-text": isDarkBg ? "#fff" : "#111",
+        "--card-tether-bg": "oklch(0.965 0.005 35)",
+        "--card-tether-color": "#333",
       }}
     >
       <div

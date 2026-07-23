@@ -106,8 +106,8 @@
 }
 
 .protofile-card--compact .protofile__social-btn svg {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
 }
 
 .protofile-card--compact .protofile__links {
@@ -121,18 +121,22 @@
 }
 
 .protofile-card--compact .protofile__link-btn {
-  padding: 0.3rem 0.6rem;
-  font-size: calc(var(--text-xs) * 0.75);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.55rem;
+}
+
+.protofile-card--compact .protofile__link-btn--rounded {
+  border-radius: 6px !important;
 }
 
 .protofile-card--compact .protofile__section-heading {
-  font-size: calc(var(--text-xs) * 0.75);
-  margin: 0.15rem 0;
+  font-size: 0.5rem;
+  margin: 0.1rem 0;
 }
 
 .protofile-card--compact .protofile__link-icon svg {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 .protofile-card--compact .protofile__footer-brand-wrap {
@@ -164,8 +168,8 @@
 }
 
 .protofile-card--compact .protofile__social-btn svg {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
 }
 
 /* ---- Compact overrides for social style variants ---- */
@@ -182,11 +186,41 @@
   margin: 0 -7px;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+  transform: translateZ(0);
 }
 
 .protofile-card--compact .protofile__socials--bubble .protofile__social-btn {
   box-shadow: 0 1px 4px oklch(0 0 0 / 0.1) !important;
 }
+
+.protofile-card--compact .protofile__socials--tether .protofile__social-btn {
+  width: 30px;
+  height: 30px;
+  margin: 0 4px;
+  border-width: 1px;
+}
+.protofile-card--compact .protofile__socials--tether .protofile__social-btn::before,
+.protofile-card--compact .protofile__socials--tether .protofile__social-btn::after {
+  width: 2px;
+  height: 2px;
+}
+.protofile-card--compact .protofile__socials--tether .protofile__social-btn::before {
+  left: -5px;
+}
+.protofile-card--compact .protofile__socials--tether .protofile__social-btn::after {
+  right: -5px;
+}
+.protofile-card--compact .protofile__socials--tether::before {
+  top: 50%;
+}
+.protofile-card--compact .protofile__socials--tether .protofile__social-btn:hover {
+  transform: translateY(-2px) scale(1.08);
+}
+.protofile-card--compact .protofile__socials--tether .protofile__social-btn:hover::before,
+.protofile-card--compact .protofile__socials--tether .protofile__social-btn:hover::after {
+  background: color-mix(in oklch, var(--accent) 50%, transparent);
+}
+
 
 /* ---- No hover lift on photo/avatar in card preview ---- */
 

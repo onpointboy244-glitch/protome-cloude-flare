@@ -1,4 +1,5 @@
-import CardFace, { cardStyles } from './CardFace.jsx'
+import CardFace from './CardFace.jsx'
+import { cardStyles } from './cardStyles.jsx'
 import { DEMO_PROFILES } from './demoProfiles.js'
 import { isLightColor } from '../../lib/icons.jsx'
 import GooeyBackground from './GooeyBackground'

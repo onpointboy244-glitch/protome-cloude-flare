@@ -8,7 +8,7 @@ export default function LinkItem({ item, onShareLink, showIcon = true, buttonSty
   const cornerClass = `protofile__link-btn--${buttonCorner}`
   const btnInlineStyle = {
     ...(buttonColor && buttonStyle === 'solid' ? { background: buttonColor, borderColor: buttonColor } : {}),
-    ...(buttonTextColor ? { color: buttonTextColor } : {}),
+    ...(buttonTextColor ? { color: buttonTextColor, '--c-text': buttonTextColor } : {}),
   }
   return (
     <div className="protofile__link-row">
@@ -20,6 +20,7 @@ export default function LinkItem({ item, onShareLink, showIcon = true, buttonSty
         className={`protofile__link-btn ${styleClass} ${cornerClass}`.trim()}
         style={btnInlineStyle}
         data-platform={detectPlatformKey(item.label, item.url)}
+        data-custom-text={buttonTextColor || undefined}
       >
         <span className="protofile__link-body">
           {icon && <span className="protofile__link-icon" aria-hidden="true">{icon}</span>}

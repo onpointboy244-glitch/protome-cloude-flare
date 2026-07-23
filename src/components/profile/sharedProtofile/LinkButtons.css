@@ -434,3 +434,16 @@
   .protofile__link-btn.protofile__link-btn--rounded { border-radius: 12px !important; }
   .protofile__link-btn.protofile__link-btn--pill { border-radius: 999px !important; }
 }
+
+/* When user sets a custom button text color, the data-custom-text attribute
+   is added. This overrides ALL hover/focus states so the color stays — critical
+   on mobile where sticky :hover would otherwise override the user's color.
+   Placed last in file so it wins any specificity tie. */
+.protofile__link-btn[data-custom-text],
+.protofile__link-btn[data-custom-text]:hover {
+  color: var(--c-text) !important;
+}
+
+.protofile--light .protofile__link-btn[data-custom-text]:hover {
+  color: var(--c-text) !important;
+}

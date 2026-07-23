@@ -56,7 +56,7 @@ const BUTTON_CORNERS = [
 
 const SOCIAL_STYLES = [
   { key: "default", label: "Default" },
-  { key: "stacked", label: "Stacked" },
+  { key: "tether", label: "Tether" },
   { key: "bubble", label: "Bubble" },
   { key: "minimal", label: "Minimal" },
   { key: "pill", label: "Pill" },
