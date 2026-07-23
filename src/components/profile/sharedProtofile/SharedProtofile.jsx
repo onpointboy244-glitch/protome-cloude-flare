@@ -24,6 +24,9 @@ export default function SharedProtofile({ data }) {
     bgPos: data.bg_pos || "0 0",
     buttonStyle: data.button_style || 'solid',
     buttonCorner: data.button_corner || 'rounded',
+    buttonColor: data.button_color || '',
+    buttonTextColor: data.button_text_color || '',
+    socialStyle: data.social_style || 'default',
   };
   const {
     name,
@@ -41,6 +44,9 @@ export default function SharedProtofile({ data }) {
     font,
     buttonStyle,
     buttonCorner,
+    buttonColor,
+    buttonTextColor,
+    socialStyle,
     detect_icons,
   } = d;
   const accentColor = accent || "var(--color-primary-l)";
@@ -71,8 +77,9 @@ export default function SharedProtofile({ data }) {
   const hasPhoto = !!photoSrc;
   // Backward compat: if bgGradient is set but bgType is 'none' (no db column yet), treat as gradient
   const isGooey = bgGradient?.startsWith?.("__gooey__");
+  const isAccentOverlay = bgGradient?.includes?.("color-mix");
   const gooeyVariant = isGooey
-    ? bgGradient === "__gooey__" ? "groovy" : (bgGradient.split("__").filter(Boolean)[1] || "groovy")
+    ? bgGradient === "__gooey__" ? "groovy1" : (bgGradient.split("__").filter(Boolean)[1] || "groovy1")
     : undefined;
   const wallpaperType = bgType === "none" && bgGradient && !isGooey ? "gradient" : bgType;
   const isPattern = wallpaperType === "pattern" && !isGooey;
@@ -131,6 +138,7 @@ export default function SharedProtofile({ data }) {
         "--accent": accentInvisible ? visibleAccent : accentColor,
         "--accent-hover-text": accentHoverText,
         "--bg-color": bgColor || "var(--color-bg)",
+        "--card-text": isDarkBg ? "#fff" : "#111",
       }}
     >
       <div
@@ -147,7 +155,7 @@ export default function SharedProtofile({ data }) {
           style={{ background: accentColor }}
         />
         {isGooey && <GooeyBackground accent={visibleAccent} variant={gooeyVariant} />}
-        <main className={`protofile__main${isGooey ? ' protofile__main--gooey' : ''}`}>
+        <main className={`protofile__main${isGooey ? ' protofile__main--gooey' : ''}${isAccentOverlay ? ' protofile__main--accent-overlay' : ''}`}>
           {/* Share — top left */}
           <div className="protofile__share-wrapper">
             <ShareButton accentColor={visibleAccent} isLightBg={isLightBg} onShare={() => setShareOpen(true)} />
@@ -180,7 +188,7 @@ export default function SharedProtofile({ data }) {
 
           {/* Social icon row */}
           {socialLinks.length > 0 && (
-            <div className="protofile__socials">
+            <div className={`protofile__socials${socialStyle !== 'default' ? ` protofile__socials--${socialStyle}` : ''}`}>
               {socialLinks.map((link, i) => {
                 const icon = detectIcon(link.label, link.url) || GENERIC_ICON;
                 const href = link.url.startsWith("http")
@@ -220,6 +228,8 @@ export default function SharedProtofile({ data }) {
                   item={item}
                   buttonStyle={buttonStyle}
                   buttonCorner={buttonCorner}
+                  buttonColor={buttonColor}
+                  buttonTextColor={buttonTextColor}
                   showIcon={detect_icons !== false}
                   onShareLink={() => {
                     const href = item.url.startsWith("http") ? item.url : `https://${item.url}`;

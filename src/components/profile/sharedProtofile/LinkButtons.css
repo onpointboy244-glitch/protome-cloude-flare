@@ -52,8 +52,8 @@
 }
 
 /* Desktop hover:
-   - Glass (default): stay glassy, just brighter + lift
-   - Solid / Outline: accent fill (defined below) */
+   Generic: brightens + lifts
+   Individual styles override with accent fill (solid/glass/outline) */
 @media (hover: hover) and (pointer: fine) {
   .protofile__link-btn:hover {
     background: rgba(255, 255, 255, 0.14);
@@ -320,6 +320,21 @@
    Button style variants: Solid / Glass (default) / Outline
    ================================================================ */
 
+/* On hover: like outline — brighter, lifted, no solid fill */
+.protofile__link-btn--glass:hover {
+  background: rgba(255, 255, 255, 0.14) !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 8px 20px oklch(0 0 0 / 0.15) !important;
+}
+
+.protofile--light .protofile__link-btn--glass:hover {
+  background: rgba(0, 0, 0, 0.06) !important;
+  color: oklch(0.12 0.008 35.8) !important;
+  border-color: rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 8px 20px oklch(0 0 0 / 0.1) !important;
+}
+
 /* ---- Solid: white on dark, dark on light ---- */
 
 .protofile__link-btn--solid {
@@ -388,6 +403,17 @@
     background: #1a1a1a !important;
     color: #fff !important;
     border: none !important;
+  }
+
+  .protofile__link-btn.protofile__link-btn--glass {
+    background: rgba(255, 255, 255, 0.07) !important;
+    color: rgba(255, 255, 255, 0.92) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.28) !important;
+  }
+  .protofile--light .protofile__link-btn.protofile__link-btn--glass {
+    background: rgba(255, 255, 255, 0.5) !important;
+    color: oklch(0.15 0.008 35.8) !important;
+    border: 1.5px solid transparent !important;
   }
 
   .protofile__link-btn.protofile__link-btn--outline {

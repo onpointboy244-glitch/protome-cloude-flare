@@ -51,50 +51,6 @@
   color: var(--color-muted);
 }
 
-/* ---- Gradient Picker ---- */
-
-.create-section__gradient-picker {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-sm);
-  width: 100%;
-  max-width: 380px;
-}
-
-.create-section__gradient-swatch {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1;
-  min-height: 72px;
-  border-radius: 12px;
-  border: 2px solid var(--color-border);
-  padding: 0;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.create-section__gradient-swatch:hover {
-  transform: scale(1.06);
-  box-shadow: 0 4px 16px oklch(0 0 0 / 0.12);
-  z-index: 1;
-}
-
-.create-section__gradient-swatch--active {
-  border-color: var(--color-ink);
-  box-shadow: 0 0 0 3px var(--color-bg), 0 0 0 5px var(--color-ink);
-}
-
-@media (max-width: 640px) {
-  .create-section__gradient-picker {
-    grid-template-columns: repeat(3, 1fr);
-    max-width: 100%;
-  }
-}
-
 .create-section__font-options {
   display: flex;
   flex-wrap: wrap;
@@ -161,159 +117,6 @@
 .create-section__font-sample--rounded {
   font-family: 'Fredoka', 'Nunito', system-ui, sans-serif;
   font-weight: 600;
-}
-
-/* ---- Mini gooey preview inside swatch ---- */
-
-.create-section__gradient-swatch--gooey {
-  overflow: hidden;
-}
-
-.create-section__groovy-preview {
-  position: absolute;
-  inset: -6px;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.create-section__groovy-wrapper {
-  position: absolute;
-  inset: -4px;
-  filter: blur(3px) contrast(12);
-}
-
-.create-section__groovy-blob {
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.7;
-
-}
-
-/* --- Groovy preview (4 blobs) --- */
-.create-section__groovy-blob--groovy-1 {
-  width: 65%;
-  height: 70%;
-  top: -8%;
-  left: -10%;
-  border-radius: 55% 45% 65% 35% / 42% 58% 42% 58%;
-  transform: rotate(-6deg);
-}
-.create-section__groovy-blob--groovy-2 {
-  width: 55%;
-  height: 85%;
-  top: 5%;
-  right: -12%;
-  border-radius: 38% 62% 28% 72% / 58% 35% 65% 42%;
-  transform: rotate(10deg);
-}
-.create-section__groovy-blob--groovy-3 {
-  width: 75%;
-  height: 50%;
-  top: 25%;
-  left: 15%;
-  border-radius: 62% 38% 48% 52% / 35% 58% 42% 65%;
-  transform: rotate(-14deg);
-}
-.create-section__groovy-blob--groovy-4 {
-  width: 55%;
-  height: 55%;
-  bottom: -10%;
-  left: -8%;
-  border-radius: 48% 52% 36% 64% / 58% 35% 65% 42%;
-  transform: rotate(5deg);
-}
-
-/* --- Fold preview (6 alternating angled bands) --- */
-.create-section__groovy-blob--fold-1 {
-  width: 140%;
-  height: 22%;
-  top: -2%;
-  left: -20%;
-  border-radius: 0 70% 60% 0 / 0 85% 75% 0;
-  transform: rotate(-10deg);
-  opacity: 0.5;
-
-}
-.create-section__groovy-blob--fold-2 {
-  width: 140%;
-  height: 22%;
-  top: 14%;
-  left: -20%;
-  border-radius: 70% 0 0 60% / 85% 0 0 75%;
-  transform: rotate(10deg);
-  opacity: 0.5;
-
-}
-.create-section__groovy-blob--fold-3 {
-  width: 140%;
-  height: 22%;
-  top: 30%;
-  left: -20%;
-  border-radius: 0 70% 60% 0 / 0 85% 75% 0;
-  transform: rotate(-10deg);
-  opacity: 0.5;
-
-}
-.create-section__groovy-blob--fold-4 {
-  width: 140%;
-  height: 22%;
-  top: 46%;
-  left: -20%;
-  border-radius: 70% 0 0 60% / 85% 0 0 75%;
-  transform: rotate(10deg);
-  opacity: 0.5;
-
-}
-.create-section__groovy-blob--fold-5 {
-  width: 140%;
-  height: 22%;
-  top: 62%;
-  left: -20%;
-  border-radius: 0 70% 60% 0 / 0 85% 75% 0;
-  transform: rotate(-10deg);
-  opacity: 0.5;
-
-}
-.create-section__groovy-blob--fold-6 {
-  width: 140%;
-  height: 22%;
-  top: 78%;
-  left: -20%;
-  border-radius: 70% 0 0 60% / 85% 0 0 75%;
-  transform: rotate(10deg);
-  opacity: 0.5;
-
-}
-
-/* --- Sunburst preview (6 rays + core) --- */
-.create-section__groovy-blob--sunburst-1,
-.create-section__groovy-blob--sunburst-2,
-.create-section__groovy-blob--sunburst-3,
-.create-section__groovy-blob--sunburst-4,
-.create-section__groovy-blob--sunburst-5,
-.create-section__groovy-blob--sunburst-6 {
-  width: 200%;
-  height: 8%;
-  top: 46%;
-  left: -50%;
-  border-radius: 30%;
-  opacity: 0.45;
-
-}
-.create-section__groovy-blob--sunburst-1 { transform: rotate(0deg); }
-.create-section__groovy-blob--sunburst-2 { transform: rotate(30deg); }
-.create-section__groovy-blob--sunburst-3 { transform: rotate(60deg); }
-.create-section__groovy-blob--sunburst-4 { transform: rotate(90deg); }
-.create-section__groovy-blob--sunburst-5 { transform: rotate(120deg); }
-.create-section__groovy-blob--sunburst-6 { transform: rotate(150deg); }
-.create-section__groovy-blob--sunburst-7 {
-  width: 20%;
-  height: 20%;
-  top: 40%;
-  left: 40%;
-  border-radius: 50%;
-  opacity: 0.6;
-
 }
 
 /* ---- Button style pill previews ---- */
@@ -390,10 +193,19 @@
     flex-wrap: wrap;
     width: 100%;
   }
+}
 
-  .create-section__gradient-picker {
-    grid-template-columns: repeat(2, 1fr);
-  }
+/* ---- Social style compact grid ---- */
+
+.create-section__social-style-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-xs);
+}
+
+.create-section__social-style-options .create-section__bg-type-btn {
+  text-align: center;
+  justify-content: center;
 }
 
 /* ---- Wallpaper Type Buttons ---- */

@@ -26,8 +26,8 @@
 }
 
 .protofile-card--compact {
-  max-width: 360px;
-  font-size: 0.9em;
+  max-width: 280px;
+  font-size: 0.8em;
 }
 
 .protofile-card--compact:hover {

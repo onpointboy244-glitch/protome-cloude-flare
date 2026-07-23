@@ -28,17 +28,21 @@ import { MAX_FREE_PROFILES } from '../components/profile/createSection/formConst
  *   colors:    { accent, bg_color }
  *   background:{ bg_gradient, bg_type, bg_size }
  *   font:      string
- *   button:    { style, corner }
+ *   button:    { style, corner, color, text_color }
+ *   social:    { style }
  */
 const DESIGN_MAP = [
-  { flat: 'accent',         dest: ['colors', 'accent'] },
-  { flat: 'bg_color',       dest: ['colors', 'bg_color'] },
-  { flat: 'bg_gradient',    dest: ['background', 'bg_gradient'] },
-  { flat: 'bg_type',        dest: ['background', 'bg_type'] },
-  { flat: 'bg_size',        dest: ['background', 'bg_size'] },
-  { flat: 'font',           dest: ['font'] },
-  { flat: 'button_style',   dest: ['button', 'style'] },
-  { flat: 'button_corner',  dest: ['button', 'corner'] },
+  { flat: 'accent',           dest: ['colors', 'accent'] },
+  { flat: 'bg_color',         dest: ['colors', 'bg_color'] },
+  { flat: 'bg_gradient',      dest: ['background', 'bg_gradient'] },
+  { flat: 'bg_type',          dest: ['background', 'bg_type'] },
+  { flat: 'bg_size',          dest: ['background', 'bg_size'] },
+  { flat: 'font',             dest: ['font'] },
+  { flat: 'button_style',     dest: ['button', 'style'] },
+  { flat: 'button_corner',    dest: ['button', 'corner'] },
+  { flat: 'button_color',     dest: ['button', 'color'] },
+  { flat: 'button_text_color', dest: ['button', 'text_color'] },
+  { flat: 'social_style',     dest: ['social', 'style'] },
 ]
 
 /**

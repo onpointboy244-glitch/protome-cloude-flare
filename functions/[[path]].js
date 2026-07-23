@@ -329,14 +329,17 @@ export async function onRequest(context) {
         // Maps: accent → design.colors.accent, bg_color → design.colors.bg_color, etc.
         if (data.design && typeof data.design === 'object') {
           const DESIGN_MAP_EDGE = [
-            ['accent',         ['colors', 'accent']],
-            ['bg_color',       ['colors', 'bg_color']],
-            ['bg_gradient',    ['background', 'bg_gradient']],
-            ['bg_type',        ['background', 'bg_type']],
-            ['bg_size',        ['background', 'bg_size']],
-            ['font',           ['font']],
-            ['button_style',   ['button', 'style']],
-            ['button_corner',  ['button', 'corner']],
+            ['accent',           ['colors', 'accent']],
+            ['bg_color',         ['colors', 'bg_color']],
+            ['bg_gradient',      ['background', 'bg_gradient']],
+            ['bg_type',          ['background', 'bg_type']],
+            ['bg_size',          ['background', 'bg_size']],
+            ['font',             ['font']],
+            ['button_style',     ['button', 'style']],
+            ['button_corner',    ['button', 'corner']],
+            ['button_color',     ['button', 'color']],
+            ['button_text_color', ['button', 'text_color']],
+            ['social_style',     ['social', 'style']],
           ]
           for (const [flat, dest] of DESIGN_MAP_EDGE) {
             let val = data.design

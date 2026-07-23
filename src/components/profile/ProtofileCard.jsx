@@ -16,7 +16,7 @@ export default function ProtofileCard({ data, compact, animateIn }) {
   const bgColor = profile.bg_color || profile.bgColor || ''
   const isGooey = bgGradient?.startsWith?.('__gooey__')
   const gooeyVariant = isGooey
-    ? bgGradient === '__gooey__' ? 'groovy' : (bgGradient.split('__').filter(Boolean)[1] || 'groovy')
+    ? bgGradient === '__gooey__' ? 'groovy1' : (bgGradient.split('__').filter(Boolean)[1] || 'groovy1')
     : undefined
   const accent = profile.accent || '#C5A059'
   const isLightBg = isLightColor(bgColor)
@@ -44,7 +44,7 @@ export default function ProtofileCard({ data, compact, animateIn }) {
             const pBgGradient = p.bg_gradient || p.bgGradient || ''
             const pIsGooey = pBgGradient?.startsWith?.('__gooey__')
             const pGooeyVariant = pIsGooey
-              ? pBgGradient === '__gooey__' ? 'groovy' : (pBgGradient.split('__').filter(Boolean)[1] || 'groovy')
+              ? pBgGradient === '__gooey__' ? 'groovy1' : (pBgGradient.split('__').filter(Boolean)[1] || 'groovy1')
               : undefined
             return (
               <div key={i} className="protofile-card__tower-item">

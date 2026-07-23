@@ -8,6 +8,9 @@ const INITIAL_STATE = {
   accent: '#c45a3c', bgGradient: null, bgColor: '#000000', bgType: 'none', bgSize: 'cover', font: 'serif',
   buttonStyle: 'solid',
   buttonCorner: 'rounded',
+  buttonColor: '',
+  buttonTextColor: '',
+  socialStyle: 'default',
   detectIcons: true,
 }
 
@@ -52,6 +55,9 @@ function reducer(state, action) {
         font: action.profile.font || 'serif',
         buttonStyle: action.profile.button_style || 'solid',
         buttonCorner: action.profile.button_corner || 'rounded',
+        buttonColor: action.profile.button_color || '',
+        buttonTextColor: action.profile.button_text_color || '',
+        socialStyle: action.profile.social_style || 'default',
         detectIcons: action.profile.detect_icons !== false,
       }
 

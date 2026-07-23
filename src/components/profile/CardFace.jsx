@@ -1,5 +1,5 @@
 import './CardFace.css'
-import { renderPlatformIcon, detectIconKey, detectPlatformKey, isLightColor, gradientIsDark, isSocialLink } from '../../lib/icons.jsx'
+import { renderPlatformIcon, detectIconKey, detectPlatformKey, detectIcon, GENERIC_ICON, isLightColor, gradientIsDark, isSocialLink } from '../../lib/icons.jsx'
 import { DEFAULT_DATA, LINK_LABELS } from './demoProfiles.js'
 import './sharedProtofile/Typography.css'
 import './sharedProtofile/PhotoAvatar.css'
@@ -25,6 +25,7 @@ export function cardStyles(profile) {
   // Backward compat: if bgGradient is set but bgType is 'none' (no db column yet), treat as gradient
   const wallpaperType = bgType === 'none' && bgGradient ? 'gradient' : bgType
   const isGooey = bgGradient?.startsWith?.('__gooey__')
+  const isAccentOverlay = bgGradient?.includes('color-mix')
   const hasGradientOrPattern = wallpaperType !== 'none' && bgGradient && !isGooey
   // Semi-transparent overlays should use bgColor for contrast, not gradientIsDark
   const isPattern = wallpaperType === 'pattern' && !isGooey
@@ -75,8 +76,10 @@ export default function CardFace({ profile, animateIn }) {
     bgColor: profile.bg_color || profile.bgColor || '',
     bgGradient: profile.bg_gradient || profile.bgGradient || '',
   }
-  const { links: rawLinks = {}, accent = '', font = '', button_style = 'solid', button_corner = 'rounded' } = d
+  const { links: rawLinks = {}, accent = '', font = '', button_style = 'solid', button_corner = 'rounded', button_color = '', button_text_color = '', social_style = 'default', detect_icons = true } = d
   const accentColor = accent || 'var(--color-primary-l)'
+  const isGooey = d.bgGradient?.startsWith?.('__gooey__')
+  const isAccentOverlay = !isGooey && d.bgGradient?.includes?.('color-mix')
   const btnStyleClass = `protofile__link-btn--${button_style}`
   const cornerClass = `protofile__link-btn--${button_corner}`
   const initials = d.name
@@ -87,14 +90,21 @@ export default function CardFace({ profile, animateIn }) {
     .toUpperCase()
 
   const links = Array.isArray(rawLinks) ? rawLinks : Object.values(rawLinks).filter(v => v)
-  const activeLinks = links.filter(l => l.url?.trim()).map(l => [l.label, l.url, l.type])
-  const cardLinks = activeLinks.filter(([label, url, type]) => !isSocialLink(label, url, type))
-  const circleLinks = activeLinks.filter(([label, url, type]) => isSocialLink(label, url, type))
+
+  // Same logic as SharedProtofile: social links → circles at top,
+  // everything else (sections + non-social links) in order below
+  const socialLinks = links.filter(l => !l.isSection && l.url?.trim() && isSocialLink(l.label, l.url, l.type))
+  const otherItems = links.filter(l => !isSocialLink(l.label, l.url, l.type))
+
+  const btnInlineStyle = {
+    ...(button_color && button_style === 'solid' ? { background: button_color, borderColor: button_color } : {}),
+    ...(button_text_color ? { color: button_text_color } : {}),
+  }
 
   return (
     <>
       <div className="protofile__accent-bar" style={{ background: accentColor }} />
-      <main className="protofile__main">
+      <main className={`protofile__main ${isGooey ? 'protofile__main--gooey' : ''} ${isAccentOverlay ? 'protofile__main--accent-overlay' : ''}`.trim()}>
         {d.photo ? (
           <div className="protofile__photo-wrapper" style={{ borderColor: accentColor }}>
             <img src={d.photo} alt="" className="protofile__photo" loading="lazy" />
@@ -112,20 +122,20 @@ export default function CardFace({ profile, animateIn }) {
           <p className="protofile__bio">{d.bio}</p>
         )}
 
-        {circleLinks.length > 0 && (
-          <div className="protofile__socials">
-            {circleLinks.map(([label, url], i) => {
-              const iconKey = detectIconKey(label, url)
+        {socialLinks.length > 0 && (
+          <div className={`protofile__socials${social_style !== 'default' ? ` protofile__socials--${social_style}` : ''}`}>
+            {socialLinks.map((l, i) => {
+              const iconKey = detectIconKey(l.label, l.url)
               return (
                 <a
-                  key={`${label}-${i}`}
-                  href={url}
+                  key={`social-${i}`}
+                  href={l.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="protofile__social-btn"
                   onClick={animateIn ? e => e.preventDefault() : null}
-                  title={LINK_LABELS[label] || label}
-                  data-platform={detectPlatformKey(label, url)}
+                  title={LINK_LABELS[l.label] || l.label}
+                  data-platform={detectPlatformKey(l.label, l.url)}
                 >
                   {renderPlatformIcon(iconKey, 14)}
                 </a>
@@ -134,20 +144,28 @@ export default function CardFace({ profile, animateIn }) {
           </div>
         )}
 
-        {cardLinks.length > 0 && (
+        {otherItems.length > 0 && (
           <div className="protofile__links">
-            {cardLinks.map(([label, url], i) => (
-              <a
-                key={`card-${label}-${i}`}
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`protofile__link-btn ${btnStyleClass} ${cornerClass}`.trim()}
-                onClick={animateIn ? e => e.preventDefault() : null}
-              >
-                <span className="protofile__link-label">{label}</span>
-              </a>
-            ))}
+            {otherItems.map((item, i) =>
+              item.isSection ? (
+                <div key={`sect-${i}`} className="protofile__section-heading">{item.label}</div>
+              ) : (
+                <a
+                  key={`link-${i}`}
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`protofile__link-btn ${btnStyleClass} ${cornerClass}`.trim()}
+                  style={btnInlineStyle}
+                  onClick={animateIn ? e => e.preventDefault() : null}
+                >
+                  <span className="protofile__link-body">
+                    {detect_icons && <span className="protofile__link-icon" aria-hidden="true">{detectIcon(item.label, item.url) || GENERIC_ICON}</span>}
+                    <span className="protofile__link-label">{item.label}</span>
+                  </span>
+                </a>
+              )
+            )}
           </div>
         )}
       </main>

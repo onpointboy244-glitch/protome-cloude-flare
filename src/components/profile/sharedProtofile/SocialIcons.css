@@ -175,3 +175,116 @@
 .protofile--light .protofile__social-btn[data-platform="whatsapp"]:hover {
   color: #111;
 }
+
+/* ---- Stacked social icon layout (overlapping) ---- */
+
+.protofile__socials--stacked {
+  gap: 0;
+}
+
+.protofile__socials--stacked .protofile__social-btn {
+  margin: 0 -10px;
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.protofile__socials--stacked .protofile__social-btn:hover {
+  z-index: 10;
+}
+
+/* ---- Bubble social icon layout (always-filled accent circles) ---- */
+
+.protofile__socials--bubble .protofile__social-btn {
+  background: var(--accent) !important;
+  border-color: transparent !important;
+  opacity: 0.85;
+  color: #fff !important;
+  box-shadow: 0 2px 8px oklch(0 0 0 / 0.12) !important;
+}
+
+.protofile__socials--bubble .protofile__social-btn:hover {
+  opacity: 1;
+  color: #fff !important;
+  background: var(--accent) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px oklch(0 0 0 / 0.2) !important;
+}
+
+/* ---- Minimal social icon layout (plain icons, no backgrounds) ---- */
+
+.protofile__socials--minimal {
+  gap: var(--space-lg);
+}
+
+.protofile__socials--minimal .protofile__social-btn {
+  width: auto;
+  height: auto;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--card-text, inherit) !important;
+  border-radius: 0;
+}
+
+.protofile__socials--minimal .protofile__social-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(2);
+  box-shadow: none !important;
+  background: none !important;
+}
+
+.protofile--light .protofile__socials--minimal .protofile__social-btn {
+  color: oklch(0.35 0.008 35 / 0.8) !important;
+}
+
+.protofile--light .protofile__socials--minimal .protofile__social-btn:hover {
+  filter: brightness(2);
+}
+
+/* ---- Pill social icon layout (shared pill container) ---- */
+
+.protofile__socials--pill {
+  gap: 0;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  padding: 6px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.protofile--light .protofile__socials--pill {
+  background: oklch(0 0 0 / 0.04);
+  border-color: oklch(0 0 0 / 0.08);
+}
+
+.protofile__socials--pill .protofile__social-btn {
+  border: none;
+  background: none !important;
+  box-shadow: none !important;
+  border-radius: 0;
+  color: var(--card-text, inherit);
+}
+
+.protofile__socials--pill .protofile__social-btn:first-child {
+  border-radius: 999px 0 0 999px;
+}
+
+.protofile__socials--pill .protofile__social-btn:last-child {
+  border-radius: 0 999px 999px 0;
+}
+
+.protofile__socials--pill .protofile__social-btn:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: none !important;
+  color: #fff !important;
+}
+
+.protofile--light .protofile__socials--pill .protofile__social-btn:hover {
+  background: oklch(0 0 0 / 0.06) !important;
+  color: oklch(0.12 0.008 35.8) !important;
+}
+

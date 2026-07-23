@@ -80,3 +80,9 @@
 .protofile__main--gooey {
   background: none !important;
 }
+
+/* Accent overlay (Top/Bottom gradient wallpaper): no separate accent wash,
+   the wallpaper itself provides the accent tint */
+.protofile__main--accent-overlay {
+  background: none !important;
+}

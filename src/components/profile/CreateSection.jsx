@@ -11,7 +11,8 @@ import UsernameField from './createSection/UsernameField'
 import LinksEditor from './createSection/LinksEditor'
 import DesignControls from './createSection/DesignControls'
 import DeleteProfileModal from './createSection/DeleteProfileModal'
-import { detectIconKey } from '../../lib/icons.jsx'
+import ProtofileCard from './ProtofileCard'
+import { detectIconKey, isLightColor } from '../../lib/icons.jsx'
 import { useToast } from '../layout/Toast'
 import './CreateSection.css'
 
@@ -63,7 +64,7 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
         name: f.name.trim(), role: f.role.trim(),
         bio: f.bio.trim(),
         photo_url: f.photoRemoved && !f.photoFile ? '' : (photoUrl || (editingUsername ? originalPhotoUrlRef.current : '') || f.photoData || ''),
-        links: validLinks, accent: f.accent, bg_color: f.bgColor, bg_gradient: f.bgGradient, bg_type: f.bgType, bg_size: f.bgSize, font: f.font, button_style: f.buttonStyle, button_corner: f.buttonCorner,
+        links: validLinks, accent: f.accent, bg_color: f.bgColor, bg_gradient: f.bgGradient, bg_type: f.bgType, bg_size: f.bgSize, font: f.font, button_style: f.buttonStyle, button_corner: f.buttonCorner, button_color: f.buttonColor, button_text_color: f.buttonTextColor, social_style: f.socialStyle,
         detect_icons: f.detectIcons, username,
       }
 
@@ -221,6 +222,38 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
     </div>
   ) : null, [editingUsername, submitted, selectProfile])
 
+  // =========== LIVE PREVIEW ===========
+  const previewData = useMemo(() => {
+    const previewLinks = f.links
+      .filter(l => !l.isSection ? l.url.trim() : l.label.trim())
+      .map(l => l.isSection
+        ? { label: l.label.trim(), isSection: true }
+        : { label: l.label.trim() || 'Website', url: l.url.trim(), ...(l.type ? { type: l.type } : {}) }
+      )
+    return {
+      name: f.name.trim() || 'Your Name',
+      role: f.role.trim() || 'Independent creator',
+      bio: (f.bio.trim() || 'Your bio will appear here.').slice(0, 80),
+      photo_url: f.photoData || '',
+      photo: f.photoData || '',
+      links: previewLinks,
+      accent: f.accent,
+      bg_color: f.bgColor,
+      bg_gradient: f.bgGradient,
+      bg_type: f.bgType,
+      bg_size: f.bgSize,
+      font: f.font,
+      button_style: f.buttonStyle,
+      button_corner: f.buttonCorner,
+      button_color: f.buttonColor,
+      button_text_color: f.buttonTextColor,
+      social_style: f.socialStyle,
+      detect_icons: f.detectIcons,
+    }
+  }, [f])
+
+  const isPreviewLight = useMemo(() => isLightColor(f.bgColor), [f.bgColor])
+
   // =========== RESULT VIEW ===========
   if (submitted && createdUsername) {
     return <CreateProfileResult createdUsername={createdUsername} latestProtofile={latestProtofile} onReset={handleReset} />
@@ -252,7 +285,8 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
             </div>
           </div>
         ) : user ? (
-          <form className="create-section__form" onSubmit={handleSubmit}>
+          <div className="create-section__split">
+            <form className="create-section__form" onSubmit={handleSubmit}>
 
             <ProfileSelector myProfiles={myProfiles} profilesLoading={profilesLoading} onEdit={selectProfile} onDelete={setConfirmDelete} editingProfile={editingUsername} />
 
@@ -311,6 +345,9 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
                 font={f.font}
                 buttonStyle={f.buttonStyle}
                 buttonCorner={f.buttonCorner}
+                buttonColor={f.buttonColor}
+                buttonTextColor={f.buttonTextColor}
+                socialStyle={f.socialStyle}
                 onAccentChange={val => setDesign({ accent: val })}
                 onBgColorChange={val => setDesign({ bgColor: val })}
                 onBgTypeChange={type => {
@@ -333,8 +370,11 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
                   })
                 }}
                 onFontChange={val => setDesign({ font: val })}
-                onButtonStyleChange={val => setDesign({ buttonStyle: val })}
+                onButtonStyleChange={val => setDesign({ buttonStyle: val, ...(val === 'solid' ? { buttonColor: '' } : {}) })}
                 onButtonCornerChange={val => setDesign({ buttonCorner: val })}
+                onButtonColorChange={val => setDesign({ buttonColor: val })}
+                onButtonTextColorChange={val => setDesign({ buttonTextColor: val })}
+                onSocialStyleChange={val => setDesign({ socialStyle: val })}
               />
 
               <div className="create-section__field-group">
@@ -364,7 +404,17 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
             )}
 
             <DeleteProfileModal profile={confirmDelete} deleting={deleteMutation.isPending} onCancel={() => setConfirmDelete(null)} onConfirm={handleDelete} />
-          </form>
+            </form>
+
+            <aside className="create-section__preview">
+              <div className={`create-section__preview-sticky ${isPreviewLight ? 'create-section__preview-sticky--light' : ''}`}>
+                <div className="create-section__preview-label">Live preview</div>
+                <div className="create-section__preview-card-wrap">
+                  <ProtofileCard data={previewData} compact />
+                </div>
+              </div>
+            </aside>
+          </div>
         ) : (
           <div className="create-section__auth-required">
             <div className="create-section__auth-card">
