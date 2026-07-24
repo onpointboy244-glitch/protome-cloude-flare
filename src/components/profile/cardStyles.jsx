@@ -43,8 +43,6 @@ export function cardStyles(profile) {
       '--card-social-color': 'rgba(255, 255, 255, 0.75)',
       '--card-social-border': 'rgba(255, 255, 255, 0.12)',
       '--card-avatar-bg': '#e8ddd4',
-      '--card-tether-bg': 'oklch(0.965 0.005 35)',
-      '--card-tether-color': '#333',
     } : {
       '--card-text': '#111',
       '--card-text-muted': '#555',
@@ -56,8 +54,6 @@ export function cardStyles(profile) {
       '--card-social-color': 'oklch(0.35 0.008 35 / 0.8)',
       '--card-social-border': 'oklch(0 0 0 / 0.08)',
       '--card-avatar-bg': '#2a2520',
-      '--card-tether-bg': 'oklch(0.965 0.005 35)',
-      '--card-tether-color': '#333',
     }),
   }
 }

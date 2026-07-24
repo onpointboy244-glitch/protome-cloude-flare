@@ -27,6 +27,7 @@ export default function SharedProtofile({ data }) {
     buttonColor: data.button_color || '',
     buttonTextColor: data.button_text_color || '',
     socialStyle: data.social_style || 'default',
+    socialPosition: data.social_position || 'top',
   };
   const {
     name,
@@ -47,6 +48,7 @@ export default function SharedProtofile({ data }) {
     buttonColor,
     buttonTextColor,
     socialStyle,
+    socialPosition,
     detect_icons,
   } = d;
   const accentColor = accent || "var(--color-primary-l)";
@@ -139,8 +141,6 @@ export default function SharedProtofile({ data }) {
         "--accent-hover-text": accentHoverText,
         "--bg-color": bgColor || "var(--color-bg)",
         "--card-text": isDarkBg ? "#fff" : "#111",
-        "--card-tether-bg": "oklch(0.965 0.005 35)",
-        "--card-tether-color": "#333",
       }}
     >
       <div
@@ -188,8 +188,8 @@ export default function SharedProtofile({ data }) {
           {/* Bio */}
           {bio && <p className="protofile__bio">{bio}</p>}
 
-          {/* Social icon row */}
-          {socialLinks.length > 0 && (
+          {/* Social icon row — top (default) */}
+          {socialPosition !== 'bottom' && socialLinks.length > 0 && (
             <div className={`protofile__socials${socialStyle !== 'default' ? ` protofile__socials--${socialStyle}` : ''}`}>
               {socialLinks.map((link, i) => {
                 const icon = detectIcon(link.label, link.url) || GENERIC_ICON;
@@ -243,6 +243,32 @@ export default function SharedProtofile({ data }) {
               ),
             )}
           </div>
+
+          {/* Social icon row — bottom */}
+          {socialPosition === 'bottom' && socialLinks.length > 0 && (
+            <div className={`protofile__socials${socialStyle !== 'default' ? ` protofile__socials--${socialStyle}` : ''}`}>
+              {socialLinks.map((link, i) => {
+                const icon = detectIcon(link.label, link.url) || GENERIC_ICON;
+                const href = link.url.startsWith("http")
+                  ? link.url
+                  : `https://${link.url}`;
+                return (
+                  <a
+                    key={`social-b-${link.id || i}`}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="protofile__social-btn"
+                    title={link.label}
+                    aria-label={link.label}
+                    data-platform={detectPlatformKey(link.label, link.url)}
+                  >
+                    {icon}
+                  </a>
+                );
+              })}
+            </div>
+          )}
 
           {/* Footer */}
           <div

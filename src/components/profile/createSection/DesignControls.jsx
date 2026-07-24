@@ -1,4 +1,5 @@
 import { WALLPAPER_STYLES, WALLPAPER_TYPES } from "./formConstants";
+import { isLightColor } from "../../../lib/icons.jsx";
 import "./DesignControls.css";
 
 const FONTS = [
@@ -56,7 +57,6 @@ const BUTTON_CORNERS = [
 
 const SOCIAL_STYLES = [
   { key: "default", label: "Default" },
-  { key: "tether", label: "Tether" },
   { key: "bubble", label: "Bubble" },
   { key: "minimal", label: "Minimal" },
   { key: "pill", label: "Pill" },
@@ -74,6 +74,7 @@ export default function DesignControls({
   buttonColor,
   buttonTextColor,
   socialStyle,
+  socialPosition,
   onAccentChange,
   onBgColorChange,
   onBgTypeChange,
@@ -84,6 +85,7 @@ export default function DesignControls({
   onButtonColorChange,
   onButtonTextColorChange,
   onSocialStyleChange,
+  onSocialPositionChange,
 }) {
   const presets = WALLPAPER_STYLES[bgType] || WALLPAPER_STYLES.none;
 
@@ -92,6 +94,9 @@ export default function DesignControls({
       return bgGradient === preset.css && bgSize === (preset.bgSize || "cover");
     return bgGradient === preset.css;
   };
+
+  // Default solid button color: white on dark bg, black on light bg
+  const defaultBtnColor = isLightColor(bgColor) ? "#1a1a1a" : "#ffffff";
 
   return (
     <div className="create-section__field-group">
@@ -235,12 +240,12 @@ export default function DesignControls({
               <input
                 id="pf-btn-color"
                 type="color"
-                value={buttonColor || "#ffffff"}
+                value={buttonColor || defaultBtnColor}
                 onChange={(e) => onButtonColorChange(e.target.value)}
                 className="create-section__color-picker"
               />
               <span className="create-section__color-value">
-                {buttonColor || "#ffffff (default)"}
+                {buttonColor || "Auto"}
               </span>
             </div>
           </div>
@@ -277,6 +282,26 @@ export default function DesignControls({
                 {s.label}
               </button>
             ))}
+          </div>
+        </div>
+
+        <div className="create-section__design-row">
+          <label className="create-section__label">Social position</label>
+          <div className="create-section__social-style-options">
+            <button
+              type="button"
+              className={`create-section__bg-type-btn ${socialPosition !== 'bottom' ? "create-section__bg-type-btn--active" : ""}`}
+              onClick={() => onSocialPositionChange('top')}
+            >
+              Top
+            </button>
+            <button
+              type="button"
+              className={`create-section__bg-type-btn ${socialPosition === 'bottom' ? "create-section__bg-type-btn--active" : ""}`}
+              onClick={() => onSocialPositionChange('bottom')}
+            >
+              Bottom
+            </button>
           </div>
         </div>
       </div>

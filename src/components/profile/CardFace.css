@@ -193,35 +193,6 @@
   box-shadow: 0 1px 4px oklch(0 0 0 / 0.1) !important;
 }
 
-.protofile-card--compact .protofile__socials--tether .protofile__social-btn {
-  width: 30px;
-  height: 30px;
-  margin: 0 4px;
-  border-width: 1px;
-}
-.protofile-card--compact .protofile__socials--tether .protofile__social-btn::before,
-.protofile-card--compact .protofile__socials--tether .protofile__social-btn::after {
-  width: 2px;
-  height: 2px;
-}
-.protofile-card--compact .protofile__socials--tether .protofile__social-btn::before {
-  left: -5px;
-}
-.protofile-card--compact .protofile__socials--tether .protofile__social-btn::after {
-  right: -5px;
-}
-.protofile-card--compact .protofile__socials--tether::before {
-  top: 50%;
-}
-.protofile-card--compact .protofile__socials--tether .protofile__social-btn:hover {
-  transform: translateY(-2px) scale(1.08);
-}
-.protofile-card--compact .protofile__socials--tether .protofile__social-btn:hover::before,
-.protofile-card--compact .protofile__socials--tether .protofile__social-btn:hover::after {
-  background: color-mix(in oklch, var(--accent) 50%, transparent);
-}
-
-
 /* ---- No hover lift on photo/avatar in card preview ---- */
 
 .protofile-card .protofile__photo-wrapper:hover,

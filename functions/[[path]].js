@@ -340,6 +340,7 @@ export async function onRequest(context) {
             ['button_color',     ['button', 'color']],
             ['button_text_color', ['button', 'text_color']],
             ['social_style',     ['social', 'style']],
+            ['social_position',  ['social', 'position']],
           ]
           for (const [flat, dest] of DESIGN_MAP_EDGE) {
             let val = data.design

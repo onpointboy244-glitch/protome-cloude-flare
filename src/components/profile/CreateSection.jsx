@@ -64,7 +64,7 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
         name: f.name.trim(), role: f.role.trim(),
         bio: f.bio.trim(),
         photo_url: f.photoRemoved && !f.photoFile ? '' : (photoUrl || (editingUsername ? originalPhotoUrlRef.current : '') || f.photoData || ''),
-        links: validLinks, accent: f.accent, bg_color: f.bgColor, bg_gradient: f.bgGradient, bg_type: f.bgType, bg_size: f.bgSize, font: f.font, button_style: f.buttonStyle, button_corner: f.buttonCorner, button_color: f.buttonColor, button_text_color: f.buttonTextColor, social_style: f.socialStyle,
+        links: validLinks, accent: f.accent, bg_color: f.bgColor, bg_gradient: f.bgGradient, bg_type: f.bgType, bg_size: f.bgSize, font: f.font, button_style: f.buttonStyle, button_corner: f.buttonCorner, button_color: f.buttonColor, button_text_color: f.buttonTextColor, social_style: f.socialStyle, social_position: f.socialPosition,
         detect_icons: f.detectIcons, username,
       }
 
@@ -248,6 +248,7 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
       button_color: f.buttonColor,
       button_text_color: f.buttonTextColor,
       social_style: f.socialStyle,
+      social_position: f.socialPosition,
       detect_icons: f.detectIcons,
     }
   }, [f])
@@ -348,6 +349,7 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
                 buttonColor={f.buttonColor}
                 buttonTextColor={f.buttonTextColor}
                 socialStyle={f.socialStyle}
+                socialPosition={f.socialPosition}
                 onAccentChange={val => setDesign({ accent: val })}
                 onBgColorChange={val => setDesign({ bgColor: val })}
                 onBgTypeChange={type => {
@@ -375,6 +377,7 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
                 onButtonColorChange={val => setDesign({ buttonColor: val })}
                 onButtonTextColorChange={val => setDesign({ buttonTextColor: val })}
                 onSocialStyleChange={val => setDesign({ socialStyle: val })}
+                onSocialPositionChange={val => setDesign({ socialPosition: val })}
               />
 
               <div className="create-section__field-group">

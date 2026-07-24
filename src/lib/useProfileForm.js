@@ -11,6 +11,7 @@ const INITIAL_STATE = {
   buttonColor: '',
   buttonTextColor: '',
   socialStyle: 'default',
+  socialPosition: 'top',
   detectIcons: true,
 }
 
@@ -58,6 +59,7 @@ function reducer(state, action) {
         buttonColor: action.profile.button_color || '',
         buttonTextColor: action.profile.button_text_color || '',
         socialStyle: action.profile.social_style || 'default',
+        socialPosition: action.profile.social_position || 'top',
         detectIcons: action.profile.detect_icons !== false,
       }
 

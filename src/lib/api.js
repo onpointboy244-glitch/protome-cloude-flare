@@ -29,7 +29,7 @@ import { MAX_FREE_PROFILES } from '../components/profile/createSection/formConst
  *   background:{ bg_gradient, bg_type, bg_size }
  *   font:      string
  *   button:    { style, corner, color, text_color }
- *   social:    { style }
+ *   social:    { style, position }
  */
 const DESIGN_MAP = [
   { flat: 'accent',           dest: ['colors', 'accent'] },
@@ -43,6 +43,7 @@ const DESIGN_MAP = [
   { flat: 'button_color',     dest: ['button', 'color'] },
   { flat: 'button_text_color', dest: ['button', 'text_color'] },
   { flat: 'social_style',     dest: ['social', 'style'] },
+  { flat: 'social_position',  dest: ['social', 'position'] },
 ]
 
 /**

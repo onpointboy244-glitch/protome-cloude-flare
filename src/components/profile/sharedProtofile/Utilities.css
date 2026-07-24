@@ -214,4 +214,69 @@
     border-color: rgba(0, 0, 0, 0.35) !important;
     color: oklch(0.12 0.008 35.8) !important;
   }
+
+  /* ── Glass: frosted look on touch (override base !important above) ── */
+  .protofile__link-btn--glass {
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: none !important;
+    color: rgba(255, 255, 255, 0.92) !important;
+    box-shadow:
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.10),
+      0 1px 3px oklch(0 0 0 / 0.08) !important;
+  }
+  .protofile--light .protofile__link-btn--glass {
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    background: rgba(0, 0, 0, 0.03) !important;
+    border: none !important;
+    color: oklch(0.12 0.008 35.8) !important;
+    box-shadow:
+      inset 0 0.5px 0 rgba(255, 255, 255, 0.6),
+      0 1px 3px oklch(0 0 0 / 0.04) !important;
+  }
+
+  /* Glass hover/tap touch — brighter but still glassy */
+  .protofile__link-btn--glass:hover,
+  .protofile__link-btn--glass:active,
+  .protofile__link-btn--glass:focus,
+  .protofile__link-btn--glass:focus-visible {
+    background: rgba(255, 255, 255, 0.09) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 4px 12px oklch(0 0 0 / 0.1) !important;
+    transform: none !important;
+    outline: none !important;
+  }
+  .protofile--light .protofile__link-btn--glass:hover,
+  .protofile--light .protofile__link-btn--glass:active,
+  .protofile--light .protofile__link-btn--glass:focus,
+  .protofile--light .protofile__link-btn--glass:focus-visible {
+    background: rgba(0, 0, 0, 0.05) !important;
+    color: oklch(0.12 0.008 35.8) !important;
+    border: none !important;
+    box-shadow: 0 4px 12px oklch(0 0 0 / 0.06) !important;
+  }
+}
+
+/* When user sets a custom button text color, the data-custom-text attribute
+   is added. This overrides ALL hover/focus/touch states so the color stays —
+   critical on mobile where sticky :hover/:active/:focus would otherwise
+   override the user's color. Placed last in this file (which is imported
+   last) so it wins any specificity tie with !important. */
+.protofile__link-btn[data-custom-text],
+.protofile__link-btn[data-custom-text]:hover,
+.protofile__link-btn[data-custom-text]:active,
+.protofile__link-btn[data-custom-text]:focus,
+.protofile__link-btn[data-custom-text]:focus-visible {
+  color: var(--c-text) !important;
+}
+
+.protofile--light .protofile__link-btn[data-custom-text],
+.protofile--light .protofile__link-btn[data-custom-text]:hover,
+.protofile--light .protofile__link-btn[data-custom-text]:active,
+.protofile--light .protofile__link-btn[data-custom-text]:focus,
+.protofile--light .protofile__link-btn[data-custom-text]:focus-visible {
+  color: var(--c-text) !important;
 }

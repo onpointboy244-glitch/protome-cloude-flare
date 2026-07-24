@@ -18,7 +18,7 @@ export default function CardFace({ profile, animateIn }) {
     bgColor: profile.bg_color || profile.bgColor || '',
     bgGradient: profile.bg_gradient || profile.bgGradient || '',
   }
-  const { links: rawLinks = {}, accent = '', button_style = 'solid', button_corner = 'rounded', button_color = '', button_text_color = '', social_style = 'default', detect_icons = true } = d
+  const { links: rawLinks = {}, accent = '', button_style = 'solid', button_corner = 'rounded', button_color = '', button_text_color = '', social_style = 'default', social_position = 'top', detect_icons = true } = d
   const accentColor = accent || 'var(--color-primary-l)'
   const isGooey = d.bgGradient?.startsWith?.('__gooey__')
   const isAccentOverlay = !isGooey && d.bgGradient?.includes?.('color-mix')
@@ -64,7 +64,8 @@ export default function CardFace({ profile, animateIn }) {
           <p className="protofile__bio">{d.bio}</p>
         )}
 
-        {socialLinks.length > 0 && (
+        {/* Social icon row — top (default) */}
+        {social_position !== 'bottom' && socialLinks.length > 0 && (
           <div className={`protofile__socials${social_style !== 'default' ? ` protofile__socials--${social_style}` : ''}`}>
             {socialLinks.map((l, i) => {
               const iconKey = detectIconKey(l.label, l.url)
@@ -109,6 +110,29 @@ export default function CardFace({ profile, animateIn }) {
                 </a>
               )
             )}
+          </div>
+        )}
+
+        {/* Social icon row — bottom */}
+        {social_position === 'bottom' && socialLinks.length > 0 && (
+          <div className={`protofile__socials${social_style !== 'default' ? ` protofile__socials--${social_style}` : ''}`}>
+            {socialLinks.map((l, i) => {
+              const iconKey = detectIconKey(l.label, l.url)
+              return (
+                <a
+                  key={`social-b-${i}`}
+                  href={l.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="protofile__social-btn"
+                  onClick={animateIn ? e => e.preventDefault() : null}
+                  title={LINK_LABELS[l.label] || l.label}
+                  data-platform={detectPlatformKey(l.label, l.url)}
+                >
+                  {renderPlatformIcon(iconKey, 14)}
+                </a>
+              )
+            })}
           </div>
         )}
       </main>

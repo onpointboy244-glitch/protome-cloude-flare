@@ -4,7 +4,7 @@ import './LinkButtons.css'
 export default function LinkItem({ item, onShareLink, showIcon = true, buttonStyle = 'solid', buttonCorner = 'rounded', buttonColor = '', buttonTextColor = '' }) {
   const href = item.url.startsWith('http') ? item.url : `https://${item.url}`
   const icon = showIcon ? (detectIcon(item.label, item.url) || GENERIC_ICON) : null
-  const styleClass = buttonStyle !== 'glass' ? `protofile__link-btn--${buttonStyle}` : ''
+  const styleClass = `protofile__link-btn--${buttonStyle}`
   const cornerClass = `protofile__link-btn--${buttonCorner}`
   const btnInlineStyle = {
     ...(buttonColor && buttonStyle === 'solid' ? { background: buttonColor, borderColor: buttonColor } : {}),
