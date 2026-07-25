@@ -17,6 +17,7 @@ export default function ReportModal({ username, onClose }) {
   const [status, setStatus] = useState('idle') // idle | sending | success | error
   const [errorMsg, setErrorMsg] = useState('')
   const modalRef = useRef(null)
+  const alreadyReported = localStorage.getItem(`reported:${username}`)
 
   // Focus trap + Escape key
   useEffect(() => {
@@ -48,6 +49,7 @@ export default function ReportModal({ username, onClose }) {
     setErrorMsg('')
     try {
       await reportProfile(username, { reason, details: details.trim() || null })
+      localStorage.setItem(`reported:${username}`, '1')
       setStatus('success')
     } catch (err) {
       setStatus('error')
@@ -58,7 +60,7 @@ export default function ReportModal({ username, onClose }) {
   return (
     <div className="protofile__modal-overlay" onClick={onClose}>
       <div ref={modalRef} className="protofile__modal" onClick={e => e.stopPropagation()}>
-        {status === 'success' ? (
+        {alreadyReported || status === 'success' ? (
           <>
             <div className="protofile__modal-icon">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

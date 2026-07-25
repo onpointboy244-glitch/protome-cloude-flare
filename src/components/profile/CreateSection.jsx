@@ -28,6 +28,7 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
 
   // --- UI-only state ---
   const [submitted, setSubmitted] = useState(false)
+  const [floatingOpen, setFloatingOpen] = useState(false)
   const [createdUsername, setCreatedUsername] = useState('')
   const [photoError, setPhotoError] = useState('')
   const [usernameStatus, setUsernameStatus] = useState('idle')
@@ -285,7 +286,7 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
               <p style={{ color: 'var(--color-muted)' }}>Checking your session&hellip;</p>
             </div>
           </div>
-        ) : user ? (
+        ) : user ? (<>
           <div className="create-section__split">
             <form className="create-section__form" onSubmit={handleSubmit}>
 
@@ -418,7 +419,38 @@ export default function CreateSection({ onProtofileCreated, onProfileDeleted, la
               </div>
             </aside>
           </div>
-        ) : (
+
+          {/* Mobile: floating preview bubble (PiP-style) */}
+          <div className="create-section__floating-preview">
+            <button
+              type="button"
+              className="create-section__floating-toggle"
+              onClick={() => setFloatingOpen(p => !p)}
+              aria-label="Toggle preview"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                <line x1="8" y1="21" x2="16" y2="21"/>
+                <line x1="12" y1="17" x2="12" y2="21"/>
+              </svg>
+            </button>
+            <div className={`create-section__floating-card ${floatingOpen ? 'create-section__floating-card--open' : ''}`}>
+              <button
+                type="button"
+                className="create-section__floating-close"
+                onClick={() => setFloatingOpen(false)}
+                aria-label="Close preview"
+              >
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+              <div className="create-section__floating-card-body">
+                <ProtofileCard data={previewData} compact />
+              </div>
+            </div>
+          </div>
+        </>) : (
           <div className="create-section__auth-required">
             <div className="create-section__auth-card">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">

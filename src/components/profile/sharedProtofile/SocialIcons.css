@@ -10,7 +10,7 @@
 
 /* When socials appear below links (position: bottom), add space above and below */
 .protofile__links + .protofile__socials {
-  margin-top: var(--space-lg);
+  margin-top: var(--space-2xl);
   margin-bottom: 0;
 }
 

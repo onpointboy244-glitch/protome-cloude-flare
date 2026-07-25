@@ -304,6 +304,108 @@
   }
 }
 
+/* ---- Mobile Floating Preview (PiP) ---- */
+
+@media (max-width: 1024px) {
+  .create-section__floating-preview {
+    position: fixed;
+    bottom: var(--space-xl);
+    right: var(--space-xl);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-sm);
+    pointer-events: none;
+  }
+
+  .create-section__floating-preview > * {
+    pointer-events: auto;
+  }
+
+  /* Toggle button */
+  .create-section__floating-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .create-section__floating-toggle:active {
+    transform: scale(0.92);
+  }
+
+  /* The card */
+  .create-section__floating-card {
+    display: none;
+    width: 220px;
+    max-height: 75vh;
+    border-radius: 16px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    animation: floatIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .create-section__floating-card--open {
+    display: block;
+  }
+
+  /* Scrollable body inside the card (close button stays fixed) */
+  .create-section__floating-card-body {
+    max-height: 70vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Close button */
+  .create-section__floating-close {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.35);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+
+  @keyframes floatIn {
+    from {
+      opacity: 0;
+      transform: scale(0.85) translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+}
+
+@media (min-width: 1025px) {
+  .create-section__floating-preview {
+    display: none;
+  }
+}
+
 /* ---- Live Preview ---- */
 
 .create-section__split {
@@ -363,17 +465,7 @@
   }
 
   .create-section__preview {
-    position: static;
-    order: -1;
-  }
-
-  .create-section__preview-sticky {
-    max-width: 360px;
-    margin: 0 auto;
-  }
-
-  .create-section__preview-card-wrap {
-    max-width: 240px;
+    display: none;
   }
 }
 
