@@ -41,8 +41,8 @@
 }
 
 .protofile--light .protofile__social-btn {
-  background: var(--color-surface);
-  color: oklch(0.35 0.008 35 / 0.8);
+  background: oklch(0 0 0 / 0.06);
+  color: oklch(0.25 0.008 35 / 0.85);
   box-shadow:
     inset 0 0 0 1.5px oklch(0 0 0 / 0.08),
     0 0 0 0 transparent;
@@ -270,6 +270,17 @@
   border-radius: 0;
 }
 
+/* On wallpaper/pattern backgrounds, add shadow so minimal icons don't blend in */
+.protofile__card--wallpaper .protofile__socials--minimal .protofile__social-btn {
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
+}
+
+/* On dark wallpaper — make icons white so they read over busy patterns */
+:is(.protofile--dark .protofile__card--wallpaper, .protofile__card--wallpaper.protofile--dark) .protofile__socials--minimal .protofile__social-btn {
+  color: #fff !important;
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
+}
+
 .protofile__socials--minimal .protofile__social-btn:hover {
   transform: translateY(-1px);
   filter: brightness(2);
@@ -277,12 +288,29 @@
   background: none !important;
 }
 
+.protofile__card--wallpaper .protofile__socials--minimal .protofile__social-btn:hover {
+  filter: brightness(2) drop-shadow(0 0 3px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
+}
+
+:is(.protofile--dark .protofile__card--wallpaper, .protofile__card--wallpaper.protofile--dark) .protofile__socials--minimal .protofile__social-btn:hover {
+  color: #fff !important;
+  filter: brightness(1.5) drop-shadow(0 0 3px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
+}
+
 .protofile--light .protofile__socials--minimal .protofile__social-btn {
-  color: oklch(0.35 0.008 35 / 0.8) !important;
+  color: var(--card-text, oklch(0.2 0.008 35)) !important;
 }
 
 .protofile--light .protofile__socials--minimal .protofile__social-btn:hover {
   filter: brightness(2);
+}
+
+:is(.protofile--light .protofile__card--wallpaper, .protofile__card--wallpaper.protofile--light) .protofile__socials--minimal .protofile__social-btn {
+  color: #111 !important;
+}
+
+:is(.protofile--light .protofile__card--wallpaper, .protofile__card--wallpaper.protofile--light) .protofile__socials--minimal .protofile__social-btn:hover {
+  filter: brightness(2) drop-shadow(0 0 2px rgba(0, 0, 0, 0.35)) drop-shadow(0 0 8px rgba(0, 0, 0, 0.15));
 }
 
 /* ---- Pill social icon layout (shared pill container) ---- */
@@ -298,9 +326,28 @@
   margin-right: auto;
 }
 
+/* On wallpaper/pattern backgrounds, pill keeps its default look — icons go white on dark */
+.protofile__card--wallpaper .protofile__socials--pill {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* On dark wallpaper — make icons white so they read over busy patterns */
+:is(.protofile--dark .protofile__card--wallpaper, .protofile__card--wallpaper.protofile--dark) .protofile__socials--pill .protofile__social-btn {
+  color: #fff !important;
+}
+
 .protofile--light .protofile__socials--pill {
   background: oklch(0 0 0 / 0.04);
   border-color: oklch(0 0 0 / 0.08);
+}
+
+:is(.protofile--light .protofile__card--wallpaper, .protofile__card--wallpaper.protofile--light) .protofile__socials--pill {
+  background: oklch(1 0 0 / 0.5);
+  border-color: oklch(0 0 0 / 0.1);
+}
+
+:is(.protofile--light .protofile__card--wallpaper, .protofile__card--wallpaper.protofile--light) .protofile__socials--pill .protofile__social-btn {
+  color: #111 !important;
 }
 
 .protofile__socials--pill .protofile__social-btn {
