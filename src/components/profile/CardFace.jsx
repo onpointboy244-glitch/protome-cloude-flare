@@ -1,5 +1,6 @@
 import './CardFace.css'
 import { renderPlatformIcon, detectIconKey, detectPlatformKey, detectIcon, GENERIC_ICON, isSocialLink } from '../../lib/icons.jsx'
+import { computeProfileTheme } from '../../lib/useProfileTheme.js'
 import { LINK_LABELS, DEFAULT_DATA } from './demoProfiles.js'
 import './sharedProtofile/Typography.css'
 import './sharedProtofile/PhotoAvatar.css'
@@ -18,12 +19,10 @@ export default function CardFace({ profile, animateIn }) {
     bgColor: profile.bg_color || profile.bgColor || '',
     bgGradient: profile.bg_gradient || profile.bgGradient || '',
   }
-  const { links: rawLinks = {}, accent = '', button_style = 'solid', button_corner = 'rounded', button_color = '', button_text_color = '', social_style = 'default', social_position = 'top', detect_icons = true } = d
-  const accentColor = accent || 'var(--color-primary-l)'
-  const isGooey = d.bgGradient?.startsWith?.('__gooey__')
-  const isAccentOverlay = !isGooey && d.bgGradient?.includes?.('color-mix')
-  const btnStyleClass = `protofile__link-btn--${button_style}`
-  const cornerClass = `protofile__link-btn--${button_corner}`
+  const theme = computeProfileTheme(d)
+  const { accentColor, btnStyleClass, cornerClass, socialClass, mainClass, detectIcons, socialPosition, buttonTextColor } = theme
+
+  const { links: rawLinks = {} } = d
   const initials = d.name
     .split(' ')
     .map(w => w[0])
@@ -38,15 +37,10 @@ export default function CardFace({ profile, animateIn }) {
   const socialLinks = links.filter(l => !l.isSection && l.url?.trim() && isSocialLink(l.label, l.url, l.type))
   const otherItems = links.filter(l => !isSocialLink(l.label, l.url, l.type))
 
-  const btnInlineStyle = {
-    ...(button_color && button_style === 'solid' ? { background: button_color, borderColor: button_color } : {}),
-    ...(button_text_color ? { color: button_text_color, '--c-text': button_text_color } : {}),
-  }
-
   return (
     <>
       <div className="protofile__accent-bar" style={{ background: accentColor }} />
-      <main className={`protofile__main ${isGooey ? 'protofile__main--gooey' : ''} ${isAccentOverlay ? 'protofile__main--accent-overlay' : ''}`.trim()}>
+      <main className={mainClass}>
         {d.photo ? (
           <div className="protofile__photo-wrapper" style={{ borderColor: accentColor }}>
             <img src={d.photo} alt="" className="protofile__photo" loading="lazy" />
@@ -65,8 +59,8 @@ export default function CardFace({ profile, animateIn }) {
         )}
 
         {/* Social icon row — top (default) */}
-        {social_position !== 'bottom' && socialLinks.length > 0 && (
-          <div className={`protofile__socials${social_style !== 'default' ? ` protofile__socials--${social_style}` : ''}`}>
+        {socialPosition !== 'bottom' && socialLinks.length > 0 && (
+          <div className={socialClass}>
             {socialLinks.map((l, i) => {
               const iconKey = detectIconKey(l.label, l.url)
               return (
@@ -99,12 +93,11 @@ export default function CardFace({ profile, animateIn }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`protofile__link-btn ${btnStyleClass} ${cornerClass}`.trim()}
-                  style={btnInlineStyle}
                   onClick={animateIn ? e => e.preventDefault() : null}
-                  data-custom-text={button_text_color || undefined}
+                  data-custom-text={buttonTextColor || undefined}
                 >
                   <span className="protofile__link-body">
-                    {detect_icons && <span className="protofile__link-icon" aria-hidden="true">{detectIcon(item.label, item.url) || GENERIC_ICON}</span>}
+                    {detectIcons && <span className="protofile__link-icon" aria-hidden="true">{detectIcon(item.label, item.url) || GENERIC_ICON}</span>}
                     <span className="protofile__link-label">{item.label}</span>
                   </span>
                 </a>
@@ -114,8 +107,8 @@ export default function CardFace({ profile, animateIn }) {
         )}
 
         {/* Social icon row — bottom */}
-        {social_position === 'bottom' && socialLinks.length > 0 && (
-          <div className={`protofile__socials${social_style !== 'default' ? ` protofile__socials--${social_style}` : ''}`}>
+        {socialPosition === 'bottom' && socialLinks.length > 0 && (
+          <div className={socialClass}>
             {socialLinks.map((l, i) => {
               const iconKey = detectIconKey(l.label, l.url)
               return (

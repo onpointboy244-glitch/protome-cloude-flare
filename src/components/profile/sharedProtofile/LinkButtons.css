@@ -342,6 +342,19 @@
     0 1px 3px oklch(0 0 0 / 0.04);
 }
 
+/* On pattern backgrounds, light blur so pattern lines show through softly */
+.protofile__card--wallpaper .protofile__link-btn--glass {
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+:is(.protofile--light .protofile__card--wallpaper, .protofile__card--wallpaper.protofile--light) .protofile__link-btn--glass {
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  background: rgba(0, 0, 0, 0.04);
+}
+
 /* On hover: catch more light, lift */
 .protofile__link-btn--glass:hover {
   background: rgba(255, 255, 255, 0.09) !important;
@@ -361,14 +374,14 @@
 /* ---- Solid: white on dark, dark on light ---- */
 
 .protofile__link-btn--solid {
-  background: #fff;
+  background: var(--btn-bg, #fff);
   color: #1a1a1a;
   border: none;
   box-shadow: 0 1px 2px oklch(0 0 0 / 0.08);
 }
 
 .protofile--light .protofile__link-btn--solid {
-  background: #1a1a1a;
+  background: var(--btn-bg, #1a1a1a);
   color: #fff;
   box-shadow: 0 1px 2px oklch(0 0 0 / 0.15);
 }
@@ -418,12 +431,12 @@
 /* Higher specificity beats Utilities.css's !important defaults */
 @media (prefers-reduced-motion: reduce) {
   .protofile__link-btn.protofile__link-btn--solid {
-    background: #fff !important;
+    background: var(--btn-bg, #fff) !important;
     color: #1a1a1a !important;
     border: none !important;
   }
   .protofile--light .protofile__link-btn.protofile__link-btn--solid {
-    background: #1a1a1a !important;
+    background: var(--btn-bg, #1a1a1a) !important;
     color: #fff !important;
     border: none !important;
   }
@@ -462,5 +475,22 @@
   .protofile__link-btn.protofile__link-btn--square { border-radius: 0px !important; }
   .protofile__link-btn.protofile__link-btn--rounded { border-radius: 12px !important; }
   .protofile__link-btn.protofile__link-btn--pill { border-radius: 999px !important; }
+}
+
+/* When user sets a custom button text color, this overrides ALL hover/focus/touch states */
+.protofile__link-btn[data-custom-text],
+.protofile__link-btn[data-custom-text]:hover,
+.protofile__link-btn[data-custom-text]:active,
+.protofile__link-btn[data-custom-text]:focus,
+.protofile__link-btn[data-custom-text]:focus-visible {
+  color: var(--c-text) !important;
+}
+
+.protofile--light .protofile__link-btn[data-custom-text],
+.protofile--light .protofile__link-btn[data-custom-text]:hover,
+.protofile--light .protofile__link-btn[data-custom-text]:active,
+.protofile--light .protofile__link-btn[data-custom-text]:focus,
+.protofile--light .protofile__link-btn[data-custom-text]:focus-visible {
+  color: var(--c-text) !important;
 }
 

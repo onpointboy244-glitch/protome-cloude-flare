@@ -1,15 +1,11 @@
 import { detectPlatformKey, detectIcon, GENERIC_ICON } from '../../../lib/icons.jsx'
 import './LinkButtons.css'
 
-export default function LinkItem({ item, onShareLink, showIcon = true, buttonStyle = 'solid', buttonCorner = 'rounded', buttonColor = '', buttonTextColor = '' }) {
+export default function LinkItem({ item, onShareLink, showIcon = true, buttonStyle = 'solid', buttonCorner = 'rounded', buttonTextColor = '' }) {
   const href = item.url.startsWith('http') ? item.url : `https://${item.url}`
   const icon = showIcon ? (detectIcon(item.label, item.url) || GENERIC_ICON) : null
   const styleClass = `protofile__link-btn--${buttonStyle}`
   const cornerClass = `protofile__link-btn--${buttonCorner}`
-  const btnInlineStyle = {
-    ...(buttonColor && buttonStyle === 'solid' ? { background: buttonColor, borderColor: buttonColor } : {}),
-    ...(buttonTextColor ? { color: buttonTextColor, '--c-text': buttonTextColor } : {}),
-  }
   return (
     <div className="protofile__link-row">
       <a
@@ -18,7 +14,6 @@ export default function LinkItem({ item, onShareLink, showIcon = true, buttonSty
         target="_blank"
         rel="noopener noreferrer"
         className={`protofile__link-btn ${styleClass} ${cornerClass}`.trim()}
-        style={btnInlineStyle}
         data-platform={detectPlatformKey(item.label, item.url)}
         data-custom-text={buttonTextColor || undefined}
       >

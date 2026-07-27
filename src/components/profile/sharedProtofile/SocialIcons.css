@@ -270,15 +270,15 @@
   border-radius: 0;
 }
 
-/* On wallpaper/pattern backgrounds, add shadow so minimal icons don't blend in */
+/* On wallpaper/pattern backgrounds, minimal icons just need color, no shadow */
 .protofile__card--wallpaper .protofile__socials--minimal .protofile__social-btn {
-  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
+  filter: none;
 }
 
 /* On dark wallpaper — make icons white so they read over busy patterns */
 :is(.protofile--dark .protofile__card--wallpaper, .protofile__card--wallpaper.protofile--dark) .protofile__socials--minimal .protofile__social-btn {
   color: #fff !important;
-  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
+  filter: none;
 }
 
 .protofile__socials--minimal .protofile__social-btn:hover {
@@ -289,12 +289,12 @@
 }
 
 .protofile__card--wallpaper .protofile__socials--minimal .protofile__social-btn:hover {
-  filter: brightness(2) drop-shadow(0 0 3px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
+  filter: brightness(2);
 }
 
 :is(.protofile--dark .protofile__card--wallpaper, .protofile__card--wallpaper.protofile--dark) .protofile__socials--minimal .protofile__social-btn:hover {
   color: #fff !important;
-  filter: brightness(1.5) drop-shadow(0 0 3px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
+  filter: brightness(1.5);
 }
 
 .protofile--light .protofile__socials--minimal .protofile__social-btn {
@@ -310,7 +310,8 @@
 }
 
 :is(.protofile--light .protofile__card--wallpaper, .protofile__card--wallpaper.protofile--light) .protofile__socials--minimal .protofile__social-btn:hover {
-  filter: brightness(2) drop-shadow(0 0 2px rgba(0, 0, 0, 0.35)) drop-shadow(0 0 8px rgba(0, 0, 0, 0.15));
+  color: #111 !important;
+  filter: brightness(2);
 }
 
 /* ---- Pill social icon layout (shared pill container) ---- */
@@ -326,9 +327,11 @@
   margin-right: auto;
 }
 
-/* On wallpaper/pattern backgrounds, pill keeps its default look — icons go white on dark */
+/* On wallpaper/pattern backgrounds, pill gets blur so pattern shows through */
 .protofile__card--wallpaper .protofile__socials--pill {
-  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 /* On dark wallpaper — make icons white so they read over busy patterns */
@@ -342,7 +345,9 @@
 }
 
 :is(.protofile--light .protofile__card--wallpaper, .protofile__card--wallpaper.protofile--light) .protofile__socials--pill {
-  background: oklch(1 0 0 / 0.5);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  background: rgba(255, 255, 255, 0.3);
   border-color: oklch(0 0 0 / 0.1);
 }
 

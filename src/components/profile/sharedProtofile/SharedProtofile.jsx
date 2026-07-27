@@ -19,16 +19,21 @@ export default function SharedProtofile({ data }) {
     isLightBg,
     isDarkBg,
     isGooey,
-    isPattern,
     isAccentOverlay,
     gooeyVariant,
-    fontClass,
     accentColor,
     visibleAccent,
     cssVars,
     wrapperClass,
     cardClass,
     cardBgStyle,
+    mainClass,
+    socialClass,
+    socialPosition,
+    detectIcons,
+    buttonStyle,
+    buttonCorner,
+    buttonTextColor,
   } = theme;
 
   const d = {
@@ -38,12 +43,6 @@ export default function SharedProtofile({ data }) {
     bgType: data.bg_type || "none",
     bgSize: data.bg_size || "cover",
     bgPos: data.bg_pos || "0 0",
-    buttonStyle: data.button_style || 'solid',
-    buttonCorner: data.button_corner || 'rounded',
-    buttonColor: data.button_color || '',
-    buttonTextColor: data.button_text_color || '',
-    socialStyle: data.social_style || 'default',
-    socialPosition: data.social_position || 'top',
   };
   const {
     name,
@@ -52,17 +51,6 @@ export default function SharedProtofile({ data }) {
     photo,
     photo_url,
     links,
-    bgColor,
-    bgGradient,
-    bgSize,
-    bgPos,
-    buttonStyle,
-    buttonCorner,
-    buttonColor,
-    buttonTextColor,
-    socialStyle,
-    socialPosition,
-    detect_icons,
   } = d;
   const initials = name
     ? name
@@ -101,7 +89,7 @@ export default function SharedProtofile({ data }) {
           style={{ background: accentColor }}
         />
         {isGooey && <GooeyBackground accent={visibleAccent} variant={gooeyVariant} />}
-        <main className={`protofile__main${isGooey ? ' protofile__main--gooey' : ''}${isAccentOverlay ? ' protofile__main--accent-overlay' : ''}`}>
+        <main className={mainClass}>
           {/* Share — top left */}
           <div className="protofile__share-wrapper">
             <ShareButton accentColor={visibleAccent} isLightBg={isLightBg} onShare={() => setShareOpen(true)} />
@@ -134,7 +122,7 @@ export default function SharedProtofile({ data }) {
 
           {/* Social icon row — top (default) */}
           {socialPosition !== 'bottom' && socialLinks.length > 0 && (
-            <div className={`protofile__socials${socialStyle !== 'default' ? ` protofile__socials--${socialStyle}` : ''}`}>
+            <div className={socialClass}>
               {socialLinks.map((link, i) => {
                 const icon = detectIcon(link.label, link.url) || GENERIC_ICON;
                 const href = link.url.startsWith("http")
@@ -174,9 +162,8 @@ export default function SharedProtofile({ data }) {
                   item={item}
                   buttonStyle={buttonStyle}
                   buttonCorner={buttonCorner}
-                  buttonColor={buttonColor}
                   buttonTextColor={buttonTextColor}
-                  showIcon={detect_icons !== false}
+                  showIcon={detectIcons}
                   onShareLink={() => {
                     const href = item.url.startsWith("http") ? item.url : `https://${item.url}`;
                     setShareUrl(href);
@@ -190,7 +177,7 @@ export default function SharedProtofile({ data }) {
 
           {/* Social icon row — bottom */}
           {socialPosition === 'bottom' && socialLinks.length > 0 && (
-            <div className={`protofile__socials${socialStyle !== 'default' ? ` protofile__socials--${socialStyle}` : ''}`}>
+            <div className={socialClass}>
               {socialLinks.map((link, i) => {
                 const icon = detectIcon(link.label, link.url) || GENERIC_ICON;
                 const href = link.url.startsWith("http")

@@ -15,6 +15,7 @@ export default function ProtofileCard({ data, compact, animateIn }) {
   const theme = computeProfileTheme(profile)
   const cardStyle = {
     ...cardStyles(profile),
+    ...theme.cssVars,
     ...(theme.isGooey ? { position: 'relative' } : {}),
   }
   const rootClass = `protofile-card ${compact ? 'protofile-card--compact' : ''} ${theme.hasWallpaper ? 'protofile__card--wallpaper' : ''} ${theme.isGooey ? 'protofile-card--gooey' : ''} ${theme.isLightBg ? 'protofile--light' : 'protofile--dark'} ${theme.fontClass}`
@@ -32,7 +33,7 @@ export default function ProtofileCard({ data, compact, animateIn }) {
               <div key={i} className="protofile-card__tower-item">
                 <div
                   className={`protofile-card__tower-face ${pTheme.isLightBg ? 'protofile--light' : 'protofile--dark'} ${pTheme.fontClass}`}
-                  style={{ ...cardStyles(p), ...(pTheme.isGooey ? { position: 'relative' } : {}) }}
+                  style={{ ...cardStyles(p), ...pTheme.cssVars, ...(pTheme.isGooey ? { position: 'relative' } : {}) }}
                 >
                   {pTheme.isGooey && <GooeyBackground accent={pTheme.accentColor} variant={pTheme.gooeyVariant} />}
                   <CardFace profile={p} animateIn />

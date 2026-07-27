@@ -1,13 +1,9 @@
 /**
- * Shared profile theme computation — single source of truth for:
- *   - isLightBg / isDarkBg
- *   - wallpaper / pattern / gooey detection
- *   - accent visibility / hover text
- *   - CSS variable map
- *   - Class names for the outer wrapper
+ * Shared profile theme computation — single source of truth for ALL design
+ * fields: backgrounds, colors, fonts, button styles, social styles, etc.
  *
- * Used by both SharedProtofile (public profile) and ProtofileCard (live preview).
- * ANY theme logic changes go HERE, not in the components.
+ * Used by both SharedProtofile (public profile) and CardFace (live preview).
+ * ANY design logic change goes HERE, not in the components.
  */
 import { isLightColor, gradientIsDark } from './icons.jsx'
 
@@ -49,8 +45,17 @@ export function computeProfileTheme(profile) {
     bgType: profile.bg_type || profile.bgType || 'none',
     bgSize: profile.bg_size || profile.bgSize || 'cover',
     bgPos: profile.bg_pos || profile.bgPos || '0 0',
+    buttonStyle: profile.button_style || profile.buttonStyle || 'solid',
+    buttonCorner: profile.button_corner || profile.buttonCorner || 'rounded',
+    buttonColor: profile.button_color || profile.buttonColor || '',
+    buttonTextColor: profile.button_text_color || profile.buttonTextColor || '',
+    socialStyle: profile.social_style || profile.socialStyle || 'default',
+    socialPosition: profile.social_position || profile.socialPosition || 'top',
+    detectIcons: profile.detect_icons !== false && profile.detect_icons !== undefined,
   }
-  const { bgColor, bgGradient, bgType, bgSize, bgPos, accent, font } = d
+  const { bgColor, bgGradient, bgType, bgSize, bgPos, accent, font,
+    buttonStyle, buttonCorner, buttonColor, buttonTextColor,
+    socialStyle, socialPosition, detectIcons } = d
   const accentColor = accent || 'var(--color-primary-l)'
   const isAccentLight = accent ? isLightColor(accent) : false
   const fontClass = font && font !== 'serif' ? `protofile--${font}` : ''
@@ -95,7 +100,18 @@ export function computeProfileTheme(profile) {
     ? (visibleAccent === '#000' ? '#fff' : '#000')
     : (isAccentLight ? '#000' : '#fff')
 
-  // CSS variables map — same as cardStyles() returns, but also usable standalone
+  // Convenience class strings
+  const btnStyleClass = `protofile__link-btn--${buttonStyle}`
+  const cornerClass = `protofile__link-btn--${buttonCorner}`
+  const socialClass = `protofile__socials${socialStyle !== 'default' ? ` protofile__socials--${socialStyle}` : ''}`
+  const mainClass = `protofile__main${isGooey ? ' protofile__main--gooey' : ''}${isAccentOverlay ? ' protofile__main--accent-overlay' : ''}`
+  const wrapperClass = `protofile ${fontClass}${isLightBg ? ' protofile--light' : ''}${isDarkBg ? ' protofile--dark' : ''}`
+  const cardClass = `protofile__card${hasWallpaper && !isGooey ? ' protofile__card--wallpaper' : ''}${isGooey ? ' protofile__card--gooey' : ''}`
+  const cardBgStyle = !isGooey && hasWallpaper
+    ? { '--bg-gradient': bgGradient.replace(/ACCENTCLR/g, encodeURIComponent(accent || '#C5A059')) }
+    : {}
+
+  // CSS variables map
   const cssVars = {
     '--accent': accentInvisible ? visibleAccent : accentColor,
     '--accent-hover-text': accentHoverText,
@@ -133,6 +149,9 @@ export function computeProfileTheme(profile) {
       '--card-social-border': 'oklch(0 0 0 / 0.08)',
       '--card-avatar-bg': '#2a2520',
     }),
+    // Button custom colors — cascade to every button in the card
+    ...(buttonStyle === 'solid' && buttonColor ? { '--btn-bg': buttonColor, '--btn-border': buttonColor } : {}),
+    ...(buttonTextColor ? { '--c-text': buttonTextColor } : {}),
   }
 
   return {
@@ -151,15 +170,23 @@ export function computeProfileTheme(profile) {
     visibleAccent,
     accentHoverText,
     accentInvisible,
+    // Design field values
+    buttonStyle,
+    buttonCorner,
+    buttonColor,
+    buttonTextColor,
+    socialStyle,
+    socialPosition,
+    detectIcons,
+    // Convenience class strings
+    btnStyleClass,
+    cornerClass,
+    socialClass,
+    mainClass,
+    wrapperClass,
+    cardClass,
+    cardBgStyle,
     // CSS custom properties
     cssVars,
-    // Convenience: class string for the .protofile wrapper
-    wrapperClass: `protofile ${fontClass}${isLightBg ? ' protofile--light' : ''}${isDarkBg ? ' protofile--dark' : ''}`,
-    // Convenience: class string for .protofile__card
-    cardClass: `protofile__card${hasWallpaper && !isGooey ? ' protofile__card--wallpaper' : ''}${isGooey ? ' protofile__card--gooey' : ''}`,
-    // Convenience: bg style for .protofile__card
-    cardBgStyle: !isGooey && hasWallpaper
-      ? { '--bg-gradient': bgGradient.replace(/ACCENTCLR/g, encodeURIComponent(accent || '#C5A059')) }
-      : {},
   }
 }
