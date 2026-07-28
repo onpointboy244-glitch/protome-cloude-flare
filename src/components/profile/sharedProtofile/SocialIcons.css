@@ -329,8 +329,8 @@
 
 /* On wallpaper/pattern backgrounds, pill gets blur so pattern shows through */
 .protofile__card--wallpaper .protofile__socials--pill {
-  backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
   background: rgba(255, 255, 255, 0.06);
 }
 
@@ -345,8 +345,8 @@
 }
 
 :is(.protofile--light .protofile__card--wallpaper, .protofile__card--wallpaper.protofile--light) .protofile__socials--pill {
-  backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
   background: rgba(255, 255, 255, 0.3);
   border-color: oklch(0 0 0 / 0.1);
 }
