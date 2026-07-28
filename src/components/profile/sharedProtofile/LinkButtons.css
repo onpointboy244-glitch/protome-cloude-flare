@@ -226,6 +226,15 @@
   padding-top: 0;
 }
 
+/* On wallpaper/pattern backgrounds, add text shadow so heading reads over busy pattern */
+.protofile__card--wallpaper .protofile__section-heading {
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+:is(.protofile--light .protofile__card--wallpaper, .protofile__card--wallpaper.protofile--light) .protofile__section-heading {
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.6), 0 1px 2px rgba(255, 255, 255, 0.4);
+}
+
 /* ---- Link label ---- */
 
 .protofile__link-label {
