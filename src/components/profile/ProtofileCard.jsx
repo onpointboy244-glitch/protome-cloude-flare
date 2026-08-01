@@ -3,13 +3,13 @@ import { cardStyles } from './cardStyles.jsx'
 import { DEMO_PROFILES } from './demoProfiles.js'
 import { computeProfileTheme } from '../../lib/useProfileTheme.js'
 import GooeyBackground from './GooeyBackground'
+import Shuffle3D from './Shuffle3D'
 import './ProtofileCard.css'
 
 export default function ProtofileCard({ data, compact, animateIn }) {
-  // ---- Hero: pure CSS keyframe animation — no JS cycling state ----
-  // Render profiles twice so the animation loops seamlessly:
-  // [0,1,2,3,0,1,2,3]. The animation scrolls to position 4 (clone of 0),
-  // and when it loops back to 0%, it shows the real profile 0 — identical content.
+  // ---- Hero: 3D Card Shuffle — modern coverflow carousel ----
+  // Uses Shuffle3D component with CSS perspective, rotateY transforms,
+  // auto-advance timer, and interactive dot navigation.
 
   const profile = data || DEMO_PROFILES[0]
   const theme = computeProfileTheme(profile)
@@ -22,27 +22,7 @@ export default function ProtofileCard({ data, compact, animateIn }) {
 
   if (animateIn) {
     return (
-      <div
-        className={`protofile-card protofile-card--hero ${theme.isLightBg ? 'protofile--light' : 'protofile--dark'}`}
-        style={cardStyles(DEMO_PROFILES[0])}
-      >
-        <div className="protofile-card__tower protofile-card__tower--animated">
-          {[...DEMO_PROFILES, ...DEMO_PROFILES].map((p, i) => {
-            const pTheme = computeProfileTheme(p)
-            return (
-              <div key={i} className="protofile-card__tower-item">
-                <div
-                  className={`protofile-card__tower-face ${pTheme.isLightBg ? 'protofile--light' : 'protofile--dark'} ${pTheme.fontClass}`}
-                  style={{ ...cardStyles(p), ...pTheme.cssVars, ...(pTheme.isGooey ? { position: 'relative' } : {}) }}
-                >
-                  {pTheme.isGooey && <GooeyBackground accent={pTheme.accentColor} variant={pTheme.gooeyVariant} />}
-                  <CardFace profile={p} animateIn />
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
+      <Shuffle3D profiles={DEMO_PROFILES} />
     )
   }
 

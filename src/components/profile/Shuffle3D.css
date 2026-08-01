@@ -1,0 +1,441 @@
+/* ============================================
+   3D Rotating Ring Carousel
+   Cards ride on a visible glowing ring in 3D space.
+   protome @ protome.pages.dev
+   ============================================ */
+
+.shuffle-3d {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  user-select: none;
+  position: relative;
+}
+
+/* ---- 3D scene ---- */
+
+.shuffle-3d__scene {
+  position: relative;
+  height: 500px;
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 60px;
+}
+
+/* ---- Ambient colored backlight ---- */
+
+.shuffle-3d__ambient {
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+  transition: background 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: blur(80px);
+  opacity: 0.3;
+  z-index: 0;
+}
+
+/* ---- Cards ---- */
+
+.shuffle-3d__card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  height: 430px;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: default;
+  /* 'filter' intentionally NOT in will-change — it would force a non-none filter
+     backdrop root on the active card and break the glass buttons' backdrop-filter. */
+  will-change: transform, opacity;
+}
+
+/* ---- Card glow ring (accent aura) ---- */
+
+.shuffle-3d__card::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 19px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.shuffle-3d__card--active::before {
+  opacity: 1;
+  box-shadow:
+    0 0 24px 4px color-mix(in oklch, var(--card-accent, transparent) 35%, transparent),
+    0 0 60px 16px color-mix(in oklch, var(--card-accent, transparent) 16%, transparent),
+    0 0 120px 40px color-mix(in oklch, var(--card-accent, transparent) 6%, transparent);
+}
+
+.shuffle-3d__card--side::before {
+  opacity: 0.4;
+  box-shadow:
+    0 0 16px 2px color-mix(in oklch, var(--card-accent, transparent) 20%, transparent),
+    0 0 40px 8px color-mix(in oklch, var(--card-accent, transparent) 8%, transparent);
+}
+
+.shuffle-3d__card--back {
+  pointer-events: none;
+}
+
+/* ---- Card inner shell ---- */
+
+.shuffle-3d__card-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--card-bg, var(--color-bg));
+  background-image: var(--card-gradient, none);
+  background-size: var(--card-bg-size, cover);
+  background-repeat: var(--card-bg-repeat, no-repeat);
+  color: var(--card-text, inherit);
+  position: relative;
+  box-shadow:
+    0 2px 8px oklch(0 0 0 / 0.06),
+    0 0 0 1px color-mix(in oklch, var(--card-accent, oklch(0.5 0 0)) 10%, transparent);
+  transition: box-shadow 0.5s ease;
+}
+
+.shuffle-3d__card--active .shuffle-3d__card-inner {
+  box-shadow:
+    0 8px 32px oklch(0 0 0 / 0.12),
+    0 0 0 1px color-mix(in oklch, var(--card-accent, oklch(0.5 0 0)) 22%, transparent);
+}
+
+/* ---- Accent rim top light ---- */
+
+.shuffle-3d__card-inner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 5%,
+    color-mix(in oklch, var(--card-accent, transparent) 75%, transparent) 50%,
+    transparent 95%
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 5;
+}
+
+.shuffle-3d__card--active .shuffle-3d__card-inner::after,
+.shuffle-3d__card--side .shuffle-3d__card-inner::after {
+  opacity: 1;
+}
+
+/* Gooey fix */
+.shuffle-3d__card-inner .gooey-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.shuffle-3d__card-inner > .protofile__accent-bar ~ * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Dots ---- */
+
+.shuffle-3d__dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.shuffle-3d__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background: oklch(0.6 0 0 / 0.2);
+  cursor: pointer;
+  transition:
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background 0.4s ease,
+    box-shadow 0.4s ease,
+    width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  padding: 0;
+  position: relative;
+}
+
+.shuffle-3d__dot:hover {
+  transform: scale(1.35);
+  background: oklch(0.6 0 0 / 0.35);
+}
+
+.shuffle-3d__dot--active {
+  width: 36px;
+  border-radius: 6px;
+  transform: scale(1);
+  box-shadow: 0 0 14px color-mix(in oklch, var(--dot-color, oklch(0.6 0 0)) 40%, transparent);
+}
+
+.shuffle-3d__dot--active:hover {
+  transform: scale(1);
+  background: var(--dot-color);
+}
+
+/* ---- Card content ---- */
+
+.shuffle-3d__card .protofile__main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 18px 16px;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.shuffle-3d__card .protofile__main::-webkit-scrollbar {
+  display: none;
+}
+
+.shuffle-3d__card .protofile__photo-wrapper {
+  width: 58px;
+  height: 58px;
+  min-height: 58px;
+  border-width: 2px;
+  margin-bottom: 6px;
+}
+
+.shuffle-3d__card .protofile__photo {
+  width: 54px;
+  height: 54px;
+}
+
+.shuffle-3d__card .protofile__name {
+  font-size: 1rem;
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+
+.shuffle-3d__card .protofile__role {
+  font-size: 0.68rem;
+  margin-bottom: 6px;
+  opacity: 0.75;
+}
+
+.shuffle-3d__card .protofile__bio {
+  font-size: 0.68rem;
+  margin-bottom: 8px;
+  max-width: 260px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.shuffle-3d__card .protofile__links {
+  gap: 4px;
+}
+
+.shuffle-3d__card .protofile__link-btn {
+  padding: 5px 14px;
+  font-size: 0.7rem;
+  min-height: 30px;
+}
+
+.shuffle-3d__card .protofile__social {
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.shuffle-3d__card .protofile__social-btn {
+  width: 26px;
+  height: 26px;
+}
+
+
+/* ---- Field objects — pop out from behind the active card ---- */
+
+.shuffle-3d__field-layer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.shuffle-3d__field-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 58px;
+  height: 58px;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.shuffle-3d__field-bob {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(180deg, oklch(0.2 0.02 0 / 0.85), oklch(0.13 0.02 0 / 0.8));
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid color-mix(in oklch, var(--field-accent, #888) 40%, transparent);
+  color: color-mix(in oklch, var(--field-accent, #888) 70%, #fff);
+  box-shadow:
+    0 10px 26px oklch(0 0 0 / 0.35),
+    0 0 18px color-mix(in oklch, var(--field-accent, #888) 30%, transparent);
+  animation: shuffle-3d-float 3s ease-in-out infinite;
+}
+
+@keyframes shuffle-3d-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+  .shuffle-3d__scene {
+    height: 440px;
+    perspective: 1000px;
+    margin-top: 40px;
+  }
+
+  .shuffle-3d__ambient {
+    width: 320px;
+    height: 320px;
+  }
+
+  .shuffle-3d__card {
+    width: 250px;
+    height: 380px;
+  }
+
+  .shuffle-3d__card .protofile__main {
+    padding: 16px 12px 12px;
+  }
+
+  .shuffle-3d__card .protofile__photo-wrapper {
+    width: 48px;
+    height: 48px;
+    min-height: 48px;
+  }
+
+  .shuffle-3d__card .protofile__photo {
+    width: 44px;
+    height: 44px;
+  }
+
+  .shuffle-3d__card .protofile__name {
+    font-size: 0.9rem;
+  }
+
+  .shuffle-3d__field-layer {
+    /* scale first, then lift — the translateY is in un-scaled px so the
+       arc clears the smaller mobile card's top edge */
+    transform: scale(0.72) translateY(-48px);
+  }
+
+  .shuffle-3d__field-item {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .shuffle-3d__scene {
+    height: 440px;
+    perspective: 800px;
+    margin-top: 30px;
+  }
+
+  .shuffle-3d__ambient {
+    width: 260px;
+    height: 260px;
+    opacity: 0.25;
+  }
+
+  .shuffle-3d__card {
+    width: 210px;
+    height: 340px;
+  }
+
+  .shuffle-3d__card .protofile__main {
+    padding: 12px 10px 10px;
+  }
+
+  .shuffle-3d__card .protofile__photo-wrapper {
+    width: 42px;
+    height: 42px;
+    min-height: 42px;
+  }
+
+  .shuffle-3d__card .protofile__photo {
+    width: 38px;
+    height: 38px;
+  }
+
+  .shuffle-3d__card .protofile__name {
+    font-size: 0.8rem;
+  }
+
+  .shuffle-3d__card .protofile__role {
+    font-size: 0.6rem;
+  }
+
+  .shuffle-3d__card .protofile__bio {
+    font-size: 0.6rem;
+    max-width: 180px;
+  }
+
+  .shuffle-3d__card .protofile__link-btn {
+    padding: 3px 10px;
+    font-size: 0.62rem;
+    min-height: 26px;
+  }
+
+  .shuffle-3d__field-layer {
+    /* scale first, then lift — the translateY is in un-scaled px so the
+       arc clears the smaller mobile card's top edge */
+    transform: scale(0.58) translateY(-48px);
+  }
+
+  .shuffle-3d__field-item {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shuffle-3d__card,
+  .shuffle-3d__dot,
+  .shuffle-3d__ambient,
+  .shuffle-3d__field-item {
+    transition-duration: 0.01ms !important;
+  }
+
+  .shuffle-3d__field-bob {
+    animation: none;
+  }
+}

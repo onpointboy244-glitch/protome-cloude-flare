@@ -34,69 +34,6 @@
   transform: translateY(-3px);
 }
 
-/* ---- Card Tower for Hero Demo (Linktree-style) ---- */
-
-.protofile-card__tower {
-  display: flex;
-  flex-direction: column;
-  will-change: transform;
-}
-
-.protofile-card__tower--animated {
-  animation: towerScroll 14s cubic-bezier(0.45, 0, 0.2, 1) infinite;
-}
-
-.protofile-card__tower--animated:hover {
-  animation-play-state: paused;
-}
-
-.protofile-card__tower-item {
-  height: 560px;
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-.protofile-card__tower-face {
-  height: 100%;
-  background: var(--card-bg, var(--color-bg));
-  background-image: var(--card-gradient, none);
-  background-size: var(--card-bg-size, cover);
-  background-repeat: var(--card-bg-repeat, no-repeat);
-  color: var(--card-text, inherit);
-}
-
-.protofile-card__tower-face .protofile__accent-bar {
-  opacity: 0.85;
-}
-
-/* ---- Tower CSS keyframe animation ---- */
-
-@keyframes towerScroll {
-  0%   { transform: translateY(0); }
-  21%  { transform: translateY(0); }
-  25%  { transform: translateY(-560px); }
-  46%  { transform: translateY(-560px); }
-  50%  { transform: translateY(-1120px); }
-  71%  { transform: translateY(-1120px); }
-  75%  { transform: translateY(-1680px); }
-  96%  { transform: translateY(-1680px); }
-  100% { transform: translateY(-2240px); }
-}
-
-/* ---- Hero cycling card (fixed-height viewport) ---- */
-
-.protofile-card--hero {
-  height: 560px;
-  overflow: hidden;
-}
-
-.protofile-card--hero .protofile__main {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  height: calc(560px - 4px); /* minus the accent bar */
-}
-
 /* ---- Reduced motion ---- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -104,8 +41,5 @@
   .protofile-card--compact {
     transition-duration: 0.01ms !important;
     transform: none !important;
-  }
-  .protofile-card__tower--animated {
-    animation: none !important;
   }
 }

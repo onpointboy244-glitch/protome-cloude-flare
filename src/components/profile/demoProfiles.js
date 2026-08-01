@@ -1,7 +1,12 @@
+// Swirl pattern (matches WALLPAPER_STYLES.pattern 'swirl' in formConstants.js).
+// ACCENTCLR is replaced with the profile's accent at render time.
+const SWIRL = "url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22300%22%20viewBox%3D%220%200%20300%20300%22%3E%0A%20%20%3Cg%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%0A%20%20%20%20%3Cpath%20stroke%3D%22ACCENTCLR%22%20stroke-width%3D%222.8%22%20opacity%3D%220.55%22%20d%3D%22M%200%2C75%20C%2085%2C240%20215%2C-90%20300%2C75%22%20%2F%3E%0A%20%20%20%20%3Cpath%20stroke%3D%22ACCENTCLR%22%20stroke-width%3D%222.2%22%20opacity%3D%220.45%22%20d%3D%22M%200%2C155%20C%2045%2C20%20255%2C290%20300%2C155%22%20%2F%3E%0A%20%20%20%20%3Cpath%20stroke%3D%22ACCENTCLR%22%20stroke-width%3D%221.6%22%20opacity%3D%220.35%22%20d%3D%22M%200%2C245%20C%20110%2C170%20190%2C320%20300%2C245%22%20%2F%3E%0A%20%20%20%20%3Cpath%20stroke%3D%22ACCENTCLR%22%20stroke-width%3D%222.5%22%20opacity%3D%220.5%22%20d%3D%22M%2075%2C0%20C%2025%2C80%20125%2C220%2075%2C300%22%20%2F%3E%0A%20%20%20%20%3Cpath%20stroke%3D%22ACCENTCLR%22%20stroke-width%3D%222%22%20opacity%3D%220.4%22%20d%3D%22M%20220%2C0%20C%20270%2C60%20170%2C240%20220%2C300%22%20%2F%3E%0A%20%20%20%20%3Cpath%20stroke%3D%22ACCENTCLR%22%20stroke-width%3D%222.5%22%20opacity%3D%220.5%22%20d%3D%22M%20110%2C80%20C%2060%2C40%2030%2C120%2080%2C160%20C%20130%2C200%20180%2C150%20150%2C100%20C%20120%2C50%2070%2C70%20110%2C110%22%20%2F%3E%0A%20%20%20%20%3Cpath%20stroke%3D%22ACCENTCLR%22%20stroke-width%3D%222%22%20opacity%3D%220.4%22%20d%3D%22M%20200%2C20%20C%20250%2C10%20280%2C50%20260%2C90%20C%20240%2C130%20180%2C100%20200%2C60%20C%20220%2C20%20250%2C30%20240%2C50%22%20%2F%3E%0A%20%20%20%20%3Cpath%20stroke%3D%22ACCENTCLR%22%20stroke-width%3D%221.8%22%20opacity%3D%220.35%22%20d%3D%22M%2040%2C280%20C%2020%2C260%2030%2C230%2055%2C240%20C%2080%2C250%2070%2C275%2050%2C270%20C%2035%2C265%2040%2C250%2050%2C255%22%20%2F%3E%0A%20%20%20%20%3Cpath%20stroke%3D%22ACCENTCLR%22%20stroke-width%3D%221.5%22%20opacity%3D%220.3%22%20d%3D%22M%20160%2C220%20C%20145%2C205%20125%2C220%20140%2C235%20C%20155%2C250%20175%2C235%20160%2C220%22%20%2F%3E%0A%20%20%20%20%3Cpath%20stroke%3D%22ACCENTCLR%22%20stroke-width%3D%221.3%22%20opacity%3D%220.25%22%20d%3D%22M%20270%2C160%20C%20285%2C145%20295%2C165%20280%2C180%20C%20265%2C195%20255%2C175%20270%2C160%22%20%2F%3E%0A%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E')"
+
 const DEMO_PROFILES = [
   {
     name: 'Jordan Mitchell',
     role: 'Product Designer · Independent',
+    fieldItems: ['camera', 'pen-tool', 'layers', 'headphones'],
     bio: 'Designing thoughtful digital experiences at the intersection of craft and purpose. Previously at Figma, currently building protome.',
     photo: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=face',
     links: [
@@ -26,6 +31,7 @@ const DEMO_PROFILES = [
   {
     name: 'Alex Chen',
     role: 'Full-Stack Developer · Open Source',
+    fieldItems: ['code', 'terminal', 'branch', 'cpu'],
     bio: 'Building tools for the next million developers. Core contributor to Astro and Vite. Love CLI tools, design systems, and good documentation.',
     photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face',
     links: [
@@ -48,6 +54,7 @@ const DEMO_PROFILES = [
   {
     name: 'Maya Rivera',
     role: 'Writer · Creative Director',
+    fieldItems: ['feather', 'book', 'mail', 'edit'],
     bio: 'Words for brands that mean it. Previously copy lead at Mailchimp, now running my own studio. Newsletter hits 40k inboxes weekly.',
     photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face',
     links: [
@@ -59,8 +66,9 @@ const DEMO_PROFILES = [
     ],
     accent: '#e8a0b0',
     bgColor: '#221515',
-    bgGradient: 'radial-gradient(ellipse at 50% 30%, rgba(200,180,255,0.25) 0%, transparent 70%)',
-    bgType: 'glow',
+    bgGradient: SWIRL,
+    bgType: 'pattern',
+    bg_size: '300px 300px',
     font: 'hand',
     button_style: 'glass',
     button_corner: 'square',
@@ -70,6 +78,7 @@ const DEMO_PROFILES = [
   {
     name: 'Sam Okafor',
     role: 'Indie Maker · No-code',
+    fieldItems: ['send', 'trend', 'zap', 'bag'],
     bio: 'Shipping SaaS products without writing a line of code. Built 3 profitable tools in 12 months. I teach no-code at buildinpublic.co.',
     photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face',
     links: [
