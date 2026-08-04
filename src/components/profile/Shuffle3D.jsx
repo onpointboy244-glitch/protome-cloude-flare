@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo, useSyncExternalStore } from 'react'
 import {
   FaCamera, FaHeadphones, FaPencilRuler, FaLayerGroup, FaFont,
   FaCode, FaTerminal, FaProjectDiagram, FaMicrochip,
@@ -129,6 +129,17 @@ export default function Shuffle3D({ profiles = [] }) {
 
   useEffect(() => { hoveredRef.current = hovered }, [hovered])
 
+  /* Detect real hover capability (mouse/trackpad) vs touch */
+  const canHover = useSyncExternalStore(
+    (callback) => {
+      const mq = window.matchMedia('(hover: hover)')
+      mq.addEventListener?.('change', callback)
+      return () => mq.removeEventListener?.('change', callback)
+    },
+    () => window.matchMedia('(hover: hover)').matches,
+    () => false // SSR fallback
+  )
+
   /* ---- Continuous rotation via rAF ---- */
   useEffect(() => {
     const BASE_SPEED = 9  // degrees per frame — very fast
@@ -148,7 +159,7 @@ export default function Shuffle3D({ profiles = [] }) {
         } else {
           angleRef.current += shortest * 0.08
         }
-      } else if (!hoveredRef.current) {
+      } else if (!hoveredRef.current || !canHover) {
         // ---- Slow-mo each time a card reaches the front ----
         // Cards are every 90°. Distance from center → speed.
         // At 0° (center) → slow. At 45° (midway) → fast.
@@ -167,7 +178,7 @@ export default function Shuffle3D({ profiles = [] }) {
 
     raf = requestAnimationFrame(tick)
     return () => { running = false; if (raf) cancelAnimationFrame(raf) }
-  }, [])
+  }, [canHover])
 
   /* ---- Go to specific card ---- */
   const goTo = useCallback((i) => {
@@ -272,8 +283,8 @@ export default function Shuffle3D({ profiles = [] }) {
                 '--card-accent': accent,
               }}
               onClick={() => !isActive && goTo(i)}
-              onMouseEnter={() => isActive && setActiveHovered(true)}
-              onMouseLeave={() => isActive && setActiveHovered(false)}
+              onMouseEnter={() => canHover && isActive && setActiveHovered(true)}
+              onMouseLeave={() => canHover && isActive && setActiveHovered(false)}
               role="button"
               tabIndex={isActive ? 0 : -1}
               aria-label={profile.name}

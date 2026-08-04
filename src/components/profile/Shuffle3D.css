@@ -247,7 +247,7 @@
 }
 
 .shuffle-3d__card .protofile__links {
-  gap: 4px;
+  gap: 6px;  /* more space between link buttons */
 }
 
 .shuffle-3d__card .protofile__link-btn {
@@ -256,16 +256,51 @@
   min-height: 30px;
 }
 
-.shuffle-3d__card .protofile__social {
-  gap: 6px;
-  margin-bottom: 4px;
+/* ---- Compact social icons — slightly larger than CardFace compact ---- */
+.shuffle-3d__card .protofile__socials {
+  margin-bottom: 1rem;  /* more space between links and social */
+  gap: 0.35rem;           /* slightly bigger gap between icons */
 }
 
 .shuffle-3d__card .protofile__social-btn {
-  width: 26px;
-  height: 26px;
+  width: 30px;            /* slightly bigger than 26px */
+  height: 30px;
 }
 
+.shuffle-3d__card .protofile__social-btn svg {
+  width: 12px;            /* slightly bigger than 10px */
+  height: 12px;
+}
+
+/* Compact overrides for social style variants */
+.shuffle-3d__card .protofile__socials--pill {
+  padding: 4px 12px;      /* slightly bigger padding */
+}
+
+.shuffle-3d__card .protofile__socials--pill .protofile__social-btn {
+  padding: 0 10px;        /* more horizontal padding inside pill */
+}
+
+.shuffle-3d__card .protofile__socials--minimal {
+  gap: 0.75rem;           /* slightly bigger gap for minimal */
+}
+
+.shuffle-3d__card .protofile__socials--minimal .protofile__social-btn {
+  width: auto;
+  height: auto;
+  padding: 3px;           /* slightly bigger hit area */
+}
+
+.shuffle-3d__card .protofile__socials--stacked .protofile__social-btn {
+  margin: 0 -8px;         /* slightly more overlap */
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transform: translateZ(0);
+}
+
+.shuffle-3d__card .protofile__socials--bubble .protofile__social-btn {
+  box-shadow: 0 1px 4px oklch(0 0 0 / 0.1) !important;
+}
 
 /* ---- Field objects — pop out from behind the active card ---- */
 
