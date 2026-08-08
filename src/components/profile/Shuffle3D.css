@@ -62,7 +62,7 @@
 /* ---- Card glow ring (accent aura) ---- */
 
 .shuffle-3d__card::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: -3px;
   border-radius: 19px;
@@ -74,16 +74,21 @@
 .shuffle-3d__card--active::before {
   opacity: 1;
   box-shadow:
-    0 0 24px 4px color-mix(in oklch, var(--card-accent, transparent) 35%, transparent),
-    0 0 60px 16px color-mix(in oklch, var(--card-accent, transparent) 16%, transparent),
-    0 0 120px 40px color-mix(in oklch, var(--card-accent, transparent) 6%, transparent);
+    0 0 24px 4px
+      color-mix(in oklch, var(--card-accent, transparent) 35%, transparent),
+    0 0 60px 16px
+      color-mix(in oklch, var(--card-accent, transparent) 16%, transparent),
+    0 0 120px 40px
+      color-mix(in oklch, var(--card-accent, transparent) 6%, transparent);
 }
 
 .shuffle-3d__card--side::before {
   opacity: 0.4;
   box-shadow:
-    0 0 16px 2px color-mix(in oklch, var(--card-accent, transparent) 20%, transparent),
-    0 0 40px 8px color-mix(in oklch, var(--card-accent, transparent) 8%, transparent);
+    0 0 16px 2px
+      color-mix(in oklch, var(--card-accent, transparent) 20%, transparent),
+    0 0 40px 8px
+      color-mix(in oklch, var(--card-accent, transparent) 8%, transparent);
 }
 
 .shuffle-3d__card--back {
@@ -105,20 +110,22 @@
   position: relative;
   box-shadow:
     0 2px 8px oklch(0 0 0 / 0.06),
-    0 0 0 1px color-mix(in oklch, var(--card-accent, oklch(0.5 0 0)) 10%, transparent);
+    0 0 0 1px
+      color-mix(in oklch, var(--card-accent, oklch(0.5 0 0)) 10%, transparent);
   transition: box-shadow 0.5s ease;
 }
 
 .shuffle-3d__card--active .shuffle-3d__card-inner {
   box-shadow:
     0 8px 32px oklch(0 0 0 / 0.12),
-    0 0 0 1px color-mix(in oklch, var(--card-accent, oklch(0.5 0 0)) 22%, transparent);
+    0 0 0 1px
+      color-mix(in oklch, var(--card-accent, oklch(0.5 0 0)) 22%, transparent);
 }
 
 /* ---- Accent rim top light ---- */
 
 .shuffle-3d__card-inner::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -187,7 +194,8 @@
   width: 36px;
   border-radius: 6px;
   transform: scale(1);
-  box-shadow: 0 0 14px color-mix(in oklch, var(--dot-color, oklch(0.6 0 0)) 40%, transparent);
+  box-shadow: 0 0 14px
+    color-mix(in oklch, var(--dot-color, oklch(0.6 0 0)) 40%, transparent);
 }
 
 .shuffle-3d__dot--active:hover {
@@ -247,7 +255,7 @@
 }
 
 .shuffle-3d__card .protofile__links {
-  gap: 6px;  /* more space between link buttons */
+  gap: 6px; /* more space between link buttons */
 }
 
 .shuffle-3d__card .protofile__link-btn {
@@ -256,43 +264,49 @@
   min-height: 30px;
 }
 
+/* 'rounded' (12px) is half this tiny button's height → reads as a capsule.
+   Scale the radius down so rounded stays distinct from pill inside the card. */
+.shuffle-3d__card .protofile__link-btn--rounded {
+  border-radius: 6px !important;
+}
+
 /* ---- Compact social icons — slightly larger than CardFace compact ---- */
 .shuffle-3d__card .protofile__socials {
-  margin-bottom: 1rem;  /* more space between links and social */
-  gap: 0.35rem;           /* slightly bigger gap between icons */
+  margin-bottom: 1rem; /* more space between links and social */
+  gap: 0.35rem; /* slightly bigger gap between icons */
 }
 
 .shuffle-3d__card .protofile__social-btn {
-  width: 30px;            /* slightly bigger than 26px */
+  width: 30px; /* slightly bigger than 26px */
   height: 30px;
 }
 
 .shuffle-3d__card .protofile__social-btn svg {
-  width: 12px;            /* slightly bigger than 10px */
+  width: 12px; /* slightly bigger than 10px */
   height: 12px;
 }
 
 /* Compact overrides for social style variants */
 .shuffle-3d__card .protofile__socials--pill {
-  padding: 4px 12px;      /* slightly bigger padding */
+  padding: 4px 12px; /* slightly bigger padding */
 }
 
 .shuffle-3d__card .protofile__socials--pill .protofile__social-btn {
-  padding: 0 10px;        /* more horizontal padding inside pill */
+  padding: 0 10px; /* more horizontal padding inside pill */
 }
 
 .shuffle-3d__card .protofile__socials--minimal {
-  gap: 0.75rem;           /* slightly bigger gap for minimal */
+  gap: 0.75rem; /* slightly bigger gap for minimal */
 }
 
 .shuffle-3d__card .protofile__socials--minimal .protofile__social-btn {
   width: auto;
   height: auto;
-  padding: 3px;           /* slightly bigger hit area */
+  padding: 3px; /* slightly bigger hit area */
 }
 
 .shuffle-3d__card .protofile__socials--stacked .protofile__social-btn {
-  margin: 0 -8px;         /* slightly more overlap */
+  margin: 0 -8px; /* slightly more overlap */
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   transform: translateZ(0);
@@ -330,10 +344,15 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: linear-gradient(180deg, oklch(0.2 0.02 0 / 0.85), oklch(0.13 0.02 0 / 0.8));
+  background: linear-gradient(
+    180deg,
+    oklch(0.2 0.02 0 / 0.85),
+    oklch(0.13 0.02 0 / 0.8)
+  );
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
-  border: 1px solid color-mix(in oklch, var(--field-accent, #888) 40%, transparent);
+  border: 1px solid
+    color-mix(in oklch, var(--field-accent, #888) 40%, transparent);
   color: color-mix(in oklch, var(--field-accent, #888) 70%, #fff);
   box-shadow:
     0 10px 26px oklch(0 0 0 / 0.35),
@@ -342,8 +361,13 @@
 }
 
 @keyframes shuffle-3d-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-7px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
 }
 
 /* ============================================
