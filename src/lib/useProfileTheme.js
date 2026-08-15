@@ -111,6 +111,23 @@ export function computeProfileTheme(profile) {
     ? { '--bg-gradient': bgGradient.replace(/ACCENTCLR/g, encodeURIComponent(accent || '#C5A059')) }
     : {}
 
+  // Compute auto button text color based on button style, custom buttonColor, and light/dark theme
+  function computeAutoButtonTextColor() {
+    if (buttonStyle === 'solid') {
+      // Solid: default bg is white on dark, black on light
+      // If custom buttonColor is set, compute contrast against it
+      const btnBg = buttonColor || (isLightBg ? '#1a1a1a' : '#fff')
+      return isLightColor(btnBg) ? '#1a1a1a' : '#fff'
+    }
+    if (buttonStyle === 'glass') {
+      // Glass: white-ish on dark, dark on light
+      return isLightBg ? '#1e1e1e' : '#fff'
+    }
+    // outline: white on dark, dark on light
+    return isLightBg ? '#1e1e1e' : '#fff'
+  }
+  const autoButtonTextColor = computeAutoButtonTextColor()
+
   // CSS variables map
   const cssVars = {
     '--accent': accentInvisible ? visibleAccent : accentColor,
@@ -151,6 +168,9 @@ export function computeProfileTheme(profile) {
     }),
     // Button custom colors — cascade to every button in the card
     ...(buttonStyle === 'solid' && buttonColor ? { '--btn-bg': buttonColor, '--btn-border': buttonColor } : {}),
+    // Auto button text color (what renders when user hasn't set custom text color)
+    '--c-text-auto': autoButtonTextColor,
+    // Explicit custom text color overrides auto
     ...(buttonTextColor ? { '--c-text': buttonTextColor } : {}),
   }
 

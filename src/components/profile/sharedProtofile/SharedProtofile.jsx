@@ -17,9 +17,7 @@ export default function SharedProtofile({ data }) {
   const theme = computeProfileTheme(data);
   const {
     isLightBg,
-    isDarkBg,
     isGooey,
-    isAccentOverlay,
     gooeyVariant,
     accentColor,
     visibleAccent,

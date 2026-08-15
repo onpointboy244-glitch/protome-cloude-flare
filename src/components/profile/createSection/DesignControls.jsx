@@ -62,6 +62,20 @@ const SOCIAL_STYLES = [
   { key: "pill", label: "Pill" },
 ];
 
+// Compute the auto button text color (what will actually render)
+function getAutoButtonTextColor(buttonStyle, buttonColor, bgColor) {
+  const isLightBg = isLightColor(bgColor)
+  if (buttonStyle === 'solid') {
+    const btnBg = buttonColor || (isLightBg ? '#1a1a1a' : '#fff')
+    return isLightColor(btnBg) ? '#1a1a1a' : '#fff'
+  }
+  if (buttonStyle === 'glass') {
+    return isLightBg ? '#1e1e1e' : '#fff'
+  }
+  // outline
+  return isLightBg ? '#1e1e1e' : '#fff'
+}
+
 export default function DesignControls({
   accent,
   bgColor,
@@ -259,7 +273,7 @@ export default function DesignControls({
             <input
               id="pf-btn-text-color"
               type="color"
-              value={buttonTextColor || "#000000"}
+              value={buttonTextColor || getAutoButtonTextColor(buttonStyle, buttonColor, bgColor)}
               onChange={(e) => onButtonTextColorChange(e.target.value)}
               className="create-section__color-picker"
             />

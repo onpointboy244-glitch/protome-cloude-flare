@@ -335,7 +335,7 @@
   -webkit-tap-highlight-color: transparent;
   background: rgba(255, 255, 255, 0.04);
   border: none;
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--c-text-auto, rgba(255, 255, 255, 0.92));
   box-shadow:
     inset 0 0.5px 0 rgba(255, 255, 255, 0.10),
     0 1px 3px oklch(0 0 0 / 0.08);
@@ -344,7 +344,7 @@
 .protofile--light .protofile__link-btn--glass {
   background: rgba(0, 0, 0, 0.03);
   border: none;
-  color: oklch(0.12 0.008 35.8);
+  color: var(--c-text-auto, oklch(0.12 0.008 35.8));
   box-shadow:
     inset 0 0.5px 0 rgba(255, 255, 255, 0.6),
     0 1px 3px oklch(0 0 0 / 0.04);
@@ -366,7 +366,7 @@
 /* On hover: catch more light, lift */
 .protofile__link-btn--glass:hover {
   background: rgba(255, 255, 255, 0.09) !important;
-  color: #fff !important;
+  color: var(--c-text-auto, #fff) !important;
   border: none !important;
   box-shadow: 0 8px 24px oklch(0 0 0 / 0.15) !important;
   transform: translateY(-2px);
@@ -374,7 +374,7 @@
 
 .protofile--light .protofile__link-btn--glass:hover {
   background: rgba(0, 0, 0, 0.05) !important;
-  color: oklch(0.12 0.008 35.8) !important;
+  color: var(--c-text-auto, oklch(0.12 0.008 35.8)) !important;
   border: none !important;
   box-shadow: 0 8px 24px oklch(0 0 0 / 0.08) !important;
 }
@@ -383,14 +383,14 @@
 
 .protofile__link-btn--solid {
   background: var(--btn-bg, #fff);
-  color: #1a1a1a;
+  color: var(--c-text-auto, #1a1a1a);
   border: none;
   box-shadow: 0 1px 2px oklch(0 0 0 / 0.08);
 }
 
 .protofile--light .protofile__link-btn--solid {
   background: var(--btn-bg, #1a1a1a);
-  color: #fff;
+  color: var(--c-text-auto, #fff);
   box-shadow: 0 1px 2px oklch(0 0 0 / 0.15);
 }
 
@@ -411,14 +411,14 @@
 .protofile__link-btn--outline {
   background: transparent;
   border: 1.5px solid rgba(255, 255, 255, 0.28);
-  color: #fff;
+  color: var(--c-text-auto, #fff);
   box-shadow: none;
 }
 
 .protofile--light .protofile__link-btn--outline {
   background: transparent;
   border: 1.5px solid rgba(0, 0, 0, 0.18);
-  color: oklch(0.12 0.008 35.8);
+  color: var(--c-text-auto, oklch(0.12 0.008 35.8));
   box-shadow: none;
 }
 
@@ -426,13 +426,13 @@
 .protofile__link-btn--outline:hover {
   background: transparent !important;
   border-color: rgba(255, 255, 255, 0.5) !important;
-  color: #fff !important;
+  color: var(--c-text-auto, #fff) !important;
 }
 
 .protofile--light .protofile__link-btn--outline:hover {
   background: transparent !important;
   border-color: rgba(0, 0, 0, 0.35) !important;
-  color: oklch(0.12 0.008 35.8) !important;
+  color: var(--c-text-auto, oklch(0.12 0.008 35.8)) !important;
 }
 
 /* ===== Reduced motion overrides for solid & outline ===== */
@@ -440,18 +440,18 @@
 @media (prefers-reduced-motion: reduce) {
   .protofile__link-btn.protofile__link-btn--solid {
     background: var(--btn-bg, #fff) !important;
-    color: #1a1a1a !important;
+    color: var(--c-text-auto, #1a1a1a) !important;
     border: none !important;
   }
   .protofile--light .protofile__link-btn.protofile__link-btn--solid {
     background: var(--btn-bg, #1a1a1a) !important;
-    color: #fff !important;
+    color: var(--c-text-auto, #fff) !important;
     border: none !important;
   }
 
   .protofile__link-btn.protofile__link-btn--glass {
     background: rgba(255, 255, 255, 0.04) !important;
-    color: rgba(255, 255, 255, 0.92) !important;
+    color: var(--c-text-auto, rgba(255, 255, 255, 0.92)) !important;
     border: none !important;
     box-shadow:
       inset 0 0.5px 0 rgba(255, 255, 255, 0.10),
@@ -459,7 +459,7 @@
   }
   .protofile--light .protofile__link-btn.protofile__link-btn--glass {
     background: rgba(0, 0, 0, 0.03) !important;
-    color: oklch(0.15 0.008 35.8) !important;
+    color: var(--c-text-auto, oklch(0.15 0.008 35.8)) !important;
     border: none !important;
     box-shadow:
       inset 0 0.5px 0 rgba(255, 255, 255, 0.6),
@@ -469,13 +469,13 @@
   .protofile__link-btn.protofile__link-btn--outline {
     background: transparent !important;
     border: 1.5px solid rgba(255, 255, 255, 0.28) !important;
-    color: #fff !important;
+    color: var(--c-text-auto, #fff) !important;
     box-shadow: none !important;
   }
   .protofile--light .protofile__link-btn.protofile__link-btn--outline {
     background: transparent !important;
     border: 1.5px solid rgba(0, 0, 0, 0.18) !important;
-    color: oklch(0.12 0.008 35.8) !important;
+    color: var(--c-text-auto, oklch(0.12 0.008 35.8)) !important;
     box-shadow: none !important;
   }
 
