@@ -119,6 +119,17 @@
   line-height: 1.6;
 }
 
+/* ---- Serif font ---- */
+
+.protofile--serif .protofile__role,
+.protofile--serif .protofile__bio {
+  font-family: var(--font-display);
+}
+
+.protofile--serif .protofile__name {
+  font-family: var(--font-display);
+}
+
 /* ---- Bold display font ---- */
 
 .protofile--bold .protofile__name {

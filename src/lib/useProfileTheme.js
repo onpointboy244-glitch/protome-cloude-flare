@@ -58,7 +58,7 @@ export function computeProfileTheme(profile) {
     socialStyle, socialPosition, detectIcons } = d
   const accentColor = accent || 'var(--color-primary-l)'
   const isAccentLight = accent ? isLightColor(accent) : false
-  const fontClass = font && font !== 'serif' ? `protofile--${font}` : ''
+  const fontClass = font ? `protofile--${font}` : ''
 
   // Wallpaper / pattern / gooey detection
   const isGooey = bgGradient?.startsWith?.('__gooey__')
