@@ -224,9 +224,11 @@ export async function onRequest(context) {
           `<meta property="og:image" content="${ogImage}" />`,
           `<meta property="og:image:width" content="400" />`,
           `<meta property="og:image:height" content="400" />`,
+          `<meta property="og:site_name" content="protome" />`,
           `<meta name="twitter:card" content="summary" />`,
           `<meta name="twitter:title" content="protome — beautiful profile pages" />`,
           `<meta name="twitter:description" content="Create beautiful profile pages with drag-and-drop. Build your protome page today." />`,
+          `<meta name="twitter:site" content="@protome" />`,
           `<meta name="twitter:image" content="${ogImage}" />`,
           `<script type="application/ld+json">{
   "@context": "https://schema.org",
@@ -447,12 +449,14 @@ export async function onRequest(context) {
       `<meta property="og:description" content="${safeDesc}" />`,
       `<meta property="og:type" content="profile" />`,
       `<meta property="og:url" content="${siteUrl}" />`,
+      `<meta property="og:site_name" content="protome" />`,
       safeImage ? `<meta property="og:image" content="${safeImage}" />` : `<meta property="og:image" content="${esc(url.origin + '/logo-og.webp')}" />`,
       `<meta property="og:image:width" content="400" />`,
       `<meta property="og:image:height" content="400" />`,
       `<meta name="twitter:card" content="summary" />`,
       `<meta name="twitter:title" content="${safeName} — protome" />`,
       `<meta name="twitter:description" content="${safeDesc}" />`,
+      `<meta name="twitter:site" content="@protome" />`,
       safeImage ? `<meta name="twitter:image" content="${safeImage}" />` : `<meta name="twitter:image" content="${esc(url.origin + '/logo-og.webp')}" />`,
     ].filter(Boolean).join('\n    ')
 
